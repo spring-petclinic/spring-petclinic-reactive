@@ -37,10 +37,10 @@ public class SwaggerConfig {
         return new ApiInfo(
                 "Spring Pet Clinic Application Reactive",
                 "Leveraging Spring-data-cassandra-reactive and Astra Cassandra-as-a-service",
-                "1.0.0-SNAPSTHO",
+                "1.0.0-SNAPSHOT",
                 "Terms of service",
                 new Contact("DataStax Examples", "https://www.datastax.com/examples", "examples@datastax.com"),
-                "Apache v2.0", "http://www.apache.org/licenses/LICENSE-2.0", Collections.emptyList());
+                "Apache v2.0", "https://www.apache.org/licenses/LICENSE-2.0", Collections.emptyList());
     }
 
 }
