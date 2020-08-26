@@ -15,6 +15,8 @@ CREATE TABLE IF NOT EXISTS petclinic_vet (
   specialties set<text>,
   PRIMARY KEY ((id))
 );
+
+
 /** We could search veterian by their names. */
 CREATE INDEX IF NOT EXISTS petclinic_idx_vetname ON petclinic_vet(last_name);
 

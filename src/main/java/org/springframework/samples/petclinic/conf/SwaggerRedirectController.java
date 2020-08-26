@@ -1,4 +1,4 @@
-package org.springframework.samples.petclinic.core;
+package org.springframework.samples.petclinic.conf;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -14,7 +14,7 @@ import reactor.core.publisher.Mono;
  * Home:  API documentation page
  */
 @Controller
-public class HomeController {
+public class SwaggerRedirectController {
     
     /**
      * As the application does not provide any views (HTTP only) we

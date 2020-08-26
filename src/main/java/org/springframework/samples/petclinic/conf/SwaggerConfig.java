@@ -28,7 +28,7 @@ public class SwaggerConfig {
                 .groupName("petclinic")
                 .select()
                 .apis(RequestHandlerSelectors.basePackage("org.springframework.samples.petclinic"))
-                .paths(PathSelectors.any())
+                .paths(PathSelectors.ant("/api/**"))
                 .build()
                 .apiInfo(apiInfo());
     }

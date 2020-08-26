@@ -3,10 +3,12 @@ package org.springframework.samples.petclinic.vet;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
-import javax.validation.constraints.NotEmpty;
-
-import org.springframework.data.annotation.Id;
+import org.springframework.data.cassandra.core.mapping.CassandraType;
+import org.springframework.data.cassandra.core.mapping.Column;
+import org.springframework.data.cassandra.core.mapping.PrimaryKey;
+import org.springframework.data.cassandra.core.mapping.Table;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -24,30 +26,28 @@ import lombok.NoArgsConstructor;
 @Data 
 @AllArgsConstructor
 @NoArgsConstructor
+@Table("petclinic_vet")
 public class Vet implements Serializable {
 
-    /**
-     * Serial Number.
-     */
+    /** Serial Number. */
     private static final long serialVersionUID = 7407715795842376538L;
 
-    @Id
-    private Long id;
+    @PrimaryKey
+    private UUID id;
 
-    @NotEmpty
+    @Column("first_name")
+    @CassandraType(type = CassandraType.Name.TEXT)
     private String firstName;
 
-    @NotEmpty
+    @Column("last_name")
+    @CassandraType(type = CassandraType.Name.TEXT)
     private String lastName;
 
-    private Set<String> specialties = new HashSet<>();
+    @Column("specialties")
+    @CassandraType(type = CassandraType.Name.SET, typeArguments = CassandraType.Name.TEXT)
+    private Set<String> specialties = new HashSet<>();  
 
-    public int getNrOfSpecialties() {
-        return specialties.size();
+    public Vet(String uid) {
+        this.id = UUID.fromString(uid);
     }
-
-    public void addSpecialty(String specialty) {
-        specialties.add(specialty);
-    }
-
 }
