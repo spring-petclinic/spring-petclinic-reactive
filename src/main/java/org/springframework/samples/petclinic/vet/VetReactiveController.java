@@ -9,10 +9,12 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.samples.petclinic.owner.ReferenceListRepository;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -52,11 +54,15 @@ public class VetReactiveController {
     /** Implementation of Crud for repo. */
     private final VetReactiveRepository vetRepo;
     
+    /** List available lists. */
+    private final ReferenceListRepository refList;
+    
     /**
      * Injection with controller
      */
-    public VetReactiveController(VetReactiveRepository repo) {
+    public VetReactiveController(VetReactiveRepository repo, ReferenceListRepository refList) {
         this.vetRepo = repo;
+        this.refList = refList;
     }
     
     /**
@@ -95,6 +101,11 @@ public class VetReactiveController {
                       .map(ResponseEntity::ok)
                       .defaultIfEmpty(ResponseEntity.notFound().build());
     }
+    
+    @GetMapping(value = "/specialties")
+    public Mono<ResponseEntity<Set<String>>> getSpecialties() {
+     return refList.listVeretinianSpecialties().map(ResponseEntity::ok);
+ }
     
     /**
      * Create a {@link Vet} when we don't know the identifier.

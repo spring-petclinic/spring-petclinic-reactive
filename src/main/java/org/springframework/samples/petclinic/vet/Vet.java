@@ -5,6 +5,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
+import javax.validation.constraints.NotEmpty;
+
 import org.springframework.data.cassandra.core.mapping.CassandraType;
 import org.springframework.data.cassandra.core.mapping.Column;
 import org.springframework.data.cassandra.core.mapping.PrimaryKey;
@@ -33,6 +35,7 @@ public class Vet implements Serializable {
     private static final long serialVersionUID = 7407715795842376538L;
 
     @PrimaryKey
+    @NotEmpty
     private UUID id;
 
     @Column("first_name")

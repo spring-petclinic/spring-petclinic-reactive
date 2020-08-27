@@ -41,7 +41,7 @@ CREATE TABLE IF NOT EXISTS petclinic_reference_lists (
 
 /** Expecting a combobox list reference all specialties. */
 INSERT INTO petclinic_reference_lists(list_name, values) 
-VALUES ('specialty ', {'radiology', 'dentistry', 'surgery'});
+VALUES ('vet_specialty', {'radiology', 'dentistry', 'surgery'});
 
 CREATE TABLE IF NOT EXISTS petclinic_owner (
   id         uuid,

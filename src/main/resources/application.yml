@@ -12,15 +12,16 @@ spring.data.cassandra:
   contact-points: localhost
   port: 9042
   local-datacenter: datacenter1
-  username: petclinic
-  password: petclinic
-  
-  # Create the schema on the fly if it doesn't exist
+  username: ks_asset
+  password: ks_asset
   schema-action: CREATE_IF_NOT_EXISTS
-  # Increase timeouts when connecting to Astra from a dev workstation
   request:
     timeout: 10s
   connection:
     connect-timeout: 10s
     init-query-timeout: 10s
-     
+
+datastax.astra:
+  enabled: false
+  secure-connect-bundle: /Users/cedricklunven/Downloads/secure-connect-astrakathon-review.zip
+  
