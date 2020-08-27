@@ -5,11 +5,13 @@ import java.time.Duration;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.cassandra.config.AbstractReactiveCassandraConfiguration;
 import org.springframework.data.cassandra.config.SchemaAction;
+import org.springframework.data.cassandra.core.cql.ReactiveCqlTemplate;
 import org.springframework.data.cassandra.repository.config.EnableReactiveCassandraRepositories;
 
 import com.datastax.oss.driver.api.core.CqlSession;
@@ -19,18 +21,28 @@ import com.datastax.oss.driver.api.core.config.TypedDriverOption;
 import com.datastax.oss.driver.api.core.cql.SimpleStatement;
 import com.datastax.oss.driver.api.querybuilder.SchemaBuilder;
 
-import org.slf4j.Logger;
-
 /**
- * If we only use ReactiveCassandraRepository we can leverage on autoconfiguration.
+ * Enabling ReactiveCqlTemplate to execute custom queries.
  * 
- * If we need ReactiveCqlTemplate (here yes)
- * - @EnableReactiveCassandraRepositories is not enough
- * - you need to extends AbstractReactiveCassandraConfiguration
- * - When you use AbstractReactiveCassandraConfiguration autoconfiguration is KO
+ * @note Behaviour of Spring Data Cassandra and Design. Testing different conventions this is what we notice
  * 
- * As a conseqience I define  CqlSession based on Sring Data Keys but manually
- * I reuse same keys from spring-data
+ * 1. Using ONLY crud repository (ReactiveCassandraRepository) and tables,
+ * we can leverage on autoconfiguration. Spring Data load all key spring.data.cassandra.
+ * and initiate a CqlSession bean. To connect to ASTRA we can simply add a bean
+ * 
+ * @Bean
+ * public CqlSessionBuilderCustomizer sessionBuilderCustomizer() {
+ *   Path bundle = new File("secure.zip").toPath();
+ *   return builder -> builder.withCloudSecureConnectBundle(bundle);
+ * }
+ * 
+ * 2. To be able to use and inject {@link ReactiveCqlTemplate} you need to add the current class with
+ * the @EnableReactiveCassandraRepositories AND extending AbstractReactiveCassandraConfiguration. But then
+ * for some reason the CqlSession is not initialized in the same way. getKeySpace(), getDatacenter() override
+ * everything and keys are not loaded.
+ * 
+ * As a consequence here the CqlSession if initialized manually even if using the standard keys. We added
+ * datastax.astra.enabled to switch fron local cassandra to DBaas DataStax Astra without code change.
  * 
  * @author Cedrick LUNVEN (@clunven)
  */
