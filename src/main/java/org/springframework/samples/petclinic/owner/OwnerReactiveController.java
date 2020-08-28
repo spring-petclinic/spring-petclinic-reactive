@@ -13,6 +13,8 @@ import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.samples.petclinic.conf.PetClinicMapperBuilder;
+import org.springframework.samples.petclinic.vet.Vet;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -58,7 +60,7 @@ public class OwnerReactiveController {
      * Injection with controller
      */
     public OwnerReactiveController(CqlSession cqlSession) {
-        ownerDao = OwnerReactiveDaoMapper.builder(cqlSession).build().ownerDao();
+        ownerDao = new PetClinicMapperBuilder(cqlSession).build().ownerDao();
     }
     
     /**
@@ -74,6 +76,12 @@ public class OwnerReactiveController {
         @ApiResponse(code = 500, message= "Internal technical error") })
     public Flux<Owner> getAllOwners() {
         return Flux.from(ownerDao.findAllReactive());
+    }
+    
+    @GetMapping(value = "/*/lastname/{lastName}", produces = APPLICATION_JSON_VALUE)
+    public Flux<Owner> searchOwnersByName(@PathVariable("lastName") String ownerLastName) {
+        Objects.requireNonNull(ownerLastName);
+        return Flux.from(ownerDao.searchByName(ownerLastName));
     }
     
     /**

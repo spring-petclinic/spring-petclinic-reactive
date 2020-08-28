@@ -11,7 +11,6 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.samples.petclinic.reflist.ReferenceListRepository;
 import org.springframework.samples.petclinic.vet.Vet;
 import org.springframework.samples.petclinic.vet.VetReactiveDao;
-import org.springframework.samples.petclinic.vet.VetReactiveDaoMapper;
 import org.springframework.stereotype.Component;
 
 import com.datastax.oss.driver.api.core.CqlSession;
@@ -34,7 +33,7 @@ public class CassandraDataInitializer implements ApplicationListener<Application
    
     public CassandraDataInitializer(CqlSession cqlSession, ReferenceListRepository refRepo) {
         this.refRepository = refRepo;
-        this.vetRepo = VetReactiveDaoMapper.builder(cqlSession).build().vetDao();
+        this.vetRepo = new PetClinicMapperBuilder(cqlSession).build().vetDao();
     }
     
     /** {@inheritDoc} */

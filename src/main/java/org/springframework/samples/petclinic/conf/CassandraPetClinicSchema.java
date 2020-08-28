@@ -113,7 +113,6 @@ public interface CassandraPetClinicSchema {
             .withColumn(VET_SPECIALTY_ATT_FIRSTNAME, DataTypes.TEXT)
             .build();
     
-    
     String REFLIST_TABLE         = "petclinic_reference_lists";
     String REFLIST_ATT_LISTNAME  = "list_name";
     String REFLIST_ATT_VALUES    = "values";

@@ -2,6 +2,8 @@ package org.springframework.samples.petclinic.owner;
 
 import java.util.UUID;
 
+import org.springframework.samples.petclinic.conf.CassandraPetClinicSchema;
+
 import com.datastax.dse.driver.api.core.cql.reactive.ReactiveResultSet;
 import com.datastax.dse.driver.api.mapper.reactive.MappedReactiveResultSet;
 import com.datastax.oss.driver.api.mapper.annotations.Dao;
@@ -13,11 +15,11 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Dao
-public interface OwnerReactiveDao {
+public interface OwnerReactiveDao extends CassandraPetClinicSchema {
     
     @Select
     MappedReactiveResultSet<Owner> findByIdReactive(UUID ownerid);
-    
+   
     default Mono<Owner> findById(UUID ownerid) {
         return Mono.from(findByIdReactive(ownerid));
     }
@@ -27,6 +29,16 @@ public interface OwnerReactiveDao {
     
     default Flux<Owner> findAll() {
         return Flux.from(findAllReactive());
+    }
+    
+    /**
+     * A secondary index has been defined on this column*
+     */
+    @Select(customWhereClause = OWNER_ATT_LASTNAME + "= :ownerName")
+    MappedReactiveResultSet<Owner> findByOwnerNameReactive(String ownerName);
+    
+    default Flux<Owner> searchByName(String ownerName) {
+        return Flux.from(findByOwnerNameReactive(ownerName));
     }
     
     @Update

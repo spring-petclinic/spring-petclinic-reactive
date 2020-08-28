@@ -14,6 +14,7 @@ import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.samples.petclinic.conf.PetClinicMapperBuilder;
 import org.springframework.samples.petclinic.reflist.ReferenceListRepository;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -64,7 +65,7 @@ public class VetReactiveController {
      */
     public VetReactiveController(CqlSession cqlSession, ReferenceListRepository refList) {
         this.refList = refList;
-        this.vetRepo = VetReactiveDaoMapper.builder(cqlSession).build().vetDao();
+        this.vetRepo = new PetClinicMapperBuilder(cqlSession).build().vetDao();
     }
     
     /**
