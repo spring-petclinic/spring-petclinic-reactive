@@ -1,7 +1,4 @@
-package org.springframework.samples.petclinic.vet;
-
-import java.util.HashSet;
-import java.util.Set;
+package org.springframework.samples.petclinic.owner;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -10,11 +7,10 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class VetCreationRequest {
-
+public class OwnerCreationDto {
     private String firstName;
-
     private String lastName;
-
-    private Set<String> specialties = new HashSet<>();  
+    private String address;
+    private String city;
+    private String telephone;
 }

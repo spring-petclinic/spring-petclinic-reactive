@@ -18,7 +18,7 @@ import reactor.core.publisher.Mono;
  * Home:  API documentation page
  */
 @Controller
-public class SwaggerRedirectController {
+public class WebUtilController {
     
     /**
      * As the application does not provide any views (HTTP only) we

@@ -1,0 +1,10 @@
+FROM adoptopenjdk/openjdk11:alpine
+
+EXPOSE 8081
+EXPOSE 8082
+
+WORKDIR /app
+ARG JAR=spring-petclinic-reactive-1.0.0-SNAPSHOT.jar
+
+COPY /target/$JAR /app.jar
+ENTRYPOINT ["java","-jar","/app.jar"]

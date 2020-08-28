@@ -22,6 +22,6 @@ spring.data.cassandra:
     init-query-timeout: 10s
 
 datastax.astra:
-  enabled: false
+  enabled: true
   secure-connect-bundle: /Users/cedricklunven/Downloads/secure-connect-astrakathon-review.zip
   
