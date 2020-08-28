@@ -58,7 +58,7 @@ public class OwnerReactiveController {
      * Injection with controller
      */
     public OwnerReactiveController(CqlSession cqlSession) {
-        ownerDao = OwnerDaoMapper.builder(cqlSession).build().ownerDao();
+        ownerDao = OwnerReactiveDaoMapper.builder(cqlSession).build().ownerDao();
     }
     
     /**

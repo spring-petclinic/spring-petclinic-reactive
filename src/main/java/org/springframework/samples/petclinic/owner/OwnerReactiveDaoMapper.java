@@ -9,12 +9,12 @@ import com.datastax.oss.driver.api.mapper.annotations.Mapper;
  * Definition of operation for mapping.
  */
 @Mapper
-public interface OwnerDaoMapper {
-
+public interface OwnerReactiveDaoMapper {
+  
     @DaoFactory
     OwnerReactiveDao ownerDao();
     
-    static MapperBuilder<OwnerDaoMapper> builder(CqlSession session) {
+    static MapperBuilder<OwnerReactiveDaoMapper> builder(CqlSession session) {
         return new OwnerDaoMapperBuilder(session);
     }
 }

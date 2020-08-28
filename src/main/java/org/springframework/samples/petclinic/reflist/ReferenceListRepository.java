@@ -1,4 +1,4 @@
-package org.springframework.samples.petclinic.owner;
+package org.springframework.samples.petclinic.reflist;
 
 import java.util.Set;
 
