@@ -9,13 +9,11 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
 import java.util.Objects;
-import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.samples.petclinic.conf.PetClinicMapperBuilder;
-import org.springframework.samples.petclinic.reflist.ReferenceListRepository;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -44,28 +42,25 @@ import reactor.core.publisher.Mono;
  * @author Cedrick LUNVEN (@clunven)
  */
 @RestController
-@RequestMapping("/api/vets")
+@RequestMapping("/petclinic/api/vets")
 @CrossOrigin(
  methods = {PUT, POST, GET, OPTIONS, DELETE, PATCH},
  maxAge = 3600,
  allowedHeaders = {"x-requested-with", "origin", "content-type", "accept"},
  origins = "*"
 )
-@Api(value="/api/vets", tags = {"Veterinarians Api"})
+@Api(value="/petclinic/api/vets", tags = {"Veterinarians Api"})
 public class VetReactiveController {
     
     /** Implementation of Crud for repo. */
     private final VetReactiveDao vetRepo;
     
-    /** List available lists. */
-    private final ReferenceListRepository refList;
-    
     /**
      * Injection with controller
      */
-    public VetReactiveController(CqlSession cqlSession, ReferenceListRepository refList) {
-        this.refList = refList;
-        this.vetRepo = new PetClinicMapperBuilder(cqlSession).build().vetDao();
+    public VetReactiveController(CqlSession cqlSession) {
+        this.vetRepo = new VetReactiveDaoMapperBuilder(cqlSession)
+                .build().vetDao(cqlSession.getKeyspace().get());
     }
     
     /**
@@ -75,12 +70,12 @@ public class VetReactiveController {
      *   a {@link Flux} containing {@link Vet}
      */
     @GetMapping(produces = APPLICATION_JSON_VALUE)
-    @ApiOperation(value= "Read all veterinarians in database", response=Vet.class)
+    @ApiOperation(value= "Read all veterinarians in database", response=VetBeanWeb.class)
     @ApiResponses({
         @ApiResponse(code = 200, message= "List of veterinarians"), 
         @ApiResponse(code = 500, message= "Internal technical error") })
-    public Flux<Vet> getAllVets() {
-        return vetRepo.findAll();
+    public Flux<VetBeanWeb> getAllVets() {
+        return vetRepo.findAll().map(VetBeanWeb::new);
     }
     
     /**
@@ -92,24 +87,20 @@ public class VetReactiveController {
      *      a {@link Mono} of {@link Vet} or empty response with not found (404) code
      */
     @GetMapping(value = "/{vetId}", produces = APPLICATION_JSON_VALUE)
-    @ApiOperation(value= "Retrieve veterinarian information from its unique identifier", response=Vet.class)
+    @ApiOperation(value= "Retrieve veterinarian information from its unique identifier", response=VetBeanWeb.class)
     @ApiResponses({
         @ApiResponse(code = 200, message= "the identifier exists and related veterinarian is returned"), 
         @ApiResponse(code = 400, message= "The uid was not a valid UUID"), 
         @ApiResponse(code = 500, message= "Internal technical error") })
-    public Mono<ResponseEntity<Vet>> getVet(@PathVariable("vetId") @Parameter(
+    public Mono<ResponseEntity<VetBeanWeb>> getVet(@PathVariable("vetId") @Parameter(
                required = true,example = "1ff2fbd9-bbb0-4cc1-ba37-61966aa7c5e6",
                description = "Unique identifier of a Veterinarian") String vetId) {
         return vetRepo.findById(UUID.fromString(vetId))
+                      .map(VetBeanWeb::new)
                       .map(ResponseEntity::ok)
                       .defaultIfEmpty(ResponseEntity.notFound().build());
     }
-    
-    @GetMapping(value = "/specialties")
-    public Mono<ResponseEntity<Set<String>>> getSpecialties() {
-     return refList.listVeretinianSpecialties().map(ResponseEntity::ok);
- }
-    
+
     /**
      * Create a {@link Vet} when we don't know the identifier.
      *
@@ -121,17 +112,22 @@ public class VetReactiveController {
      *      the create vet.
      */
     @PostMapping(produces = APPLICATION_JSON_VALUE, consumes=APPLICATION_JSON_VALUE)
-    @ApiOperation(value= "Create a new veterinarian, an unique identifier is generated and returned", response=Vet.class)
+    @ApiOperation(value= "Create a new veterinarian, an unique identifier is generated and returned", response=VetBeanWeb.class)
     @ApiResponses({
         @ApiResponse(code = 201, message= "The veterinian has been created, uuid is provided in header"), 
         @ApiResponse(code = 400, message= "The uid was not a valid UUID"), 
         @ApiResponse(code = 500, message= "Internal technical error") })
-    public Mono<ResponseEntity<Vet>> createVet(UriComponentsBuilder ucBuilder, @RequestBody VetCreationDto vetRequest) {
+    public Mono<ResponseEntity<VetBeanWeb>> createVet(UriComponentsBuilder ucBuilder, @RequestBody VetBeanWeb vetRequest) {
       Objects.requireNonNull(vetRequest);
-      Vet input = new Vet(UUID.randomUUID(), vetRequest.getFirstName(), vetRequest.getLastName(), vetRequest.getSpecialties());
-      return vetRepo.save(input).map(created -> ResponseEntity
-                              .created(ucBuilder.path("/api/vets/{id}").buildAndExpand(created.getId()).toUri())
-                              .body(created));
+      Vet input = new Vet(UUID.randomUUID(), vetRequest.getFirstName(), vetRequest.getLastName(), 
+              vetRequest.getSpecialties().stream()
+                        .map(VetSpecialtyWebBean::getName)
+                        .collect(Collectors.toSet()));
+      return vetRepo.save(input)
+                    .map(VetBeanWeb::new)
+                    .map(created -> ResponseEntity
+                    .created(ucBuilder.path("/api/vets/{id}").buildAndExpand(created.getId()).toUri())
+                    .body(created));
     }
     
     /**
@@ -147,19 +143,25 @@ public class VetReactiveController {
      *      the create vet.
      */
     @PutMapping(value="/{vetId}", produces = APPLICATION_JSON_VALUE, consumes=APPLICATION_JSON_VALUE)
-    @ApiOperation(value= "Upsert a veterinian (no read before write as for Cassandra)", response=Vet.class)
+    @ApiOperation(value= "Upsert a veterinian (no read before write as for Cassandra)", response=VetBeanWeb.class)
     @ApiResponses({
         @ApiResponse(code = 201, message= "The veterinian has been created, uuid is provided in header"), 
         @ApiResponse(code = 400, message= "The uid was not a valid UUID"), 
         @ApiResponse(code = 500, message= "Internal technical error") })
-    public Mono<ResponseEntity<Vet>> upsert(
+    public Mono<ResponseEntity<VetBeanWeb>> upsert(
             UriComponentsBuilder ucBuilder, 
-            @PathVariable("vetId") String vetId, @RequestBody Vet vet) {
-      Objects.requireNonNull(vet);
-      Assert.isTrue(UUID.fromString(vetId).equals(vet.getId()), "Vet identifier provided in vet does not match the value if path");
-      return vetRepo.save(vet).map(created -> ResponseEntity
-              .created(ucBuilder.path("/api/vets/{id}").buildAndExpand(created.getId()).toUri())
-              .body(created));
+            @PathVariable("vetId") String vetId, @RequestBody VetBeanWeb vetRequest) {
+      Objects.requireNonNull(vetRequest);
+      Vet input = new Vet(vetRequest.getId(), vetRequest.getFirstName(), vetRequest.getLastName(), 
+              vetRequest.getSpecialties().stream()
+                        .map(VetSpecialtyWebBean::getName)
+                        .collect(Collectors.toSet()));
+      Assert.isTrue(UUID.fromString(vetId).equals(vetRequest.getId()), "Vet identifier provided in vet does not match the value if path");
+      return vetRepo.save(input)
+                    .map(VetBeanWeb::new)
+                    .map(created -> ResponseEntity
+                                .created(ucBuilder.path("/api/vets/{id}").buildAndExpand(created.getId()).toUri())
+                                .body(created));
     }
     
     /**

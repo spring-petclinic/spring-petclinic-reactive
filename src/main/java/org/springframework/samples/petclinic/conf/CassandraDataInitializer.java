@@ -8,9 +8,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
-import org.springframework.samples.petclinic.reflist.ReferenceListRepository;
+import org.springframework.samples.petclinic.reflist.ReferenceListReactiveDao;
 import org.springframework.samples.petclinic.vet.Vet;
 import org.springframework.samples.petclinic.vet.VetReactiveDao;
+import org.springframework.samples.petclinic.vet.VetReactiveDaoMapperBuilder;
 import org.springframework.stereotype.Component;
 
 import com.datastax.oss.driver.api.core.CqlSession;
@@ -27,23 +28,24 @@ public class CassandraDataInitializer implements ApplicationListener<Application
     /** Logger for the class. */
     private static final Logger LOGGER = LoggerFactory.getLogger(CassandraDataInitializer.class);
 
-    private ReferenceListRepository refRepository;
+    private ReferenceListReactiveDao refRepository;
     
     private VetReactiveDao vetRepo;
    
-    public CassandraDataInitializer(CqlSession cqlSession, ReferenceListRepository refRepo) {
+    public CassandraDataInitializer(CqlSession cqlSession, ReferenceListReactiveDao refRepo) {
         this.refRepository = refRepo;
-        this.vetRepo = new PetClinicMapperBuilder(cqlSession).build().vetDao();
+        this.vetRepo = new VetReactiveDaoMapperBuilder(cqlSession)
+                .build().vetDao(cqlSession.getKeyspace().get());
     }
     
     /** {@inheritDoc} */
     @Override
     public void onApplicationEvent(ApplicationReadyEvent event) {
         LOGGER.info("Populating data sample and indexes");
-        refRepository.saveList(ReferenceListRepository.VET_SPECIALTY, new HashSet<>(
+        refRepository.saveList(ReferenceListReactiveDao.VET_SPECIALTY, new HashSet<>(
                         Arrays.asList("dentistry", "radiology", "surgery")))
                      .subscribe();
-        refRepository.saveList(ReferenceListRepository.PET_TYPE, new HashSet<>(
+        refRepository.saveList(ReferenceListReactiveDao.PET_TYPE, new HashSet<>(
                         Arrays.asList("bird", "cat", "dog", "hamster", "lizard", "snake")))
                      .subscribe();
         

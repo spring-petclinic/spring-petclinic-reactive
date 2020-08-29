@@ -10,14 +10,7 @@ import com.datastax.oss.driver.api.mapper.annotations.CqlName;
 import com.datastax.oss.driver.api.mapper.annotations.Entity;
 import com.datastax.oss.driver.api.mapper.annotations.PartitionKey;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-@Data 
 @Entity
-@AllArgsConstructor
-@NoArgsConstructor
 @CqlName(CassandraPetClinicSchema.PET_TABLE)
 public class Pet implements CassandraPetClinicSchema {
     
@@ -37,5 +30,111 @@ public class Pet implements CassandraPetClinicSchema {
     
     @CqlName(PET_ATT_BIRTHDATE)
     private Date birthDate;
+    
+    public Pet() {}
+
+    public Pet(UUID ownerId, UUID petId, String petType, String name, Date birthDate) {
+        super();
+        this.ownerId = ownerId;
+        this.petId = petId;
+        this.petType = petType;
+        this.name = name;
+        this.birthDate = birthDate;
+    }
+
+    /**
+     * Getter accessor for attribute 'ownerId'.
+     *
+     * @return
+     *       current value of 'ownerId'
+     */
+    public UUID getOwnerId() {
+        return ownerId;
+    }
+
+    /**
+     * Setter accessor for attribute 'ownerId'.
+     * @param ownerId
+     * 		new value for 'ownerId '
+     */
+    public void setOwnerId(UUID ownerId) {
+        this.ownerId = ownerId;
+    }
+
+    /**
+     * Getter accessor for attribute 'petId'.
+     *
+     * @return
+     *       current value of 'petId'
+     */
+    public UUID getPetId() {
+        return petId;
+    }
+
+    /**
+     * Setter accessor for attribute 'petId'.
+     * @param petId
+     * 		new value for 'petId '
+     */
+    public void setPetId(UUID petId) {
+        this.petId = petId;
+    }
+
+    /**
+     * Getter accessor for attribute 'petType'.
+     *
+     * @return
+     *       current value of 'petType'
+     */
+    public String getPetType() {
+        return petType;
+    }
+
+    /**
+     * Setter accessor for attribute 'petType'.
+     * @param petType
+     * 		new value for 'petType '
+     */
+    public void setPetType(String petType) {
+        this.petType = petType;
+    }
+
+    /**
+     * Getter accessor for attribute 'name'.
+     *
+     * @return
+     *       current value of 'name'
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * Setter accessor for attribute 'name'.
+     * @param name
+     * 		new value for 'name '
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    /**
+     * Getter accessor for attribute 'birthDate'.
+     *
+     * @return
+     *       current value of 'birthDate'
+     */
+    public Date getBirthDate() {
+        return birthDate;
+    }
+
+    /**
+     * Setter accessor for attribute 'birthDate'.
+     * @param birthDate
+     * 		new value for 'birthDate '
+     */
+    public void setBirthDate(Date birthDate) {
+        this.birthDate = birthDate;
+    }
 
 }

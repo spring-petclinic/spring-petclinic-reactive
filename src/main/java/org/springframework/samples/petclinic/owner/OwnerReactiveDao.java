@@ -1,5 +1,7 @@
 package org.springframework.samples.petclinic.owner;
 
+import static com.datastax.oss.driver.api.mapper.entity.saving.NullSavingStrategy.DO_NOT_SET;
+
 import java.util.UUID;
 
 import org.springframework.samples.petclinic.conf.CassandraPetClinicSchema;
@@ -7,7 +9,9 @@ import org.springframework.samples.petclinic.conf.CassandraPetClinicSchema;
 import com.datastax.dse.driver.api.core.cql.reactive.ReactiveResultSet;
 import com.datastax.dse.driver.api.mapper.reactive.MappedReactiveResultSet;
 import com.datastax.oss.driver.api.mapper.annotations.Dao;
+import com.datastax.oss.driver.api.mapper.annotations.DefaultNullSavingStrategy;
 import com.datastax.oss.driver.api.mapper.annotations.Delete;
+import com.datastax.oss.driver.api.mapper.annotations.QueryProvider;
 import com.datastax.oss.driver.api.mapper.annotations.Select;
 import com.datastax.oss.driver.api.mapper.annotations.Update;
 
@@ -15,6 +19,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Dao
+@DefaultNullSavingStrategy(DO_NOT_SET)
 public interface OwnerReactiveDao extends CassandraPetClinicSchema {
     
     @Select
@@ -31,15 +36,10 @@ public interface OwnerReactiveDao extends CassandraPetClinicSchema {
         return Flux.from(findAllReactive());
     }
     
-    /**
-     * A secondary index has been defined on this column*
-     */
-    @Select(customWhereClause = OWNER_ATT_LASTNAME + "= :ownerName")
-    MappedReactiveResultSet<Owner> findByOwnerNameReactive(String ownerName);
-    
-    default Flux<Owner> searchByName(String ownerName) {
-        return Flux.from(findByOwnerNameReactive(ownerName));
-    }
+    @QueryProvider(
+            providerClass = OwnerReactiveDaoQueryProvider.class, 
+            entityHelpers = Owner.class)
+    Flux<Owner> searchByOwnerName(String ownerName);
     
     @Update
     ReactiveResultSet updateReactive(Owner owner);

@@ -13,7 +13,6 @@ import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.samples.petclinic.conf.PetClinicMapperBuilder;
 import org.springframework.samples.petclinic.vet.Vet;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -43,7 +42,7 @@ import reactor.core.publisher.Mono;
  * @author Cedrick LUNVEN (@clunven)
  */
 @RestController
-@RequestMapping("/api/owners")
+@RequestMapping("/petclinic/api/owners")
 @CrossOrigin(
  methods = {PUT, POST, GET, OPTIONS, DELETE, PATCH},
  maxAge = 3600,
@@ -60,7 +59,8 @@ public class OwnerReactiveController {
      * Injection with controller
      */
     public OwnerReactiveController(CqlSession cqlSession) {
-        ownerDao = new PetClinicMapperBuilder(cqlSession).build().ownerDao();
+        ownerDao = new OwnerReactiveDaoMapperBuilder(cqlSession)
+                .build().ownerDao(cqlSession.getKeyspace().get());
     }
     
     /**
@@ -80,8 +80,8 @@ public class OwnerReactiveController {
     
     @GetMapping(value = "/*/lastname/{lastName}", produces = APPLICATION_JSON_VALUE)
     public Flux<Owner> searchOwnersByName(@PathVariable("lastName") String ownerLastName) {
-        Objects.requireNonNull(ownerLastName);
-        return Flux.from(ownerDao.searchByName(ownerLastName));
+       Objects.requireNonNull(ownerLastName);
+        return Flux.from(ownerDao.searchByOwnerName(ownerLastName));
     }
     
     /**

@@ -89,6 +89,12 @@ public interface CassandraPetClinicSchema {
             .andColumn(OWNER_ATT_LASTNAME)
             .build();
     
+    SimpleStatement STMT_OWNER_SEARCHBYNAME =
+            selectFrom(OWNER_TABLE).all()
+            .whereColumn(OWNER_ATT_LASTNAME)
+            .isEqualTo(QueryBuilder.bindMarker())
+            .build();
+    
     String VET_SPECIALTY_TABLE          = "petclinic_vet_by_specialty";
     String VET_SPECIALTY_ATT_SPECIALTY  = "specialty";
     String VET_SPECIALTY_ATT_VETID      = "vet_id";
@@ -145,6 +151,8 @@ public interface CassandraPetClinicSchema {
             .value(REFLIST_ATT_LISTNAME, QueryBuilder.bindMarker())
             .value(REFLIST_ATT_VALUES, QueryBuilder.bindMarker())
             .build();
+    
+    
     
     String PET_TABLE          = "petclinic_pet_by_owner";
     String PET_ATT_OWNER_ID   = "owner_id";

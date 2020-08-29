@@ -28,7 +28,7 @@ public class WebOpenApiConfig {
                 .groupName("petclinic")
                 .select()
                 .apis(RequestHandlerSelectors.basePackage("org.springframework.samples.petclinic"))
-                .paths(PathSelectors.ant("/api/**"))
+                .paths(PathSelectors.ant("/petclinic/api/**"))
                 .build()
                 .apiInfo(apiInfo());
     }
