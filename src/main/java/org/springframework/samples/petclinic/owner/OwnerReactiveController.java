@@ -11,6 +11,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -104,18 +105,8 @@ public class OwnerReactiveController {
         @ApiResponse(code = 200, message= "List of owners (even if empty)"), 
         @ApiResponse(code = 500, message= "Internal technical error") })
     public Flux<WebBeanOwner> findAllOwners() {
-        // todo we want to look for the pets
         return Flux.from(ownerDao.findAllReactive())
-                   .map(MappingUtils::fromOwnerEntityToWebBean)
-                   
-                   .map(wbOwner -> {
-                       petDao.findAllByOwnerIdReactive(wbOwner.getId())
-                             .map(MappingUtils::fromPetEntityToWebBean)
-                             .collectList()
-                             .map(HashSet::new);
-                       wbOwner.setPets(new HashSet<>());
-                       return wbOwner;
-                   });
+                   .flatMap(this::populatePetsForOwner);
     }
     
     /**
@@ -226,5 +217,14 @@ public class OwnerReactiveController {
             required = true,example = "1ff2fbd9-bbb0-4cc1-ba37-61966aa7c5e6",
             description = "Unique identifier of a owner") String ownerId) {
         return ownerDao.delete(new Owner(ownerId)).map(v -> new ResponseEntity<Void>(HttpStatus.NO_CONTENT));
+    }
+    
+    protected Mono<WebBeanOwner> populatePetsForOwner(Owner o) {
+        return petDao.findAllByOwnerIdReactive(o.getId())
+                .collectList().map(list -> {
+                    WebBeanOwner wb = MappingUtils.fromOwnerEntityToWebBean(o);
+                    wb.setPets(list.stream().map(MappingUtils::fromPetEntityToWebBean).collect(Collectors.toSet()));
+                    return wb;
+                });
     }
 }
