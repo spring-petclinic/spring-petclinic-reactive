@@ -105,7 +105,7 @@ public class PetReactiveController {
     public Mono<ResponseEntity<WebBeanPet>> findPetById(@PathVariable("petId") @Parameter(
                required = true,example = "1ff2fbd9-bbb0-4cc1-ba37-61966aa7c5e6",
                description = "Unique identifier of a Owner") String petId) {
-        return Mono.from(petDao.findByIdReactive(UUID.fromString(petId)))
+        return petDao.findByPetIdReactive((UUID.fromString(petId)))
                    .map(MappingUtils::fromPetEntityToWebBean) // <-- TODO : probably populating Visits
                    .map(ResponseEntity::ok)
                    .defaultIfEmpty(ResponseEntity.notFound().build());

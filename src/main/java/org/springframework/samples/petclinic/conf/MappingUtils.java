@@ -2,10 +2,13 @@ package org.springframework.samples.petclinic.conf;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.HashSet;
 import java.util.Objects;
 
 import org.springframework.lang.NonNull;
-import org.springframework.samples.petclinic.owner.OwnerWebBean;
+import org.springframework.samples.petclinic.owner.Owner;
+import org.springframework.samples.petclinic.owner.WebBeanOwner;
+import org.springframework.samples.petclinic.owner.WebBeanOwnerCreation;
 import org.springframework.samples.petclinic.pet.Pet;
 import org.springframework.samples.petclinic.pet.WebBeanPet;
 import org.springframework.samples.petclinic.pet.WebBeanPetCreation;
@@ -35,7 +38,7 @@ public class MappingUtils {
         Objects.requireNonNull(entity);
         WebBeanPet wb = new WebBeanPet();
         wb.setId(entity.getPetId());
-        wb.setOwner(new OwnerWebBean(entity.getOwnerId()));
+        wb.setOwner(new WebBeanOwner(entity.getOwnerId()));
         wb.setName(entity.getName());
         wb.setType(new WebBeanPetType(entity.getPetType()));
         wb.setBirthDate(localDate2String(entity.getBirthDate()));
@@ -57,6 +60,34 @@ public class MappingUtils {
         entity.setBirthDate(string2LocalDate(wb.getBirthDate()));
         entity.setPetType(wb.getType().getName());
         return entity;
+    }
+    
+    public static Owner fromOwnerWebBeanCreationToEntity(WebBeanOwnerCreation wb) {
+        Owner o = new Owner();
+        o.setAddress(wb.getAddress());
+        o.setCity(wb.getCity());
+        o.setFirstName(wb.getFirstName());
+        o.setLastName(wb.getLastName());
+        o.setTelephone(wb.getTelephone());
+        return null;
+    }
+    public static Owner fromOwnerWebBeanToEntity(WebBeanOwner wb) {
+        Objects.requireNonNull(wb);
+        Owner o = fromOwnerWebBeanCreationToEntity(wb);
+        o.setId(wb.getId());
+        return o;
+    }
+    public static WebBeanOwner fromOwnerEntityToWebBean(Owner o) {
+        Objects.requireNonNull(o);
+        WebBeanOwner wb = new WebBeanOwner();
+        wb.setAddress(o.getAddress());
+        wb.setCity(o.getCity());
+        wb.setFirstName(o.getFirstName());
+        wb.setLastName(o.getLastName());
+        wb.setTelephone(o.getTelephone());
+        wb.setPets(new HashSet<>());
+        wb.setId(o.getId());
+        return wb;
     }
     
     

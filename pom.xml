@@ -21,10 +21,11 @@
 		<cassandra-java-driver.version>4.8.0</cassandra-java-driver.version>
 		<cassandra-native-protocol.version>1.4.11</cassandra-native-protocol.version>
 		<springfox.version>3.0.0</springfox.version>
+		<slf4j.version>1.7.30</slf4j.version>
 	</properties>
 
 	<dependencies>
-	    <!--  Expose API -->
+		<!-- Expose API -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-webflux</artifactId>
@@ -67,20 +68,20 @@
 			<artifactId>native-protocol</artifactId>
 			<version>${cassandra-native-protocol.version}</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
 		</dependency>
-	
 
-		<!-- Dev reload -->	
+
+		<!-- Dev reload -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>
 			<optional>true</optional>
 		</dependency>
-			
+
 	</dependencies>
 
 	<build>
@@ -99,6 +100,11 @@
 							<artifactId>java-driver-mapper-processor</artifactId>
 							<version>${cassandra-java-driver.version}</version>
 						</path>
+						 <path>
+                            <groupId>org.slf4j</groupId>
+                            <artifactId>slf4j-api</artifactId>
+                            <version>${slf4j.version}</version>
+                        </path>
 					</annotationProcessorPaths>
 				</configuration>
 			</plugin>
@@ -106,6 +112,19 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
 		</plugins>
 	</build>
 

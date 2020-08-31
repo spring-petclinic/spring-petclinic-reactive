@@ -180,6 +180,18 @@ public interface CassandraPetClinicSchema {
             .withColumn(PET_ATT_NAME, DataTypes.TEXT)
             .withColumn(PET_ATT_BIRTHDATE, DataTypes.DATE)
             .build();
+    
+    SimpleStatement STMT_PET_FINDBY_PET_ID =
+            selectFrom(PET_TABLE).all()
+            .whereColumn(PET_ATT_PET_ID)
+            .isEqualTo(QueryBuilder.bindMarker())
+            .allowFiltering()
+            .build();
+    SimpleStatement STMT_PET_FINDBY_OWNER_ID =
+            selectFrom(PET_TABLE).all()
+            .whereColumn(PET_ATT_OWNER_ID)
+            .isEqualTo(QueryBuilder.bindMarker())
+            .build();
    
     String VISIT_TABLE           = "petclinic_visit_by_pet";
     String VISIT_ATT_PET_ID      = "pet_id";

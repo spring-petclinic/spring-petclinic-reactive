@@ -70,12 +70,12 @@ public class VetReactiveController {
      *   a {@link Flux} containing {@link Vet}
      */
     @GetMapping(produces = APPLICATION_JSON_VALUE)
-    @ApiOperation(value= "Read all veterinarians in database", response=VetBeanWeb.class)
+    @ApiOperation(value= "Read all veterinarians in database", response=WebBeanVet.class)
     @ApiResponses({
         @ApiResponse(code = 200, message= "List of veterinarians"), 
         @ApiResponse(code = 500, message= "Internal technical error") })
-    public Flux<VetBeanWeb> getAllVets() {
-        return vetRepo.findAll().map(VetBeanWeb::new);
+    public Flux<WebBeanVet> getAllVets() {
+        return vetRepo.findAll().map(WebBeanVet::new);
     }
     
     /**
@@ -87,16 +87,16 @@ public class VetReactiveController {
      *      a {@link Mono} of {@link Vet} or empty response with not found (404) code
      */
     @GetMapping(value = "/{vetId}", produces = APPLICATION_JSON_VALUE)
-    @ApiOperation(value= "Retrieve veterinarian information from its unique identifier", response=VetBeanWeb.class)
+    @ApiOperation(value= "Retrieve veterinarian information from its unique identifier", response=WebBeanVet.class)
     @ApiResponses({
         @ApiResponse(code = 200, message= "the identifier exists and related veterinarian is returned"), 
         @ApiResponse(code = 400, message= "The uid was not a valid UUID"), 
         @ApiResponse(code = 500, message= "Internal technical error") })
-    public Mono<ResponseEntity<VetBeanWeb>> getVet(@PathVariable("vetId") @Parameter(
+    public Mono<ResponseEntity<WebBeanVet>> getVet(@PathVariable("vetId") @Parameter(
                required = true,example = "1ff2fbd9-bbb0-4cc1-ba37-61966aa7c5e6",
                description = "Unique identifier of a Veterinarian") String vetId) {
         return vetRepo.findById(UUID.fromString(vetId))
-                      .map(VetBeanWeb::new)
+                      .map(WebBeanVet::new)
                       .map(ResponseEntity::ok)
                       .defaultIfEmpty(ResponseEntity.notFound().build());
     }
@@ -112,19 +112,19 @@ public class VetReactiveController {
      *      the create vet.
      */
     @PostMapping(produces = APPLICATION_JSON_VALUE, consumes=APPLICATION_JSON_VALUE)
-    @ApiOperation(value= "Create a new veterinarian, an unique identifier is generated and returned", response=VetBeanWeb.class)
+    @ApiOperation(value= "Create a new veterinarian, an unique identifier is generated and returned", response=WebBeanVet.class)
     @ApiResponses({
         @ApiResponse(code = 201, message= "The veterinian has been created, uuid is provided in header"), 
         @ApiResponse(code = 400, message= "The uid was not a valid UUID"), 
         @ApiResponse(code = 500, message= "Internal technical error") })
-    public Mono<ResponseEntity<VetBeanWeb>> createVet(UriComponentsBuilder ucBuilder, @RequestBody VetBeanWeb vetRequest) {
+    public Mono<ResponseEntity<WebBeanVet>> createVet(UriComponentsBuilder ucBuilder, @RequestBody WebBeanVet vetRequest) {
       Objects.requireNonNull(vetRequest);
       Vet input = new Vet(UUID.randomUUID(), vetRequest.getFirstName(), vetRequest.getLastName(), 
               vetRequest.getSpecialties().stream()
-                        .map(VetSpecialtyWebBean::getName)
+                        .map(WebBeanVetSpecialty::getName)
                         .collect(Collectors.toSet()));
       return vetRepo.save(input)
-                    .map(VetBeanWeb::new)
+                    .map(WebBeanVet::new)
                     .map(created -> ResponseEntity
                     .created(ucBuilder.path("/api/vets/{id}").buildAndExpand(created.getId()).toUri())
                     .body(created));
@@ -143,22 +143,22 @@ public class VetReactiveController {
      *      the create vet.
      */
     @PutMapping(value="/{vetId}", produces = APPLICATION_JSON_VALUE, consumes=APPLICATION_JSON_VALUE)
-    @ApiOperation(value= "Upsert a veterinian (no read before write as for Cassandra)", response=VetBeanWeb.class)
+    @ApiOperation(value= "Upsert a veterinian (no read before write as for Cassandra)", response=WebBeanVet.class)
     @ApiResponses({
         @ApiResponse(code = 201, message= "The veterinian has been created, uuid is provided in header"), 
         @ApiResponse(code = 400, message= "The uid was not a valid UUID"), 
         @ApiResponse(code = 500, message= "Internal technical error") })
-    public Mono<ResponseEntity<VetBeanWeb>> upsert(
+    public Mono<ResponseEntity<WebBeanVet>> upsert(
             UriComponentsBuilder ucBuilder, 
-            @PathVariable("vetId") String vetId, @RequestBody VetBeanWeb vetRequest) {
+            @PathVariable("vetId") String vetId, @RequestBody WebBeanVet vetRequest) {
       Objects.requireNonNull(vetRequest);
       Vet input = new Vet(vetRequest.getId(), vetRequest.getFirstName(), vetRequest.getLastName(), 
               vetRequest.getSpecialties().stream()
-                        .map(VetSpecialtyWebBean::getName)
+                        .map(WebBeanVetSpecialty::getName)
                         .collect(Collectors.toSet()));
       Assert.isTrue(UUID.fromString(vetId).equals(vetRequest.getId()), "Vet identifier provided in vet does not match the value if path");
       return vetRepo.save(input)
-                    .map(VetBeanWeb::new)
+                    .map(WebBeanVet::new)
                     .map(created -> ResponseEntity
                                 .created(ucBuilder.path("/api/vets/{id}").buildAndExpand(created.getId()).toUri())
                                 .body(created));

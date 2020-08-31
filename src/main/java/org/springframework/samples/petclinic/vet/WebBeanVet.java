@@ -7,7 +7,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 
-public class VetBeanWeb implements Serializable {
+public class WebBeanVet implements Serializable {
     
     /** Serial. */
     private static final long serialVersionUID = 5116674190977860592L;
@@ -18,16 +18,16 @@ public class VetBeanWeb implements Serializable {
     
     private String lastName;
     
-    private Set<VetSpecialtyWebBean> specialties = new HashSet<>();
+    private Set<WebBeanVetSpecialty> specialties = new HashSet<>();
     
-    public VetBeanWeb() {}
+    public WebBeanVet() {}
     
-    public VetBeanWeb(Vet dto) {
+    public WebBeanVet(Vet dto) {
         this.id          = dto.getId();
         this.firstName   = dto.getFirstName();
         this.lastName    = dto.getLastName();
         this.specialties = dto.getSpecialties().stream()
-                              .map(VetSpecialtyWebBean::new).collect(Collectors.toSet());
+                              .map(WebBeanVetSpecialty::new).collect(Collectors.toSet());
         
     }
     
@@ -72,7 +72,7 @@ public class VetBeanWeb implements Serializable {
      * @return
      *       current value of 'specialties'
      */
-    public Set<VetSpecialtyWebBean> getSpecialties() {
+    public Set<WebBeanVetSpecialty> getSpecialties() {
         return specialties;
     }
     /**
@@ -80,7 +80,7 @@ public class VetBeanWeb implements Serializable {
      * @param specialties
      * 		new value for 'specialties '
      */
-    public void setSpecialties(Set<VetSpecialtyWebBean> specialties) {
+    public void setSpecialties(Set<WebBeanVetSpecialty> specialties) {
         this.specialties = specialties;
     }
 

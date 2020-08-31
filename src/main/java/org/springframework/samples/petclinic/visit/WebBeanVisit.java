@@ -11,7 +11,7 @@ import org.springframework.samples.petclinic.pet.WebBeanPet;
  *
  * @author Cedrick LUNVEN (@clunven)
  */
-public class VisitWebBean implements Serializable {
+public class WebBeanVisit implements Serializable {
     
     /** Serial. */
     private static final long serialVersionUID = -2248593252322452786L;

@@ -24,14 +24,12 @@ public interface OwnerReactiveDao extends CassandraPetClinicSchema {
     
     @Select
     MappedReactiveResultSet<Owner> findByIdReactive(UUID ownerid);
-   
     default Mono<Owner> findById(UUID ownerid) {
         return Mono.from(findByIdReactive(ownerid));
     }
     
     @Select
     MappedReactiveResultSet<Owner> findAllReactive();
-    
     default Flux<Owner> findAll() {
         return Flux.from(findAllReactive());
     }
@@ -43,7 +41,6 @@ public interface OwnerReactiveDao extends CassandraPetClinicSchema {
     
     @Update
     ReactiveResultSet updateReactive(Owner owner);
-    
     default Mono<Owner> save(Owner owner) {
         // must be applied as not LWT, no checks
         return Mono.from(updateReactive(owner))
@@ -52,7 +49,6 @@ public interface OwnerReactiveDao extends CassandraPetClinicSchema {
     
     @Delete
     ReactiveResultSet deleteReactive(Owner owner);
-    
     default Mono<Boolean> delete(Owner owner) {
         return Mono.from(deleteReactive(owner))
                    .map(rr -> rr.wasApplied());

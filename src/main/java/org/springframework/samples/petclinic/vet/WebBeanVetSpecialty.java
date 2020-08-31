@@ -7,7 +7,7 @@ import java.io.Serializable;
  *
  * @author Cedrick LUNVEN (@clunven)
  */
-public class VetSpecialtyWebBean implements Serializable {
+public class WebBeanVetSpecialty implements Serializable {
     
     /** Serial. */
     private static final long serialVersionUID = -6848331396030706076L;
@@ -16,9 +16,9 @@ public class VetSpecialtyWebBean implements Serializable {
     
     private String name;
     
-    public VetSpecialtyWebBean() {}
+    public WebBeanVetSpecialty() {}
     
-    public VetSpecialtyWebBean(String name) {
+    public WebBeanVetSpecialty(String name) {
         this.id   = name;
         this.name = name;
     }

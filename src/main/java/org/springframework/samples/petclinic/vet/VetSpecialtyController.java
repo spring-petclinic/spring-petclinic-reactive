@@ -59,55 +59,55 @@ public class VetSpecialtyController {
      * Read all veterinarians specialties from database.
      *
      * @return
-     *   a {@link Flux} containing {@link VetSpecialtyWebBean}
+     *   a {@link Flux} containing {@link WebBeanVetSpecialty}
      */
     @GetMapping(produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value= "Read all veterinarians specialties from database", 
-                  response=VetSpecialtyWebBean.class)
+                  response=WebBeanVetSpecialty.class)
     @ApiResponses({
         @ApiResponse(code = 200, message= "List of veterinarians specialties"), 
         @ApiResponse(code = 500, message= "Internal technical error") })
-    public Mono<ResponseEntity<Set<VetSpecialtyWebBean>>> getAllVetsSpecialties() {
+    public Mono<ResponseEntity<Set<WebBeanVetSpecialty>>> getAllVetsSpecialties() {
         return refList.listVeretinianSpecialties()
                       .map(Set::stream)
-                      .map(s -> s.map(VetSpecialtyWebBean::new).collect(Collectors.toSet()))
+                      .map(s -> s.map(WebBeanVetSpecialty::new).collect(Collectors.toSet()))
                       .map(ResponseEntity::ok);
     }
     
     @GetMapping(value = "/{specialtyId}", produces = APPLICATION_JSON_VALUE)
-    @ApiOperation(value= "Retrieve veterinarian information from its unique identifier", response=VetSpecialtyWebBean.class)
+    @ApiOperation(value= "Retrieve veterinarian information from its unique identifier", response=WebBeanVetSpecialty.class)
     @ApiResponses({
         @ApiResponse(code = 200, message= "the identifier exists and related veterinarian specialty is returned"), 
         @ApiResponse(code = 400, message= "The name was not valid"), 
         @ApiResponse(code = 500, message= "Internal technical error") })        
-    public Mono<ResponseEntity<VetSpecialtyWebBean>> getSpecialty(
+    public Mono<ResponseEntity<WebBeanVetSpecialty>> getSpecialty(
             @PathVariable("specialtyId") 
             @Parameter(required = true,example = "surgery",
             description = "Unique identifier of a Veterinarian specialty") String name) {
         return refList.listVeretinianSpecialties()
                       .map(set -> {
                           if (set.contains(name)) {
-                              return new ResponseEntity<VetSpecialtyWebBean>(new VetSpecialtyWebBean(name), HttpStatus.OK);
+                              return new ResponseEntity<WebBeanVetSpecialty>(new WebBeanVetSpecialty(name), HttpStatus.OK);
                           }
-                          return new ResponseEntity<VetSpecialtyWebBean>(HttpStatus.NOT_FOUND);
+                          return new ResponseEntity<WebBeanVetSpecialty>(HttpStatus.NOT_FOUND);
                       });
     }
     
     @PostMapping(produces = APPLICATION_JSON_VALUE)
-    public Mono<ResponseEntity<VetSpecialtyWebBean>> addSpecialty(
-            @RequestBody VetSpecialtyWebBean specialty) {
+    public Mono<ResponseEntity<WebBeanVetSpecialty>> addSpecialty(
+            @RequestBody WebBeanVetSpecialty specialty) {
         return refList.addVeretinianSpecialty(specialty.getName())
                       .thenReturn(specialty)
                       .map(ResponseEntity::ok);
     }
     
     @PutMapping(value = "/{specialtyId}", produces = APPLICATION_JSON_VALUE)
-    public Mono<ResponseEntity<VetSpecialtyWebBean>> updateSpecialty(
+    public Mono<ResponseEntity<WebBeanVetSpecialty>> updateSpecialty(
             @PathVariable("specialtyId") String name, 
-            @RequestBody VetSpecialtyWebBean specialty) {
+            @RequestBody WebBeanVetSpecialty specialty) {
         specialty.setId(specialty.getName());
         return refList.replaceVeretinianSpecialty(name, specialty.getName())
-                      .map(VetSpecialtyWebBean::new)
+                      .map(WebBeanVetSpecialty::new)
                       .map(ResponseEntity::ok);
     }
     

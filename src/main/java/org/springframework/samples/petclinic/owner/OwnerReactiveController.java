@@ -8,11 +8,15 @@ import static org.springframework.web.bind.annotation.RequestMethod.PATCH;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.samples.petclinic.conf.MappingUtils;
+import org.springframework.samples.petclinic.pet.PetReactiveDao;
+import org.springframework.samples.petclinic.pet.PetReactiveDaoMapperBuilder;
 import org.springframework.samples.petclinic.vet.Vet;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -55,12 +59,17 @@ public class OwnerReactiveController {
     /** Implementation of Crud for repo. */
     private OwnerReactiveDao ownerDao;
     
+    /** Implementation of Crud for repo. */
+    private PetReactiveDao petDao;
+    
     /**
      * Injection with controller
      */
     public OwnerReactiveController(CqlSession cqlSession) {
-        ownerDao = new OwnerReactiveDaoMapperBuilder(cqlSession)
+        this.ownerDao = new OwnerReactiveDaoMapperBuilder(cqlSession)
                 .build().ownerDao(cqlSession.getKeyspace().get());
+        this.petDao = new PetReactiveDaoMapperBuilder(cqlSession).build()
+                .petDao(cqlSession.getKeyspace().get());
     }
     
     /**
@@ -77,9 +86,10 @@ public class OwnerReactiveController {
     @ApiResponses({
         @ApiResponse(code = 200, message= "List of owners matching the lastname"), 
         @ApiResponse(code = 500, message= "Internal technical error") })
-    public Flux<Owner> searchOwnersByName(@PathVariable("lastName") String searchString) {
+    public Flux<WebBeanOwner> searchOwnersByName(@PathVariable("lastName") String searchString) {
        Objects.requireNonNull(searchString);
-       return Flux.from(ownerDao.searchByOwnerName(searchString));
+       return Flux.from(ownerDao.searchByOwnerName(searchString))
+                  .map(MappingUtils::fromOwnerEntityToWebBean);
     }
     
     /**
@@ -89,12 +99,23 @@ public class OwnerReactiveController {
      *   a {@link Flux} containing {@link Vet}
      */
     @GetMapping(produces = APPLICATION_JSON_VALUE)
-    @ApiOperation(value= "Read all owners in database", response=Owner.class)
+    @ApiOperation(value= "Read all owners in database", response=WebBeanOwner.class)
     @ApiResponses({
         @ApiResponse(code = 200, message= "List of owners (even if empty)"), 
         @ApiResponse(code = 500, message= "Internal technical error") })
-    public Flux<Owner> findAllOwners() {
-        return Flux.from(ownerDao.findAllReactive());
+    public Flux<WebBeanOwner> findAllOwners() {
+        // todo we want to look for the pets
+        return Flux.from(ownerDao.findAllReactive())
+                   .map(MappingUtils::fromOwnerEntityToWebBean)
+                   
+                   .map(wbOwner -> {
+                       petDao.findAllByOwnerIdReactive(wbOwner.getId())
+                             .map(MappingUtils::fromPetEntityToWebBean)
+                             .collectList()
+                             .map(HashSet::new);
+                       wbOwner.setPets(new HashSet<>());
+                       return wbOwner;
+                   });
     }
     
     /**
@@ -112,10 +133,11 @@ public class OwnerReactiveController {
         @ApiResponse(code = 400, message= "The uid was not a valid UUID"), 
         @ApiResponse(code = 404, message= "the identifier does not exists in DB"), 
         @ApiResponse(code = 500, message= "Internal technical error") })
-    public Mono<ResponseEntity<Owner>> findOwner(@PathVariable("ownerId") @Parameter(
+    public Mono<ResponseEntity<WebBeanOwner>> findOwner(@PathVariable("ownerId") @Parameter(
                required = true,example = "1ff2fbd9-bbb0-4cc1-ba37-61966aa7c5e6",
                description = "Unique identifier of a Owner") String ownerId) {
         return Mono.from(ownerDao.findByIdReactive(UUID.fromString(ownerId)))
+                   .map(MappingUtils::fromOwnerEntityToWebBean)
                    .map(ResponseEntity::ok)
                    .defaultIfEmpty(ResponseEntity.notFound().build());
     }
@@ -132,17 +154,25 @@ public class OwnerReactiveController {
      */
     @PostMapping(produces = APPLICATION_JSON_VALUE, consumes=APPLICATION_JSON_VALUE)
     @ApiOperation(value= "Create a new owner, an unique identifier is generated and returned", 
-                  response=Owner.class)
+                  response=WebBeanOwner.class)
     @ApiResponses({
         @ApiResponse(code = 201, message= "The owner has been created, uuid is provided in header"), 
         @ApiResponse(code = 400, message= "The JSON body was not valid"), 
         @ApiResponse(code = 500, message= "Internal technical error") })
-    public Mono<ResponseEntity<Owner>> createOwner(UriComponentsBuilder ucBuilder, @RequestBody OwnerCreationDto dto) {
+    public Mono<ResponseEntity<WebBeanOwner>> createOwner(
+            UriComponentsBuilder ucBuilder, 
+            @RequestBody WebBeanOwnerCreation dto) {
       Objects.requireNonNull(dto);
-      Owner input = new Owner(UUID.randomUUID(), dto.getFirstName(), dto.getLastName(), 
-                              dto.getAddress(), dto.getCity(), dto.getTelephone());
-      // Leveraging the upsert (Cassandra way) with generated UID
-      return upsertOwner(ucBuilder, input.getId().toString(), input);
+      
+      Owner o = MappingUtils.fromOwnerWebBeanCreationToEntity(dto);
+      o.setId(UUID.randomUUID());
+      return ownerDao.save(o)
+              .map(MappingUtils::fromOwnerEntityToWebBean)
+              .map(created -> ResponseEntity.created(
+                      ucBuilder.path("/api/owners/{id}")
+                               .buildAndExpand(created.getId().toString())
+                               .toUri())
+              .body(created));
     }
     
     /**
@@ -161,18 +191,20 @@ public class OwnerReactiveController {
                 consumes=APPLICATION_JSON_VALUE,
                 produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value= "Upsert a owner (no read before write as for Cassandra)", 
-                  response=Owner.class)
+                  response=WebBeanOwner.class)
     @ApiResponses({
         @ApiResponse(code = 201, message= "The owner has been created, uuid is provided in header"), 
         @ApiResponse(code = 400, message= "The owner bean was not OK"), 
         @ApiResponse(code = 500, message= "Internal technical error") })
-    public Mono<ResponseEntity<Owner>> upsertOwner(
+    public Mono<ResponseEntity<WebBeanOwner>> upsertOwner(
             UriComponentsBuilder ucBuilder, 
-            @PathVariable("ownerId") String ownerId, @RequestBody Owner owner) {
+            @PathVariable("ownerId") String ownerId, 
+            @RequestBody WebBeanOwner owner) {
       Objects.requireNonNull(owner);
       Assert.isTrue(UUID.fromString(ownerId).equals(owner.getId()), 
               "Owner identifier provided in vet does not match the value if path");
-      return ownerDao.save(owner)
+      return ownerDao.save(MappingUtils.fromOwnerWebBeanToEntity(owner))
+                     .map(MappingUtils::fromOwnerEntityToWebBean)
                      .map(created -> ResponseEntity.created(ucBuilder.path("/api/owners/{id}").buildAndExpand(created.getId()).toUri())
                      .body(created));
     }
