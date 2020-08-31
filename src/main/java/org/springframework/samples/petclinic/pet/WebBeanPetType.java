@@ -7,7 +7,7 @@ import java.io.Serializable;
  *
  * @author Cedrick LUNVEN (@clunven)
  */
-public class PetTypeWebBean implements Serializable {
+public class WebBeanPetType implements Serializable {
     
     /** Serial. */
     private static final long serialVersionUID = -6848331396030706076L;
@@ -16,9 +16,9 @@ public class PetTypeWebBean implements Serializable {
     
     private String name;
     
-    public PetTypeWebBean() {}
+    public WebBeanPetType() {}
     
-    public PetTypeWebBean(String name) {
+    public WebBeanPetType(String name) {
         this.id   = name;
         this.name = name;
     }

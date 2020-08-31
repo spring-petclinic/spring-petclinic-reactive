@@ -24,4 +24,5 @@ public interface VisitReactiveDao extends CassandraPetClinicSchema {
     default Mono<Visit> save(Visit visit) {
         return Mono.from(updateReactive(visit)).map(rr -> visit);
     }
+    
 }

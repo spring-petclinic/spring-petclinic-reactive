@@ -64,7 +64,26 @@ public class OwnerReactiveController {
     }
     
     /**
-     * Read all veterinarians from database.
+     * Search owner by their lastName leveraging a secondary index.
+     * Flux is returned and NOT mono as lastName is not the full primary key.
+     * 
+     * @param searchString
+     *      input term from user
+     * @return
+     *      list of Owner matching the term
+     */
+    @GetMapping(value = "/*/lastname/{lastName}", produces = APPLICATION_JSON_VALUE)
+    @ApiOperation(value= "Search owner by their lastName", response=Owner.class)
+    @ApiResponses({
+        @ApiResponse(code = 200, message= "List of owners matching the lastname"), 
+        @ApiResponse(code = 500, message= "Internal technical error") })
+    public Flux<Owner> searchOwnersByName(@PathVariable("lastName") String searchString) {
+       Objects.requireNonNull(searchString);
+       return Flux.from(ownerDao.searchByOwnerName(searchString));
+    }
+    
+    /**
+     * Read all owners from database.
      *
      * @return
      *   a {@link Flux} containing {@link Vet}
@@ -72,16 +91,10 @@ public class OwnerReactiveController {
     @GetMapping(produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value= "Read all owners in database", response=Owner.class)
     @ApiResponses({
-        @ApiResponse(code = 200, message= "List of owners"), 
+        @ApiResponse(code = 200, message= "List of owners (even if empty)"), 
         @ApiResponse(code = 500, message= "Internal technical error") })
-    public Flux<Owner> getAllOwners() {
+    public Flux<Owner> findAllOwners() {
         return Flux.from(ownerDao.findAllReactive());
-    }
-    
-    @GetMapping(value = "/*/lastname/{lastName}", produces = APPLICATION_JSON_VALUE)
-    public Flux<Owner> searchOwnersByName(@PathVariable("lastName") String ownerLastName) {
-       Objects.requireNonNull(ownerLastName);
-        return Flux.from(ownerDao.searchByOwnerName(ownerLastName));
     }
     
     /**
@@ -97,8 +110,9 @@ public class OwnerReactiveController {
     @ApiResponses({
         @ApiResponse(code = 200, message= "the identifier exists and related owner is returned"), 
         @ApiResponse(code = 400, message= "The uid was not a valid UUID"), 
+        @ApiResponse(code = 404, message= "the identifier does not exists in DB"), 
         @ApiResponse(code = 500, message= "Internal technical error") })
-    public Mono<ResponseEntity<Owner>> getVet(@PathVariable("ownerId") @Parameter(
+    public Mono<ResponseEntity<Owner>> findOwner(@PathVariable("ownerId") @Parameter(
                required = true,example = "1ff2fbd9-bbb0-4cc1-ba37-61966aa7c5e6",
                description = "Unique identifier of a Owner") String ownerId) {
         return Mono.from(ownerDao.findByIdReactive(UUID.fromString(ownerId)))
@@ -117,16 +131,18 @@ public class OwnerReactiveController {
      *      the created owner.
      */
     @PostMapping(produces = APPLICATION_JSON_VALUE, consumes=APPLICATION_JSON_VALUE)
-    @ApiOperation(value= "Create a new owner, an unique identifier is generated and returned", response=Owner.class)
+    @ApiOperation(value= "Create a new owner, an unique identifier is generated and returned", 
+                  response=Owner.class)
     @ApiResponses({
         @ApiResponse(code = 201, message= "The owner has been created, uuid is provided in header"), 
-        @ApiResponse(code = 400, message= "The uid was not a valid UUID"), 
+        @ApiResponse(code = 400, message= "The JSON body was not valid"), 
         @ApiResponse(code = 500, message= "Internal technical error") })
-    public Mono<ResponseEntity<Owner>> createVet(UriComponentsBuilder ucBuilder, @RequestBody OwnerCreationDto dto) {
+    public Mono<ResponseEntity<Owner>> createOwner(UriComponentsBuilder ucBuilder, @RequestBody OwnerCreationDto dto) {
       Objects.requireNonNull(dto);
       Owner input = new Owner(UUID.randomUUID(), dto.getFirstName(), dto.getLastName(), 
                               dto.getAddress(), dto.getCity(), dto.getTelephone());
-      return upsert(ucBuilder, input.getId().toString(), input);
+      // Leveraging the upsert (Cassandra way) with generated UID
+      return upsertOwner(ucBuilder, input.getId().toString(), input);
     }
     
     /**
@@ -141,24 +157,28 @@ public class OwnerReactiveController {
      * @return
      *      the created owner.
      */
-    @PutMapping(value="/{ownerId}", produces = APPLICATION_JSON_VALUE, consumes=APPLICATION_JSON_VALUE)
-    @ApiOperation(value= "Upsert a v (no read before write as for Cassandra)", response=Owner.class)
+    @PutMapping(value="/{ownerId}",  
+                consumes=APPLICATION_JSON_VALUE,
+                produces = APPLICATION_JSON_VALUE)
+    @ApiOperation(value= "Upsert a owner (no read before write as for Cassandra)", 
+                  response=Owner.class)
     @ApiResponses({
         @ApiResponse(code = 201, message= "The owner has been created, uuid is provided in header"), 
-        @ApiResponse(code = 400, message= "The uid was not a valid UUID"), 
+        @ApiResponse(code = 400, message= "The owner bean was not OK"), 
         @ApiResponse(code = 500, message= "Internal technical error") })
-    public Mono<ResponseEntity<Owner>> upsert(
+    public Mono<ResponseEntity<Owner>> upsertOwner(
             UriComponentsBuilder ucBuilder, 
             @PathVariable("ownerId") String ownerId, @RequestBody Owner owner) {
       Objects.requireNonNull(owner);
-      Assert.isTrue(UUID.fromString(ownerId).equals(owner.getId()), "Owner identifier provided in vet does not match the value if path");
+      Assert.isTrue(UUID.fromString(ownerId).equals(owner.getId()), 
+              "Owner identifier provided in vet does not match the value if path");
       return ownerDao.save(owner)
                      .map(created -> ResponseEntity.created(ucBuilder.path("/api/owners/{id}").buildAndExpand(created.getId()).toUri())
                      .body(created));
     }
     
     /**
-     * Delete a vetirinian from its unique identifier.
+     * Delete a owner from its unique identifier.
      *
      * @param vetId
      *      vetirinian identifier

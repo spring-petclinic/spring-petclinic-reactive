@@ -23,7 +23,7 @@ CREATE INDEX IF NOT EXISTS petclinic_idx_vetname ON petclinic_vet(last_name);
 /** We may want to list all radiolog. */
 CREATE TABLE IF NOT EXISTS petclinic_vet_by_specialty (
  specialty   text,
- vet_id          uuid,
+ vet_id      uuid,
  first_name  text,
  last_name   text,
  PRIMARY KEY ((specialty), vet_id)
@@ -67,7 +67,7 @@ CREATE TABLE IF NOT EXISTS petclinic_pet_by_owner (
 CREATE TABLE IF NOT EXISTS petclinic_visit_by_pet (
    pet_id      uuid,
    visit_id    uuid,
-   visite_date date,
+   visit_date  date,
    description text,
    PRIMARY KEY ((pet_id), visit_id)
 );

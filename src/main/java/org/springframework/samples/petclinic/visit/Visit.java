@@ -1,6 +1,6 @@
 package org.springframework.samples.petclinic.visit;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.UUID;
 
 import org.springframework.samples.petclinic.conf.CassandraPetClinicSchema;
@@ -25,8 +25,16 @@ public class Visit implements CassandraPetClinicSchema {
     @CqlName(VISIT_ATT_DESCRIPTION)
     private String description;
     
+    /**
+     * A Date is mapped as java LocalDate
+     * - Date      <-> java.time.LocalDate
+     * - Timestamp <-> java.time.LocalDate
+     * - Time      <-> java.time.LocalTime
+     * 
+     * @see https://docs.datastax.com/en/developer/java-driver/4.8/manual/core/#cql-to-java-type-mapping
+     */
     @CqlName(VISIT_ATT_VISIT_DATE)
-    private Date visitDate;
+    private LocalDate visitDate;
     
     public Visit() {
     }
@@ -40,7 +48,7 @@ public class Visit implements CassandraPetClinicSchema {
         this(UUID.fromString(petId), UUID.fromString(visitId));
     }
     
-    public Visit(UUID petId, UUID visitId, String description, Date visitDate) {
+    public Visit(UUID petId, UUID visitId, String description, LocalDate visitDate) {
         super();
         this.petId = petId;
         this.visitId = visitId;
@@ -111,7 +119,7 @@ public class Visit implements CassandraPetClinicSchema {
      * @return
      *       current value of 'visitDate'
      */
-    public Date getVisitDate() {
+    public LocalDate getVisitDate() {
         return visitDate;
     }
 
@@ -120,9 +128,8 @@ public class Visit implements CassandraPetClinicSchema {
      * @param visitDate
      * 		new value for 'visitDate '
      */
-    public void setVisitDate(Date visitDate) {
+    public void setVisitDate(LocalDate visitDate) {
         this.visitDate = visitDate;
     }
-    
 
 }

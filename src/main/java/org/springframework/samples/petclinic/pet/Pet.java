@@ -1,6 +1,6 @@
 package org.springframework.samples.petclinic.pet;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.UUID;
 
 import org.springframework.samples.petclinic.conf.CassandraPetClinicSchema;
@@ -28,14 +28,25 @@ public class Pet implements CassandraPetClinicSchema {
     @CqlName(PET_ATT_NAME)
     private String name;
     
+    /**
+     * A Date is mapped as java LocalDate
+     * - Date      <-> java.time.LocalDate
+     * - Timestamp <-> java.time.LocalDate
+     * - Time      <-> java.time.LocalTime
+     * 
+     * @see https://docs.datastax.com/en/developer/java-driver/4.8/manual/core/#cql-to-java-type-mapping
+     */
     @CqlName(PET_ATT_BIRTHDATE)
-    private Date birthDate;
+    private LocalDate birthDate;
     
     public Pet() {}
-
-    public Pet(UUID ownerId, UUID petId, String petType, String name, Date birthDate) {
-        super();
+    
+    public Pet(UUID ownerId) {
         this.ownerId = ownerId;
+    }
+    
+    public Pet(UUID ownerId, UUID petId, String petType, String name, LocalDate birthDate) {
+        this(ownerId);
         this.petId = petId;
         this.petType = petType;
         this.name = name;
@@ -124,7 +135,7 @@ public class Pet implements CassandraPetClinicSchema {
      * @return
      *       current value of 'birthDate'
      */
-    public Date getBirthDate() {
+    public LocalDate getBirthDate() {
         return birthDate;
     }
 
@@ -133,7 +144,7 @@ public class Pet implements CassandraPetClinicSchema {
      * @param birthDate
      * 		new value for 'birthDate '
      */
-    public void setBirthDate(Date birthDate) {
+    public void setBirthDate(LocalDate birthDate) {
         this.birthDate = birthDate;
     }
 

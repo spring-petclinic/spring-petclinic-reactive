@@ -10,5 +10,5 @@ public interface VetReactiveDaoMapper {
     
     @DaoFactory
     VetReactiveDao vetDao(@DaoKeyspace CqlIdentifier keyspace);
-    
+     
 }

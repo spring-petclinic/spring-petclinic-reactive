@@ -11,5 +11,5 @@ public interface OwnerReactiveDaoMapper {
 
     @DaoFactory
     OwnerReactiveDao ownerDao(@DaoKeyspace CqlIdentifier keyspace); 
-    
+     
 }
