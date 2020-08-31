@@ -8,12 +8,12 @@ server:
 #  Spring Data
 # --------------------------------
 spring.data.cassandra:
-  keyspace-name: petclinic
+  keyspace-name: spring_petclinic
   contact-points: localhost
   port: 9042
   local-datacenter: datacenter1
-  username: ks_asset
-  password: ks_asset
+  username: petclinic
+  password: petclinic
   schema-action: CREATE_IF_NOT_EXISTS
   request:
     timeout: 10s
@@ -23,5 +23,5 @@ spring.data.cassandra:
 
 datastax.astra:
   enabled: true
-  secure-connect-bundle: /Users/cedricklunven/Downloads/secure-connect-astrakathon-review.zip
+  secure-connect-bundle: /Users/cedricklunven/Downloads/secure-connect-demos.zip
   
