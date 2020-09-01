@@ -1,18 +1,19 @@
 package org.springframework.samples.petclinic.pet;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
+import java.util.function.Supplier;
 
 import org.springframework.samples.petclinic.conf.CassandraPetClinicSchema;
 import org.springframework.samples.petclinic.conf.MappingUtils;
-import org.springframework.samples.petclinic.owner.Owner;
 import org.springframework.samples.petclinic.owner.WebBeanOwner;
+import org.springframework.samples.petclinic.visit.WebBeanVisit;
 
 import com.datastax.dse.driver.api.core.cql.reactive.ReactiveResultSet;
 import com.datastax.dse.driver.api.mapper.reactive.MappedReactiveResultSet;
 import com.datastax.oss.driver.api.mapper.annotations.Dao;
 import com.datastax.oss.driver.api.mapper.annotations.Delete;
-import com.datastax.oss.driver.api.mapper.annotations.QueryProvider;
 import com.datastax.oss.driver.api.mapper.annotations.Select;
 import com.datastax.oss.driver.api.mapper.annotations.Update;
 
@@ -22,23 +23,20 @@ import reactor.core.publisher.Mono;
 @Dao
 public interface PetReactiveDao extends CassandraPetClinicSchema {
     
-    default Mono<WebBeanOwner> populatePetsForOwner(Owner o) {
-        return findAllByOwnerIdReactive(o.getId())
-                .collectList().map(list -> {
-                    WebBeanOwner wb = MappingUtils.fromOwnerEntityToWebBean(o);
-                    wb.setPets(list.stream().map(MappingUtils::fromPetEntityToWebBean).collect(Collectors.toSet()));
-                    return wb;
-                });
-    }
-    
     @Select
     MappedReactiveResultSet<Pet> findAllReactive();
+    
+    @Select(customWhereClause = PET_ATT_PET_ID + "= :petId", allowFiltering = true)
+    MappedReactiveResultSet<Pet> findByPetIdReactiveRs(UUID petId);
+    default Mono<Pet> findByPetIdReactive(UUID petId) {
+        return Mono.from(findByPetIdReactiveRs(petId));
+    }
 
-    @QueryProvider(providerClass = PetReactiveDaoQueryProvider.class, entityHelpers = Pet.class)
-    Mono<Pet> findByPetIdReactive(UUID petId);
-
-    @QueryProvider(providerClass = PetReactiveDaoQueryProvider.class, entityHelpers = Pet.class)
-    Flux<Pet> findAllByOwnerIdReactive(UUID ownerId);
+    @Select(customWhereClause = PET_ATT_OWNER_ID + "= :ownerId", allowFiltering = true)
+    MappedReactiveResultSet<Pet> findAllByOwnerIdReactiveRs(UUID ownerId);
+    default Flux<Pet> findAllByOwnerIdReactive(UUID ownerId) {
+        return Flux.from(findAllByOwnerIdReactiveRs(ownerId));
+    }
     
     @Update
     ReactiveResultSet updateReactive(Pet pet);
@@ -47,16 +45,24 @@ public interface PetReactiveDao extends CassandraPetClinicSchema {
     }
     
     @Delete
-    ReactiveResultSet deleteReactive(Pet pets);
+    ReactiveResultSet deleteReactive(Pet pet);
     default Mono<Boolean> delete(Pet pet) {
         return Mono.from(deleteReactive(pet)).map(rr -> rr.wasApplied());
     }
     
-    //@Select(customWhereClause = PET_ATT_PET_ID + "= :petId", allowFiltering = true)
-    //MappedReactiveResultSet<Pet> findByIdReactive2O(UUID petId);
+    default Mono<WebBeanOwner> populatePetsForOwner(WebBeanOwner wbo) {
+        return findAllByOwnerIdReactive(wbo.getId())
+                    .map(MappingUtils::fromPetEntityToWebBean)
+                    .collect((Supplier<Set<WebBeanPet>>) HashSet::new, Set::add)
+                    .doOnNext(wbo::setPets)
+                    .map(set -> wbo);
+    }
     
-    //@Select(customWhereClause = PET_ATT_OWNER_ID + "= :ownerId")
-    //MappedReactiveResultSet<Pet> findAllByOwnerIdReactive2(UUID ownerId);  
-    
+    default Mono<WebBeanVisit> populatePetForVisit(WebBeanVisit wbv) {
+        return findByPetIdReactive(wbv.getPet().getId())
+                    .map(MappingUtils::fromPetEntityToWebBean)
+                    .doOnNext(wbv::setPet)
+                    .map(set -> wbv);
+    }
     
 }

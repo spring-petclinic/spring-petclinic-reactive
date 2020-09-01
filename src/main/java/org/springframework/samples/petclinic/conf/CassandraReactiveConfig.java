@@ -51,10 +51,10 @@ public class CassandraReactiveConfig implements CassandraPetClinicSchema {
     @Value("#{'${spring.data.cassandra.contact-points}'.split(',')}") 
     private List<String> contactPoints;
     
-    @Value("${datastax.astra.enabled}")
+    @Value("${spring.data.cassandra.astra.enabled}")
     private boolean useAstra;
     
-    @Value("${datastax.astra.secure-connect-bundle}")
+    @Value("${spring.data.cassandra.astra.secure-connect-bundle}")
     private String secureConnectBundle;
     
     @Bean
@@ -62,10 +62,10 @@ public class CassandraReactiveConfig implements CassandraPetClinicSchema {
         LOGGER.info("Initializing connection to Cassandra...");
         OptionsMap om = OptionsMap.driverDefaults();
         om.put(TypedDriverOption.SESSION_KEYSPACE, keyspace);
-        om.put(TypedDriverOption.REQUEST_TIMEOUT, Duration.ofSeconds(10));
-        om.put(TypedDriverOption.CONNECTION_INIT_QUERY_TIMEOUT, Duration.ofSeconds(10));
-        om.put(TypedDriverOption.CONNECTION_SET_KEYSPACE_TIMEOUT, Duration.ofSeconds(10));
-        om.put(TypedDriverOption.CONTROL_CONNECTION_AGREEMENT_TIMEOUT, Duration.ofSeconds(10));
+        om.put(TypedDriverOption.REQUEST_TIMEOUT, Duration.ofSeconds(20));
+        om.put(TypedDriverOption.CONNECTION_INIT_QUERY_TIMEOUT, Duration.ofSeconds(20));
+        om.put(TypedDriverOption.CONNECTION_SET_KEYSPACE_TIMEOUT, Duration.ofSeconds(20));
+        om.put(TypedDriverOption.CONTROL_CONNECTION_AGREEMENT_TIMEOUT, Duration.ofSeconds(20));
         om.put(TypedDriverOption.REQUEST_CONSISTENCY, ConsistencyLevel.LOCAL_QUORUM.name());
         
         
@@ -84,7 +84,9 @@ public class CassandraReactiveConfig implements CassandraPetClinicSchema {
         
         CqlSession cqlSession = CqlSession.builder().withConfigLoader(DriverConfigLoader.fromMap(om)).build();
         LOGGER.info("[OK] Connection established to keyspace '{}'", keyspace);
-        createSchema(cqlSession);
+        if ("CREATE_IF_NOT_EXISTS".equals(schemaAction)) {
+            createSchema(cqlSession);
+        }
         return cqlSession;
     }
     

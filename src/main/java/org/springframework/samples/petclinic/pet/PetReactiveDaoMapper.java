@@ -10,5 +10,5 @@ public interface PetReactiveDaoMapper {
     
     @DaoFactory
     PetReactiveDao petDao(@DaoKeyspace CqlIdentifier keyspace);
-     
+    
 }

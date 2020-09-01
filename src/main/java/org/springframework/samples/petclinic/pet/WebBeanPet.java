@@ -17,6 +17,10 @@ public class WebBeanPet extends WebBeanPetCreation {
     public WebBeanPet() {
         super();
     }
+    
+    public WebBeanPet(UUID petId) {
+        this.id = petId;
+    }
    
     /**
      * Getter accessor for attribute 'id'.

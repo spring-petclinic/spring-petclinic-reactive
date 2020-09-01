@@ -41,15 +41,15 @@ public class Pet implements CassandraPetClinicSchema {
     
     public Pet() {}
     
-    public Pet(UUID ownerId) {
-        this.ownerId = ownerId;
+    public Pet(UUID petId) {
+        this.petId = petId;
     }
     
     public Pet(UUID ownerId, UUID petId, String petType, String name, LocalDate birthDate) {
-        this(ownerId);
-        this.petId = petId;
-        this.petType = petType;
-        this.name = name;
+        this.ownerId   = ownerId;
+        this.petId     = petId;
+        this.petType   = petType;
+        this.name      = name;
         this.birthDate = birthDate;
     }
 

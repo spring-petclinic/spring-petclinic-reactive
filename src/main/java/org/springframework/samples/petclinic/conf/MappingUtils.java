@@ -13,6 +13,9 @@ import org.springframework.samples.petclinic.pet.Pet;
 import org.springframework.samples.petclinic.pet.WebBeanPet;
 import org.springframework.samples.petclinic.pet.WebBeanPetCreation;
 import org.springframework.samples.petclinic.pet.WebBeanPetType;
+import org.springframework.samples.petclinic.visit.Visit;
+import org.springframework.samples.petclinic.visit.WebBeanVisit;
+import org.springframework.samples.petclinic.visit.WebBeanVisitCreation;
 
 /**
  * No custom Jackson serializer of Spring Convert as the data entities
@@ -69,14 +72,16 @@ public class MappingUtils {
         o.setFirstName(wb.getFirstName());
         o.setLastName(wb.getLastName());
         o.setTelephone(wb.getTelephone());
-        return null;
+        return o;
     }
+    
     public static Owner fromOwnerWebBeanToEntity(WebBeanOwner wb) {
         Objects.requireNonNull(wb);
         Owner o = fromOwnerWebBeanCreationToEntity(wb);
         o.setId(wb.getId());
         return o;
     }
+    
     public static WebBeanOwner fromOwnerEntityToWebBean(Owner o) {
         Objects.requireNonNull(o);
         WebBeanOwner wb = new WebBeanOwner();
@@ -90,5 +95,30 @@ public class MappingUtils {
         return wb;
     }
     
+    public static WebBeanVisit fromVisitEntityToWebBean(Visit entity) {
+        Objects.requireNonNull(entity);
+        WebBeanVisit wb = new WebBeanVisit();
+        wb.setId(entity.getVisitId());
+        wb.setDescription(entity.getDescription());
+        wb.setDate(localDate2String(entity.getVisitDate()));
+        wb.setPet(new WebBeanPet(entity.getPetId()));
+        return wb;
+    }
+    
+    public static Visit fromVisitWebBeanToEntity(WebBeanVisit wb) {
+        Objects.requireNonNull(wb);
+        Visit v = fromVisitWebBeanCreationToEntity(wb);
+        v.setVisitId(wb.getId());
+        return v;
+    }
+    
+    public static Visit fromVisitWebBeanCreationToEntity(WebBeanVisitCreation wbc) {
+        Objects.requireNonNull(wbc);
+        Visit v = new Visit();
+        v.setPetId(wbc.getPet().getId());
+        v.setDescription(wbc.getDescription());
+        v.setVisitDate(string2LocalDate(wbc.getDate()));
+        return v;
+    }
     
 }

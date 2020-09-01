@@ -5,23 +5,23 @@ server:
   port: ${PORT:9966}
     
 # --------------------------------
-#  Spring Data
+#  Connectivity to Cassandra
 # --------------------------------
 spring.data.cassandra:
+  
+  # keys for all
   keyspace-name: spring_petclinic
-  contact-points: localhost
-  port: 9042
-  local-datacenter: datacenter1
   username: petclinic
   password: petclinic
   schema-action: CREATE_IF_NOT_EXISTS
-  request:
-    timeout: 10s
-  connection:
-    connect-timeout: 10s
-    init-query-timeout: 10s
-
-datastax.astra:
-  enabled: true
-  secure-connect-bundle: /Users/cedricklunven/Downloads/secure-connect-demos.zip
   
+  # Keys for local
+  contact-points: localhost
+  port: 9042
+  local-datacenter: datacenter1
+  
+  #Keys for astra
+  astra:
+    enabled: true
+    secure-connect-bundle: /Users/cedricklunven/Downloads/secure-connect-demos.zip
+     

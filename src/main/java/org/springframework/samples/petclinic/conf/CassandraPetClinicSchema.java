@@ -184,15 +184,15 @@ public interface CassandraPetClinicSchema {
     SimpleStatement STMT_PET_FINDBY_PET_ID =
             selectFrom(PET_TABLE).all()
             .whereColumn(PET_ATT_PET_ID)
-            .isEqualTo(QueryBuilder.bindMarker())
+            .isEqualTo(QueryBuilder.bindMarker(PET_ATT_PET_ID))
             .allowFiltering()
             .build();
     SimpleStatement STMT_PET_FINDBY_OWNER_ID =
             selectFrom(PET_TABLE).all()
             .whereColumn(PET_ATT_OWNER_ID)
-            .isEqualTo(QueryBuilder.bindMarker())
+            .isEqualTo(QueryBuilder.bindMarker(PET_ATT_OWNER_ID))
             .build();
-   
+    
     String VISIT_TABLE           = "petclinic_visit_by_pet";
     String VISIT_ATT_PET_ID      = "pet_id";
     String VISIT_ATT_VISIT_ID    = "visit_id";

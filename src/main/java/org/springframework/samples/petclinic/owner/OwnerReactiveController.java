@@ -10,15 +10,19 @@ import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
 import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
+import java.util.function.Supplier;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.samples.petclinic.conf.MappingUtils;
 import org.springframework.samples.petclinic.pet.PetReactiveDao;
 import org.springframework.samples.petclinic.pet.PetReactiveDaoMapperBuilder;
+import org.springframework.samples.petclinic.pet.WebBeanPet;
 import org.springframework.samples.petclinic.vet.Vet;
+import org.springframework.samples.petclinic.visit.VisitReactiveDao;
+import org.springframework.samples.petclinic.visit.VisitReactiveDaoMapperBuilder;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -63,6 +67,9 @@ public class OwnerReactiveController {
     /** Implementation of Crud for repo. */
     private PetReactiveDao petDao;
     
+    /** Implementation of Crud for repo. */
+    private VisitReactiveDao visitDao;
+    
     /**
      * Injection with controller
      */
@@ -71,6 +78,8 @@ public class OwnerReactiveController {
                 .build().ownerDao(cqlSession.getKeyspace().get());
         this.petDao = new PetReactiveDaoMapperBuilder(cqlSession).build()
                 .petDao(cqlSession.getKeyspace().get());
+        this.visitDao = new VisitReactiveDaoMapperBuilder(cqlSession).build()
+                .visitDao(cqlSession.getKeyspace().get());
     }
     
     /**
@@ -106,7 +115,8 @@ public class OwnerReactiveController {
         @ApiResponse(code = 500, message= "Internal technical error") })
     public Flux<WebBeanOwner> findAllOwners() {
         return Flux.from(ownerDao.findAllReactive())
-                   .flatMap(this::populatePetsForOwner);
+                   .map(MappingUtils::fromOwnerEntityToWebBean)
+                   .flatMap(petDao::populatePetsForOwner);     
     }
     
     /**
@@ -129,8 +139,18 @@ public class OwnerReactiveController {
                description = "Unique identifier of a Owner") String ownerId) {
         return Mono.from(ownerDao.findByIdReactive(UUID.fromString(ownerId)))
                    .map(MappingUtils::fromOwnerEntityToWebBean)
+                   .flatMap(this::populateOwner)
                    .map(ResponseEntity::ok)
                    .defaultIfEmpty(ResponseEntity.notFound().build());
+    }
+    
+    protected Mono<WebBeanOwner> populateOwner(WebBeanOwner wbo) {
+        return petDao.findAllByOwnerIdReactive(wbo.getId())
+                    .map(MappingUtils::fromPetEntityToWebBean)
+                    .flatMap(visitDao::populateVisitsForPet)
+                    .collect((Supplier<Set<WebBeanPet>>) HashSet::new, Set::add)
+                    .doOnNext(wbo::setPets)
+                    .map(set -> wbo);
     }
     
     /**
@@ -154,7 +174,6 @@ public class OwnerReactiveController {
             UriComponentsBuilder ucBuilder, 
             @RequestBody WebBeanOwnerCreation dto) {
       Objects.requireNonNull(dto);
-      
       Owner o = MappingUtils.fromOwnerWebBeanCreationToEntity(dto);
       o.setId(UUID.randomUUID());
       return ownerDao.save(o)
@@ -196,6 +215,7 @@ public class OwnerReactiveController {
               "Owner identifier provided in vet does not match the value if path");
       return ownerDao.save(MappingUtils.fromOwnerWebBeanToEntity(owner))
                      .map(MappingUtils::fromOwnerEntityToWebBean)
+                     .flatMap(petDao::populatePetsForOwner)
                      .map(created -> ResponseEntity.created(ucBuilder.path("/api/owners/{id}").buildAndExpand(created.getId()).toUri())
                      .body(created));
     }
@@ -219,12 +239,5 @@ public class OwnerReactiveController {
         return ownerDao.delete(new Owner(ownerId)).map(v -> new ResponseEntity<Void>(HttpStatus.NO_CONTENT));
     }
     
-    protected Mono<WebBeanOwner> populatePetsForOwner(Owner o) {
-        return petDao.findAllByOwnerIdReactive(o.getId())
-                .collectList().map(list -> {
-                    WebBeanOwner wb = MappingUtils.fromOwnerEntityToWebBean(o);
-                    wb.setPets(list.stream().map(MappingUtils::fromPetEntityToWebBean).collect(Collectors.toSet()));
-                    return wb;
-                });
-    }
+    
 }
