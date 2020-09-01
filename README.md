@@ -11,27 +11,34 @@ Implementation of the [Spring Pet Clinic]  backend using a REST backend implente
 ## Table of content
 
 - **(A) Run the Application on your laptop *(java + maven required)***
-  - Create a DBaas Cassandra free Account (ASTRA)
-  - Build and start the user interface
-  - Build and start the backend
-  - Setup the application to run Apache Cassandra locally (docker)
+  - [Create a DBaas Cassandra free Account (ASTRA)](#)
+  - [Build and start the user interface](#)
+  - [Build and start the backend](#)
+  - [Setup the application to run Apache Cassandra locally (docker)](#)
+
 
 - **(B) Run the Sample on Gitpod**
-  - Create a DBaas Cassandra free Account (ASTRA)
-  - Open Gitpod and follow instructions
+  - [Create a DBaas Cassandra free Account (ASTRA)]()
+  - [Open Gitpod and follow instructions](#)
 
 - **(C) Architecture**
- - Understanding the Pet Clinic Application
- - Architecture diagram of the version
- - Data Model from Relational to Cassandra data Model
+  - [Understanding the Pet Clinic Application](#)
+  - [Architecture diagram of the version](#)
+  - [Data Model from Relational to Cassandra data Model](#)
 
 - **(D) Contribute**
- - Blog post and communications\
- - Architecture diagram of the version
- - Data Model from Relational to Cassandra data Model
+  - Blog post and communications\
+  - Architecture diagram of the version
+  - Data Model from Relational to Cassandra data Model 
 
 
 ## Run the Application on your laptop
+
+### A1 - Create a DBaas Cassandra free Account (ASTRA)
+### A2 - Build and start the Angular  user interface
+### A3 - Build and start the Spring Boot backend
+
+
 
 Talk is cheap, show me the code.
 
