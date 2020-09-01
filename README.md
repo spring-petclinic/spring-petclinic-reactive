@@ -130,6 +130,8 @@ npm uninstall -g angular-cli @angular/cli
 npm cache clean
 npm install -g @angular/cli@8.0.3
 npm install --save-dev @angular/cli@8.0.3
+ng build
+ng serve
 ```
 
 You should now have the UI running at [http://localhost:4200](http://localhost:4200)
