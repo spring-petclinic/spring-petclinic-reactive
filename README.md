@@ -4,26 +4,32 @@
 [![License Apache2](https://img.shields.io/hexpm/l/plug.svg)](http://www.apache.org/licenses/LICENSE-2.0)
 [![Gitpod ready-to-code](https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/clun/spring-petclinic-reactive) 
 
-Implementation of the Spring Pet Clinic REST backend using the **Spring Weblux** for controllers and **Apache Cassandra** for the backend. This is meant to be used with the **[spring-petclinic-angular](https://github.com/spring-petclinic/spring-petclinic-angular)** user interface, all steps are listed here to run the full app stay with us.
+Implementation of the [Spring Pet Clinic]  backend using a REST backend implented with **Spring Weblux** and **Apache Cassandra** for the backend. This is meant to be used with the **[spring-petclinic-angular](https://github.com/spring-petclinic/spring-petclinic-angular)** user interface, all steps are listed here to run the full app stay with us.
 
-![banner](https://raw.githubusercontent.com/clun/spring-petclinic-reactive/master/doc/img/logos-reactives.png)
+![banner](https://raw.githubusercontent.com/clun/spring-petclinic-reactive/master/doc/img/banner.png)
 
 ## Table of content
 
-- (A) Run the Application on your laptop *(java + maven required)*
+- **(A) Run the Application on your laptop *(java + maven required)***
   - Create a DBaas Cassandra free Account (ASTRA)
   - Build and start the user interface
   - Build and start the backend
   - Setup the application to run Apache Cassandra locally (docker)
 
-- (B) Run the Sample on Gitpod
+- **(B) Run the Sample on Gitpod**
   - Create a DBaas Cassandra free Account (ASTRA)
   - Open Gitpod and follow instructions
 
-- (C) Architecture
+- **(C) Architecture**
  - Understanding the Pet Clinic Application
  - Architecture diagram of the version
- 
+ - Data Model from Relational to Cassandra data Model
+
+- **(D) Contribute**
+ - Blog post and communications\
+ - Architecture diagram of the version
+ - Data Model from Relational to Cassandra data Model
+
 
 ## Run the Application on your laptop
 
@@ -34,6 +40,11 @@ Talk is cheap, show me the code.
 
 
 ## Understanding the Spring Petclinic application with a few diagrams
+
+
+
+
+## BUILD AND RUN THE UID LOCALLY
 
 ```
 git clone https://github.com/spring-petclinic/spring-petclinic-angular.git
@@ -71,4 +82,17 @@ datastax.astra:
 
 ```
 
-You should now have the backedn running at [http://localhost:9966](http://localhost:9966)
+## Run with local Cassandra
+
+```
+docker-compose up -d
+```
+
+Access application, it should redirect you to documentation
+```
+http://localhost:8081/
+```
+
+## Run with ASTRA
+
+TBD
