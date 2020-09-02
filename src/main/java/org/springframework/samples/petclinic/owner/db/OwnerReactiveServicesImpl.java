@@ -48,14 +48,14 @@ public class OwnerReactiveServicesImpl implements OwnerReactiveServices {
     public Flux<Owner> findOwnersByName(String searchString) {
         Objects.requireNonNull(searchString);
         return Flux.from(ownerDao.searchByOwnerName(searchString))
-                   .map(MappingUtils::fromOwnerToEntity);
+                   .map(MappingUtils::mapEntityAsOwner);
     }
     
     /** {@inheritDoc} */
     @Override
     public Flux<Owner> findAllOwners() {
         return Flux.from(ownerDao.findAllReactive())
-                   .map(MappingUtils::fromOwnerToEntity)
+                   .map(MappingUtils::mapEntityAsOwner)
                    .flatMap(petDao::populatePetsForOwner);  
     }
 
@@ -64,7 +64,7 @@ public class OwnerReactiveServicesImpl implements OwnerReactiveServices {
     public Mono<Owner> findOwnerById(String ownerId) {
         Objects.requireNonNull(ownerId);
         return Mono.from(ownerDao.findByIdReactive(UUID.fromString(ownerId)))
-                   .map(MappingUtils::fromOwnerToEntity)
+                   .map(MappingUtils::mapEntityAsOwner)
                    .flatMap(this::populateOwner);
     }
 
@@ -72,16 +72,16 @@ public class OwnerReactiveServicesImpl implements OwnerReactiveServices {
     @Override
     public Mono<Owner> createOwner(Owner owner) {
         Objects.requireNonNull(owner);
-        return ownerDao.save(MappingUtils.fromEntityToOwner(owner))
-                       .map(MappingUtils::fromOwnerToEntity);
+        return ownerDao.save(MappingUtils.mapOwnerAsEntity(owner))
+                       .map(MappingUtils::mapEntityAsOwner);
     }
     
     /** {@inheritDoc} */
     @Override
     public Mono<Owner> updateOwner(Owner owner) {
         Objects.requireNonNull(owner);
-        return ownerDao.save(MappingUtils.fromEntityToOwner(owner))
-                       .map(MappingUtils::fromOwnerToEntity)
+        return ownerDao.save(MappingUtils.mapOwnerAsEntity(owner))
+                       .map(MappingUtils::mapEntityAsOwner)
                        .flatMap(petDao::populatePetsForOwner);
     }
 

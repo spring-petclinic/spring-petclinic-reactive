@@ -90,7 +90,7 @@ public class MappingUtils {
         return v;
     }
     
-    public static Owner fromOwnerToEntity(OwnerEntity o) {
+    public static Owner mapEntityAsOwner(OwnerEntity o) {
         Objects.requireNonNull(o);
         Owner wb = new Owner();
         wb.setAddress(o.getAddress());
@@ -103,7 +103,7 @@ public class MappingUtils {
         return wb;
     }
     
-    public static OwnerEntity fromEntityToOwner(Owner wb) {
+    public static OwnerEntity mapOwnerAsEntity(Owner wb) {
         OwnerEntity o = new OwnerEntity();
         o.setId(wb.getId());
         o.setAddress(wb.getAddress());

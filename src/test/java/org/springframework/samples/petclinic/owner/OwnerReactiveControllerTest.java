@@ -24,6 +24,11 @@ import org.springframework.web.reactive.function.BodyInserters;
 
 import reactor.core.publisher.Mono;
 
+/**
+ * Testing the {@link OwnerReactiveController} layer.
+ *
+ * @author Cedrick LUNVEN (@clunven)
+ */
 @ExtendWith(SpringExtension.class)
 @WebFluxTest(controllers = OwnerReactiveController.class)
 @Import(OwnerReactiveServicesImpl.class)
@@ -46,7 +51,7 @@ public class OwnerReactiveControllerTest {
         Owner o1 = new Owner(
                 UUID.fromString("11111111-1111-1111-1111-111111111111"), "John", 
                                 "Connor", "T800 street", "Detroit", "0123456789");
-        OwnerEntity dto = MappingUtils.fromEntityToOwner(o1);
+        OwnerEntity dto = MappingUtils.mapOwnerAsEntity(o1);
         Mockito.when(ownerDao.save(any())).thenReturn(Mono.just(dto));
         webClient.post()
                  .uri("/petclinic/api/owners")
@@ -55,7 +60,8 @@ public class OwnerReactiveControllerTest {
                  .exchange()
                  .expectStatus().isCreated()
                  .expectBody(Owner.class);
-        // Cannot be OK as the UID is generated at controller side
+        
+        // KO as the UID is generated at controller side, not same object
         // Mockito.verify(ownerDao, times(1)).save(dto);
         // <--
     }
