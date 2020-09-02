@@ -3,7 +3,7 @@ package org.springframework.samples.petclinic.pet;
 import java.io.Serializable;
 import java.util.Set;
 
-import org.springframework.samples.petclinic.owner.WebBeanOwner;
+import org.springframework.samples.petclinic.owner.Owner;
 import org.springframework.samples.petclinic.visit.WebBeanVisit;
 
 /**
@@ -23,7 +23,7 @@ public class WebBeanPetCreation implements Serializable {
     protected WebBeanPetType type;
     
     // When creating a pet the full owner is sent even if only id is used
-    protected WebBeanOwner owner;
+    protected Owner owner;
     
     // Not used for creation but rendering
     protected Set<WebBeanVisit> visits;
@@ -39,7 +39,7 @@ public class WebBeanPetCreation implements Serializable {
      * @return
      *       current value of 'owner'
      */
-    public WebBeanOwner getOwner() {
+    public Owner getOwner() {
         return owner;
     }
 
@@ -48,7 +48,7 @@ public class WebBeanPetCreation implements Serializable {
      * @param owner
      * 		new value for 'owner '
      */
-    public void setOwner(WebBeanOwner owner) {
+    public void setOwner(Owner owner) {
         this.owner = owner;
     }
 

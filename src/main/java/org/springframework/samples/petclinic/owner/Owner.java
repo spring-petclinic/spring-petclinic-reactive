@@ -1,55 +1,36 @@
 package org.springframework.samples.petclinic.owner;
 
+import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
-import org.springframework.samples.petclinic.conf.CassandraPetClinicSchema;
-
-import com.datastax.oss.driver.api.mapper.annotations.CqlName;
-import com.datastax.oss.driver.api.mapper.annotations.Entity;
-import com.datastax.oss.driver.api.mapper.annotations.PartitionKey;
+import org.springframework.samples.petclinic.pet.WebBeanPet;
 
 /**
- * Simple JavaBean domain object representing an owner.s
+ * Bean expected by the UI with heriarchy owner 1..n -> Pet 1..n -> Visit.
+ *
+ * @author Cedrick LUNVEN (@clunven)
  */
-@Entity
-@CqlName(CassandraPetClinicSchema.OWNER_TABLE)
-public class Owner implements CassandraPetClinicSchema {
-
-    @PartitionKey
-    @CqlName(OWNER_ATT_ID)
-    private UUID id;
-
-    @CqlName(OWNER_ATT_FIRSTNAME)
-    private String firstName;
-
-    @CqlName(OWNER_ATT_LASTNAME)
-    private String lastName;
-
-    @CqlName(OWNER_ATT_ADRESS)
-    private String address;
-
-    @CqlName(OWNER_ATT_CITY)
-    private String city;
+public class Owner implements Serializable {
     
-    @CqlName(OWNER_ATT_TELEPHONE)
+    /** Serial. */
+    private static final long serialVersionUID = -140951859331681727L;
+    
+    private UUID id;
+    private String firstName;
+    private String lastName;
+    private String address;
+    private String city;
     private String telephone;
+    private Set<WebBeanPet> pets = new HashSet<>();
     
     public Owner() {}
     
-    public Owner(String uid) {
-        this.id = UUID.fromString(uid);
+    public Owner(UUID ownerId) {
+        this.id = ownerId;
     }
     
-    public Owner(UUID id, String firstName, String lastName, String address, String city, String telephone) {
-        super();
-        this.id = id;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.address = address;
-        this.city = city;
-        this.telephone = telephone;
-    }
-
     /**
      * Getter accessor for attribute 'id'.
      *
@@ -59,7 +40,6 @@ public class Owner implements CassandraPetClinicSchema {
     public UUID getId() {
         return id;
     }
-
     /**
      * Setter accessor for attribute 'id'.
      * @param id
@@ -68,7 +48,25 @@ public class Owner implements CassandraPetClinicSchema {
     public void setId(UUID id) {
         this.id = id;
     }
-
+    
+    /**
+     * Getter accessor for attribute 'pets'.
+     *
+     * @return
+     *       current value of 'pets'
+     */
+    public Set<WebBeanPet> getPets() {
+        return pets;
+    }
+    /**
+     * Setter accessor for attribute 'pets'.
+     * @param pets
+     * 		new value for 'pets '
+     */
+    public void setPets(Set<WebBeanPet> pets) {
+        this.pets = pets;
+    }
+    
     /**
      * Getter accessor for attribute 'firstName'.
      *
@@ -78,16 +76,14 @@ public class Owner implements CassandraPetClinicSchema {
     public String getFirstName() {
         return firstName;
     }
-
     /**
      * Setter accessor for attribute 'firstName'.
      * @param firstName
-     * 		new value for 'firstName '
+     *      new value for 'firstName '
      */
     public void setFirstName(String firstName) {
         this.firstName = firstName;
     }
-
     /**
      * Getter accessor for attribute 'lastName'.
      *
@@ -97,16 +93,14 @@ public class Owner implements CassandraPetClinicSchema {
     public String getLastName() {
         return lastName;
     }
-
     /**
      * Setter accessor for attribute 'lastName'.
      * @param lastName
-     * 		new value for 'lastName '
+     *      new value for 'lastName '
      */
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
-
     /**
      * Getter accessor for attribute 'address'.
      *
@@ -116,16 +110,14 @@ public class Owner implements CassandraPetClinicSchema {
     public String getAddress() {
         return address;
     }
-
     /**
      * Setter accessor for attribute 'address'.
      * @param address
-     * 		new value for 'address '
+     *      new value for 'address '
      */
     public void setAddress(String address) {
         this.address = address;
     }
-
     /**
      * Getter accessor for attribute 'city'.
      *
@@ -135,16 +127,14 @@ public class Owner implements CassandraPetClinicSchema {
     public String getCity() {
         return city;
     }
-
     /**
      * Setter accessor for attribute 'city'.
      * @param city
-     * 		new value for 'city '
+     *      new value for 'city '
      */
     public void setCity(String city) {
         this.city = city;
     }
-
     /**
      * Getter accessor for attribute 'telephone'.
      *
@@ -154,14 +144,13 @@ public class Owner implements CassandraPetClinicSchema {
     public String getTelephone() {
         return telephone;
     }
-
     /**
      * Setter accessor for attribute 'telephone'.
      * @param telephone
-     * 		new value for 'telephone '
+     *      new value for 'telephone '
      */
     public void setTelephone(String telephone) {
         this.telephone = telephone;
     }
-
+    
 }

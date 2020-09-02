@@ -1,21 +1,77 @@
-package org.springframework.samples.petclinic.owner;
+package org.springframework.samples.petclinic.owner.db;
 
-import java.io.Serializable;
+import java.util.UUID;
 
+import org.springframework.samples.petclinic.conf.CassandraPetClinicSchema;
 
-public class WebBeanOwnerCreation implements Serializable {
-    
-    /** Serial. */
-    private static final long serialVersionUID = 470454541735381314L;
-    
+import com.datastax.oss.driver.api.mapper.annotations.CqlName;
+import com.datastax.oss.driver.api.mapper.annotations.Entity;
+import com.datastax.oss.driver.api.mapper.annotations.PartitionKey;
+
+/**
+ * Simple JavaBean domain object representing an owner.s
+ */
+@Entity
+@CqlName(CassandraPetClinicSchema.OWNER_TABLE)
+public class OwnerEntity implements CassandraPetClinicSchema {
+
+    @PartitionKey
+    @CqlName(OWNER_ATT_ID)
+    private UUID id;
+
+    @CqlName(OWNER_ATT_FIRSTNAME)
     private String firstName;
+
+    @CqlName(OWNER_ATT_LASTNAME)
     private String lastName;
+
+    @CqlName(OWNER_ATT_ADRESS)
     private String address;
+
+    @CqlName(OWNER_ATT_CITY)
     private String city;
+    
+    @CqlName(OWNER_ATT_TELEPHONE)
     private String telephone;
     
-    public WebBeanOwnerCreation() {}
+    public OwnerEntity() {}
     
+    public OwnerEntity(UUID uid) {
+        this.id = uid;
+    }
+    public OwnerEntity(String uid) {
+        this(UUID.fromString(uid));
+    }
+    
+    public OwnerEntity(UUID id, String firstName, String lastName, String address, String city, String telephone) {
+        super();
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.address = address;
+        this.city = city;
+        this.telephone = telephone;
+    }
+
+    /**
+     * Getter accessor for attribute 'id'.
+     *
+     * @return
+     *       current value of 'id'
+     */
+    public UUID getId() {
+        return id;
+    }
+
+    /**
+     * Setter accessor for attribute 'id'.
+     * @param id
+     * 		new value for 'id '
+     */
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
     /**
      * Getter accessor for attribute 'firstName'.
      *
@@ -25,6 +81,7 @@ public class WebBeanOwnerCreation implements Serializable {
     public String getFirstName() {
         return firstName;
     }
+
     /**
      * Setter accessor for attribute 'firstName'.
      * @param firstName
@@ -33,6 +90,7 @@ public class WebBeanOwnerCreation implements Serializable {
     public void setFirstName(String firstName) {
         this.firstName = firstName;
     }
+
     /**
      * Getter accessor for attribute 'lastName'.
      *
@@ -42,6 +100,7 @@ public class WebBeanOwnerCreation implements Serializable {
     public String getLastName() {
         return lastName;
     }
+
     /**
      * Setter accessor for attribute 'lastName'.
      * @param lastName
@@ -50,6 +109,7 @@ public class WebBeanOwnerCreation implements Serializable {
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
+
     /**
      * Getter accessor for attribute 'address'.
      *
@@ -59,6 +119,7 @@ public class WebBeanOwnerCreation implements Serializable {
     public String getAddress() {
         return address;
     }
+
     /**
      * Setter accessor for attribute 'address'.
      * @param address
@@ -67,6 +128,7 @@ public class WebBeanOwnerCreation implements Serializable {
     public void setAddress(String address) {
         this.address = address;
     }
+
     /**
      * Getter accessor for attribute 'city'.
      *
@@ -76,6 +138,7 @@ public class WebBeanOwnerCreation implements Serializable {
     public String getCity() {
         return city;
     }
+
     /**
      * Setter accessor for attribute 'city'.
      * @param city
@@ -84,6 +147,7 @@ public class WebBeanOwnerCreation implements Serializable {
     public void setCity(String city) {
         this.city = city;
     }
+
     /**
      * Getter accessor for attribute 'telephone'.
      *
@@ -93,6 +157,7 @@ public class WebBeanOwnerCreation implements Serializable {
     public String getTelephone() {
         return telephone;
     }
+
     /**
      * Setter accessor for attribute 'telephone'.
      * @param telephone
@@ -101,4 +166,5 @@ public class WebBeanOwnerCreation implements Serializable {
     public void setTelephone(String telephone) {
         this.telephone = telephone;
     }
+
 }
