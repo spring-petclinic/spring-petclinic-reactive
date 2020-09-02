@@ -7,8 +7,8 @@ import java.util.UUID;
 import java.util.function.Supplier;
 
 import org.springframework.samples.petclinic.conf.MappingUtils;
-import org.springframework.samples.petclinic.owner.OwnerReactiveServices;
 import org.springframework.samples.petclinic.owner.Owner;
+import org.springframework.samples.petclinic.owner.OwnerReactiveServices;
 import org.springframework.samples.petclinic.pet.PetReactiveDao;
 import org.springframework.samples.petclinic.pet.WebBeanPet;
 import org.springframework.samples.petclinic.visit.VisitReactiveDao;
@@ -48,14 +48,14 @@ public class OwnerReactiveServicesImpl implements OwnerReactiveServices {
     public Flux<Owner> findOwnersByName(String searchString) {
         Objects.requireNonNull(searchString);
         return Flux.from(ownerDao.searchByOwnerName(searchString))
-                   .map(this::fromOwnerEntityToWebBean);
+                   .map(MappingUtils::fromOwnerToEntity);
     }
     
     /** {@inheritDoc} */
     @Override
     public Flux<Owner> findAllOwners() {
         return Flux.from(ownerDao.findAllReactive())
-                   .map(this::fromOwnerEntityToWebBean)
+                   .map(MappingUtils::fromOwnerToEntity)
                    .flatMap(petDao::populatePetsForOwner);  
     }
 
@@ -64,7 +64,7 @@ public class OwnerReactiveServicesImpl implements OwnerReactiveServices {
     public Mono<Owner> findOwnerById(String ownerId) {
         Objects.requireNonNull(ownerId);
         return Mono.from(ownerDao.findByIdReactive(UUID.fromString(ownerId)))
-                   .map(this::fromOwnerEntityToWebBean)
+                   .map(MappingUtils::fromOwnerToEntity)
                    .flatMap(this::populateOwner);
     }
 
@@ -72,16 +72,16 @@ public class OwnerReactiveServicesImpl implements OwnerReactiveServices {
     @Override
     public Mono<Owner> createOwner(Owner owner) {
         Objects.requireNonNull(owner);
-        return ownerDao.save(fromOwnerWebBeanToEntity(owner))
-                       .map(this::fromOwnerEntityToWebBean);
+        return ownerDao.save(MappingUtils.fromEntityToOwner(owner))
+                       .map(MappingUtils::fromOwnerToEntity);
     }
     
     /** {@inheritDoc} */
     @Override
     public Mono<Owner> updateOwner(Owner owner) {
         Objects.requireNonNull(owner);
-        return ownerDao.save(fromOwnerWebBeanToEntity(owner))
-                       .map(this::fromOwnerEntityToWebBean)
+        return ownerDao.save(MappingUtils.fromEntityToOwner(owner))
+                       .map(MappingUtils::fromOwnerToEntity)
                        .flatMap(petDao::populatePetsForOwner);
     }
 
@@ -101,28 +101,6 @@ public class OwnerReactiveServicesImpl implements OwnerReactiveServices {
                 .map(set -> wbo);
     }
     
-    private Owner fromOwnerEntityToWebBean(OwnerEntity o) {
-        Objects.requireNonNull(o);
-        Owner wb = new Owner();
-        wb.setAddress(o.getAddress());
-        wb.setCity(o.getCity());
-        wb.setFirstName(o.getFirstName());
-        wb.setLastName(o.getLastName());
-        wb.setTelephone(o.getTelephone());
-        wb.setPets(new HashSet<>());
-        wb.setId(o.getId());
-        return wb;
-    }
     
-    public OwnerEntity fromOwnerWebBeanToEntity(Owner wb) {
-        OwnerEntity o = new OwnerEntity();
-        o.setId(wb.getId());
-        o.setAddress(wb.getAddress());
-        o.setCity(wb.getCity());
-        o.setFirstName(wb.getFirstName());
-        o.setLastName(wb.getLastName());
-        o.setTelephone(wb.getTelephone());
-        return o;
-    }
 
 }

@@ -2,10 +2,12 @@ package org.springframework.samples.petclinic.conf;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.HashSet;
 import java.util.Objects;
 
 import org.springframework.lang.NonNull;
 import org.springframework.samples.petclinic.owner.Owner;
+import org.springframework.samples.petclinic.owner.db.OwnerEntity;
 import org.springframework.samples.petclinic.pet.Pet;
 import org.springframework.samples.petclinic.pet.WebBeanPet;
 import org.springframework.samples.petclinic.pet.WebBeanPetCreation;
@@ -86,6 +88,30 @@ public class MappingUtils {
         v.setDescription(wbc.getDescription());
         v.setVisitDate(string2LocalDate(wbc.getDate()));
         return v;
+    }
+    
+    public static Owner fromOwnerToEntity(OwnerEntity o) {
+        Objects.requireNonNull(o);
+        Owner wb = new Owner();
+        wb.setAddress(o.getAddress());
+        wb.setCity(o.getCity());
+        wb.setFirstName(o.getFirstName());
+        wb.setLastName(o.getLastName());
+        wb.setTelephone(o.getTelephone());
+        wb.setPets(new HashSet<>());
+        wb.setId(o.getId());
+        return wb;
+    }
+    
+    public static OwnerEntity fromEntityToOwner(Owner wb) {
+        OwnerEntity o = new OwnerEntity();
+        o.setId(wb.getId());
+        o.setAddress(wb.getAddress());
+        o.setCity(wb.getCity());
+        o.setFirstName(wb.getFirstName());
+        o.setLastName(wb.getLastName());
+        o.setTelephone(wb.getTelephone());
+        return o;
     }
     
 }
