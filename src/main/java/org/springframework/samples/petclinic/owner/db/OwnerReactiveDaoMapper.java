@@ -1,4 +1,4 @@
-package org.springframework.samples.petclinic.owner;
+package org.springframework.samples.petclinic.owner.db;
 
 
 import com.datastax.oss.driver.api.core.CqlIdentifier;
@@ -10,6 +10,6 @@ import com.datastax.oss.driver.api.mapper.annotations.Mapper;
 public interface OwnerReactiveDaoMapper {
 
     @DaoFactory
-    OwnerReactiveDao ownerDao(@DaoKeyspace CqlIdentifier keyspace); 
+    OwnerReactiveDao ownerDao(@DaoKeyspace CqlIdentifier keyspace);
      
 }

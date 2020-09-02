@@ -7,7 +7,7 @@ import java.util.function.Supplier;
 
 import org.springframework.samples.petclinic.conf.CassandraPetClinicSchema;
 import org.springframework.samples.petclinic.conf.MappingUtils;
-import org.springframework.samples.petclinic.owner.WebBeanOwner;
+import org.springframework.samples.petclinic.owner.Owner;
 import org.springframework.samples.petclinic.visit.WebBeanVisit;
 
 import com.datastax.dse.driver.api.core.cql.reactive.ReactiveResultSet;
@@ -50,7 +50,7 @@ public interface PetReactiveDao extends CassandraPetClinicSchema {
         return Mono.from(deleteReactive(pet)).map(rr -> rr.wasApplied());
     }
     
-    default Mono<WebBeanOwner> populatePetsForOwner(WebBeanOwner wbo) {
+    default Mono<Owner> populatePetsForOwner(Owner wbo) {
         return findAllByOwnerIdReactive(wbo.getId())
                     .map(MappingUtils::fromPetEntityToWebBean)
                     .collect((Supplier<Set<WebBeanPet>>) HashSet::new, Set::add)

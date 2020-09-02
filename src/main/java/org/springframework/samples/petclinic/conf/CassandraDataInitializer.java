@@ -17,8 +17,8 @@ import org.springframework.stereotype.Component;
 import com.datastax.oss.driver.api.core.CqlSession;
 
 /**
- * After application is (Spring Data would have created the tables if needed)
- * we want to insert some values. We can use a listen on {@link ApplicationReadyEvent}.
+ * After application initialization the table have been created (@Configuration beans)
+ * As such using event ApplicationReadyEvent we can populate the DB with some sample Data.
  *
  * @author Cedrick LUNVEN (@clunven)
  */
@@ -28,10 +28,16 @@ public class CassandraDataInitializer implements ApplicationListener<Application
     /** Logger for the class. */
     private static final Logger LOGGER = LoggerFactory.getLogger(CassandraDataInitializer.class);
 
+    /** Reference lists are store in table to get all values at once. */
     private ReferenceListReactiveDao refRepository;
     
+    /** Vetirinians repository. */
     private VetReactiveDao vetRepo;
    
+    /**
+     * @param cqlSession
+     * @param refRepo
+     */
     public CassandraDataInitializer(CqlSession cqlSession, ReferenceListReactiveDao refRepo) {
         this.refRepository = refRepo;
         this.vetRepo = new VetReactiveDaoMapperBuilder(cqlSession)

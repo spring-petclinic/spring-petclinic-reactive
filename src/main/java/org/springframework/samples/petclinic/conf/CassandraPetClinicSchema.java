@@ -13,7 +13,7 @@ import static com.datastax.oss.driver.api.querybuilder.QueryBuilder.*;
 
 
 /**
- * Easy all DDL operation by grouping schema informations in a single table.
+ * Contains DDL statements to build all Cassandra tables used by the application
  *
  * @author Cedrick LUNVEN (@clunven)
  */

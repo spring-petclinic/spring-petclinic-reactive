@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.samples.petclinic.conf.MappingUtils;
-import org.springframework.samples.petclinic.owner.Owner;
+import org.springframework.samples.petclinic.owner.db.OwnerEntity;
 import org.springframework.samples.petclinic.reflist.ReferenceListReactiveDao;
 import org.springframework.samples.petclinic.visit.VisitReactiveDao;
 import org.springframework.samples.petclinic.visit.VisitReactiveDaoMapperBuilder;
@@ -101,7 +101,7 @@ public class PetReactiveController {
      * @param ownerId
      *      unique identifer as a String, to be converted in {@link UUID}.
      * @return
-     *      a {@link Mono} of {@link Owner} or empty response with not found (404) code
+     *      a {@link Mono} of {@link OwnerEntity} or empty response with not found (404) code
      */
     @GetMapping(value = "/{petId}", produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value= "Retrieve pet information from its unique identifier", response=WebBeanPet.class)

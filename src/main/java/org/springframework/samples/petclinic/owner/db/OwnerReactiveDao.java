@@ -1,4 +1,4 @@
-package org.springframework.samples.petclinic.owner;
+package org.springframework.samples.petclinic.owner.db;
 
 import static com.datastax.oss.driver.api.mapper.entity.saving.NullSavingStrategy.DO_NOT_SET;
 
@@ -11,7 +11,6 @@ import com.datastax.dse.driver.api.mapper.reactive.MappedReactiveResultSet;
 import com.datastax.oss.driver.api.mapper.annotations.Dao;
 import com.datastax.oss.driver.api.mapper.annotations.DefaultNullSavingStrategy;
 import com.datastax.oss.driver.api.mapper.annotations.Delete;
-import com.datastax.oss.driver.api.mapper.annotations.QueryProvider;
 import com.datastax.oss.driver.api.mapper.annotations.Select;
 import com.datastax.oss.driver.api.mapper.annotations.Update;
 
@@ -23,33 +22,31 @@ import reactor.core.publisher.Mono;
 public interface OwnerReactiveDao extends CassandraPetClinicSchema {
     
     @Select
-    MappedReactiveResultSet<Owner> findByIdReactive(UUID ownerid);
-    default Mono<Owner> findById(UUID ownerid) {
+    MappedReactiveResultSet<OwnerEntity> findByIdReactive(UUID ownerid);
+    default Mono<OwnerEntity> findById(UUID ownerid) {
         return Mono.from(findByIdReactive(ownerid));
     }
     
     @Select
-    MappedReactiveResultSet<Owner> findAllReactive();
-    default Flux<Owner> findAll() {
+    MappedReactiveResultSet<OwnerEntity> findAllReactive();
+    default Flux<OwnerEntity> findAll() {
         return Flux.from(findAllReactive());
     }
     
-    @QueryProvider(
-            providerClass = OwnerReactiveDaoQueryProvider.class, 
-            entityHelpers = Owner.class)
-    Flux<Owner> searchByOwnerName(String ownerName);
+    @Select(customWhereClause = OWNER_ATT_LASTNAME + "= :ownerLastname")
+    Flux<OwnerEntity> searchByOwnerName(String ownerLastname);
     
     @Update
-    ReactiveResultSet updateReactive(Owner owner);
-    default Mono<Owner> save(Owner owner) {
+    ReactiveResultSet updateReactive(OwnerEntity owner);
+    default Mono<OwnerEntity> save(OwnerEntity owner) {
         // must be applied as not LWT, no checks
         return Mono.from(updateReactive(owner))
                    .map(rr -> owner);
     }
     
     @Delete
-    ReactiveResultSet deleteReactive(Owner owner);
-    default Mono<Boolean> delete(Owner owner) {
+    ReactiveResultSet deleteReactive(OwnerEntity owner);
+    default Mono<Boolean> delete(OwnerEntity owner) {
         return Mono.from(deleteReactive(owner))
                    .map(rr -> rr.wasApplied());
     }
