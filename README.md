@@ -7,63 +7,63 @@
 ![Java](https://img.shields.io/badge/-Java-black.svg?style=falt&logo=java)
 ![Cassandra](https://img.shields.io/badge/-Cassandra-black.svg?style=flat&logo=apache-cassandra)
 
-Implementation of the [Spring Pet Clinic]  backend using a REST backend implented with **Spring Weblux** and **Apache Cassandra** for the backend. This is meant to be used with the **[spring-petclinic-angular](https://github.com/spring-petclinic/spring-petclinic-angular)** user interface, all steps are listed here to run the full app stay with us.
+Implementation of the [Spring Pet Clinic] backend including a REST API implemented with **Spring Weblux** and **Apache Cassandra** for the backend. This is meant to be used with the **[spring-petclinic-angular](https://github.com/spring-petclinic/spring-petclinic-angular)** user interface. All required steps to run the full application are provided here.
 
 ![banner](https://raw.githubusercontent.com/clun/spring-petclinic-reactive/master/doc/img/banner.png)
 
-## Table of content
+## Table of contents
 
-- **(A) Run the Application on your laptop *(java + maven required)***
-  - [Create a DBaas Cassandra free Account (ASTRA)](#a1---create-a-dbaas-cassandra-free-account-astra)
+- **(A) Run the Application on your laptop *(Java + Maven required)***
+  - [Create a DBaaS Cassandra free Account (ASTRA)](#a1---create-a-dbaas-cassandra-free-account-astra)
   - [Build and start the backend](#a2)
   - [Build and start the user interface](##a3---build-and-start-the-angular--user-interface)
   - [Setup the application to run Apache Cassandra locally (docker)](#)
 
 - **(B) Run the Sample on Gitpod**
-  - [Create a DBaas Cassandra free Account (ASTRA)]()
+  - [Create a DBaaS Cassandra free Account (ASTRA)]()
   - [Open Gitpod and follow instructions](#)
 
 - **(C) Architecture**
   - [Understanding the Pet Clinic Application](#)
-  - [Architecture diagram of the version](#)
-  - [Data Model from Relational to Cassandra data Model](#)
+  - [Architecture diagram](#)
+  - [Data Model diagram](#)
 
 - **(D) Contribute**
   - [Blog post and communications](#)
-  - [Architecture diagram of the version](#)
-  - [Data Model from Relational to Cassandra data Model](#)
+  - [Architecture diagram](#)
+  - [Data Model diagram](#)
 
 ## Run the Application on your laptop
 
-### A1 - Create a DBaas Cassandra free Account (ASTRA)
+### A1 - Create a DBaaS Cassandra free Account (ASTRA)
 
-`DataStax ASTRA` service is available at url [https://astra.datastax.com](https://astra.datastax.com/)
+`DataStax ASTRA` is available at: [https://astra.datastax.com](https://astra.datastax.com/)
 
-**✅ Step 1a.Register (if needed) and Sign In to Astra** : You can use your `Github`, `Google` accounts or register with an `email`
+**✅ Step 1a.Register (if needed) and Sign In to Astra** : You can sign in with your `Github` or `Google` account or sign up with an `email`
 
 - [Registration Page](https://astra.datastax.com/register)
 
-![TodoBackendClient](https://github.com/DataStax-Academy/microservices-java-workshop-online/blob/master/z-materials/images/astra-create-register.png?raw=true)
+![Astra Registration Screen](https://github.com/DataStax-Academy/microservices-java-workshop-online/blob/master/z-materials/images/astra-create-register.png?raw=true)
 
 - [Authentication Page](https://astra.datastax.com/)
 
-![TodoBackendClient](https://github.com/DataStax-Academy/microservices-java-workshop-online/blob/master/z-materials/images/astra-create-login.png?raw=true)
+![Astra Authentication Screen](https://github.com/DataStax-Academy/microservices-java-workshop-online/blob/master/z-materials/images/astra-create-login.png?raw=true)
 
 
-**✅ Step 1b. Fill the Create New Database Form** : As you don't have have any instances the login will route through the instance creation form. You will find below which values to enter for each field.
+**✅ Step 1b. Fill the Create New Database Form** : If you don't have an existing Astra database, the login will route automatically to the database creation form. You will find below which values to enter for each field.
 
 - *Initialization Form*
-![TodoBackendClient](https://github.com/DataStax-Academy/microservices-java-workshop-online/blob/master/z-materials/images/astra-create-2.png?raw=true)
+![Astra Database Creation Form](https://github.com/DataStax-Academy/microservices-java-workshop-online/blob/master/z-materials/images/astra-create-2.png?raw=true)
 
-- **Set the Compute Size**: For the work we are doing please use `Free tier`. You instance will be there forever, free of charge. 
+- **Set the Compute Size**: For your first Astra database, we recommend using the `Free tier`. You instance will be there forever, free of charge. 
 
-- **Select region**: This is the region where your database will reside physically (choose one close to you or your users). For people in EMEA please use `europe-west-1` idea here is to reduce latency.
+- **Select region**: This is the region where your database will reside physically (choose one close to you or your users to reduce latency). For example, users in EMEA might choose `europe-west-1`.
 
-- **Fill in the database name** - Proposed value `petclinicdb`. You can use any alphanumeric value it is not part of the connection fields. Now it will be part of a file downloaded later and you should avoid capital letters.
+- **Fill in the database name** - Suggested value: `petclinicdb`. You can use any alphanumeric value. While you will not need to provide this name in order to connect to your database, the database name will be included in the name of a file you download later, so we recommend using all lower case letters for simplicity.
 
-With the 3 fields below you can pick any name
+For the 3 fields below you can pick whatever text you desire:
 
-- **Fill in the keyspace name** - Proposed value `spring_petclinic` (no spaces, alpha numeric)
+- **Fill in the keyspace name** - Suggested value:  `spring_petclinic` (no spaces, alpha numeric)
 
 - **Fill in the user name** - `petclinic`. Note the user name is case-sensitive. Please use the case we suggest here.
 
@@ -73,32 +73,31 @@ With the 3 fields below you can pick any name
 
 **👁️ Expected output**
 
-![TodoBackendClient](https://github.com/DataStax-Academy/microservices-java-workshop-online/blob/master/z-materials/images/astra-create-3.png?raw=true)
+![Database launching popup](https://github.com/DataStax-Academy/microservices-java-workshop-online/blob/master/z-materials/images/astra-create-3.png?raw=true)
 
 **✅ Step 1c. View your Database and connect** : View your database. It may take 2-3 minutes for your database to spin up. You will receive an email at that point.
 
 **👁️ Expected output**
 
 *Initializing*
-![TodoBackendClient](https://github.com/DataStax-Academy/microservices-java-workshop-online/blob/master/z-materials/images/astra-create-4.png?raw=true)
+![Initializing Screen](https://github.com/DataStax-Academy/microservices-java-workshop-online/blob/master/z-materials/images/astra-create-4.png?raw=true)
 
 *Database is ready*
-![TodoBackendClient](https://github.com/DataStax-Academy/microservices-java-workshop-online/blob/master/z-materials/images/astra-create-5.png?raw=true)
+![Database ready screen](https://github.com/DataStax-Academy/microservices-java-workshop-online/blob/master/z-materials/images/astra-create-5.png?raw=true)
 
 
 ### A2 - Build and start the Spring Boot backend
 
-**✅ Download the cloud secure bundle** : UI
+**✅ Download the secure connection bundle** : UI
 
-**✅ Setup the configuration file** : In the folder `src/main/resources` locate the file `application.yaml` and edit the following key
+**✅ Setup the configuration file** : In the folder `src/main/resources` of this repo locate the file `application.yaml` and edit the following keys:
 
 - `keyspace-name`: Name of the keyspace as stated in the user interface
 - `username`: user credentials
 - `password`: user credentials
-- `password`: user credentials
 - `secure-connect-bundle` : path of the zip you downloaded
 
-*Sample file*
+*Sample configuration file*
 ```yaml
 server:
   port: ${PORT:9966}
@@ -115,13 +114,13 @@ spring.data.cassandra:
     secure-connect-bundle: /Users/cedricklunven/Downloads/secure-connect-demos.zip
 ```
 
-**✅ Start the application** : You can now run the application `mvn spring-boot:run` il will create the table needed. You should now be able to access
+**✅ Start the application** : You can now run the application with the command: `mvn spring-boot:run`. This will create the required schema for the application in your Astra database. You should now be able to access
 
 ![banner](https://raw.githubusercontent.com/clun/spring-petclinic-reactive/master/doc/img/ui-swagger.png)
 
-### A3 - Build and start the Angular  user interface
+### A3 - Build and start the Angular user interface
 
-As stated before we leverage on the **[spring-petclinic-angular](https://github.com/spring-petclinic/spring-petclinic-angular)** user interface. 
+We suggest using the existing **[spring-petclinic-angular](https://github.com/spring-petclinic/spring-petclinic-angular)** user interface. 
 
 ```bash
 git clone https://github.com/spring-petclinic/spring-petclinic-angular.git
@@ -134,20 +133,20 @@ ng build
 ng serve
 ```
 
-You should now have the UI running at [http://localhost:4200](http://localhost:4200)
-![banner](https://raw.githubusercontent.com/clun/spring-petclinic-reactive/master/doc/img/ui-top.png)
+You should now be able to access the UI at: [http://localhost:4200](http://localhost:4200)
+![Pet Clinic Welcome Screen](https://raw.githubusercontent.com/clun/spring-petclinic-reactive/master/doc/img/ui-top.png)
 
 - Owners
-![banner](https://raw.githubusercontent.com/clun/spring-petclinic-reactive/master/doc/img/ui-owners.png)
+![Pet Clinic Owners Screen](https://raw.githubusercontent.com/clun/spring-petclinic-reactive/master/doc/img/ui-owners.png)
 
 - Pet Types
-![banner](https://raw.githubusercontent.com/clun/spring-petclinic-reactive/master/doc/img/ui-pettypes.png)
+![Pet Clinic Pets Screen](https://raw.githubusercontent.com/clun/spring-petclinic-reactive/master/doc/img/ui-pettypes.png)
 
 - Vet Specialties
-![banner](https://raw.githubusercontent.com/clun/spring-petclinic-reactive/master/doc/img/ui-specialties.png)
+![Pet Clinic Specialties Screen](https://raw.githubusercontent.com/clun/spring-petclinic-reactive/master/doc/img/ui-specialties.png)
 
 - Veterinians
-![banner](https://raw.githubusercontent.com/clun/spring-petclinic-reactive/master/doc/img/ui-veterinians.png)
+![Pet Clinic Veterinarians Screen](https://raw.githubusercontent.com/clun/spring-petclinic-reactive/master/doc/img/ui-veterinians.png)
 
 
 
