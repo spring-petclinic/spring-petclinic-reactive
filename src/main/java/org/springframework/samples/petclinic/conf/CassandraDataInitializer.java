@@ -18,7 +18,7 @@ import com.datastax.oss.driver.api.core.CqlSession;
 
 /**
  * After application is (Spring Data would have created the tables if needed)
- * we want to insert some values. We can use a listern on {@link ApplicationReadyEvent}.
+ * we want to insert some values. We can use a listen on {@link ApplicationReadyEvent}.
  *
  * @author Cedrick LUNVEN (@clunven)
  */
