@@ -12,12 +12,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.samples.petclinic.owner.db.OwnerReactiveDao;
 import org.springframework.samples.petclinic.owner.db.OwnerReactiveDaoMapperBuilder;
-import org.springframework.samples.petclinic.pet.PetReactiveDaoMapperBuilder;
 import org.springframework.samples.petclinic.pet.db.PetReactiveDao;
-import org.springframework.samples.petclinic.vet.VetReactiveDaoMapperBuilder;
+import org.springframework.samples.petclinic.pet.db.PetReactiveDaoMapperBuilder;
 import org.springframework.samples.petclinic.vet.db.VetReactiveDao;
-import org.springframework.samples.petclinic.visit.VisitReactiveDaoMapperBuilder;
+import org.springframework.samples.petclinic.vet.db.VetReactiveDaoMapperBuilder;
 import org.springframework.samples.petclinic.visit.db.VisitReactiveDao;
+import org.springframework.samples.petclinic.visit.db.VisitReactiveDaoMapperBuilder;
 
 import com.datastax.oss.driver.api.core.ConsistencyLevel;
 import com.datastax.oss.driver.api.core.CqlSession;
@@ -75,7 +75,6 @@ public class CassandraReactiveConfig implements CassandraPetClinicSchema {
         om.put(TypedDriverOption.CONNECTION_SET_KEYSPACE_TIMEOUT, Duration.ofSeconds(20));
         om.put(TypedDriverOption.CONTROL_CONNECTION_AGREEMENT_TIMEOUT, Duration.ofSeconds(20));
         om.put(TypedDriverOption.REQUEST_CONSISTENCY, ConsistencyLevel.LOCAL_QUORUM.name());
-        
         
         if (useAstra) {
             LOGGER.info("Connection to Datastax Astrax:");

@@ -3,25 +3,25 @@
 # --------------------------------
 server:
   port: ${PORT:9966}
-    
-# --------------------------------
-#  Connectivity to Cassandra
-# --------------------------------
-spring.data.cassandra:
   
-  # keys for all
-  keyspace-name: spring_petclinic
-  username: petclinic
-  password: petclinic
-  schema-action: CREATE_IF_NOT_EXISTS
-  
-  # Keys for local
-  contact-points: localhost
-  port: 9042
-  local-datacenter: datacenter1
-  
-  #Keys for astra
-  astra:
-    enabled: true
-    secure-connect-bundle: /Users/cedricklunven/Downloads/secure-connect-demos.zip
+spring:
+  profiles:
+    active:
      
+  data:
+    cassandra:
+      keyspace-name: spring_petclinic
+      username: petclinic
+      password: petclinic
+      schema-action: CREATE_IF_NOT_EXISTS
+      # Keys for local
+      contact-points: localhost
+      port: 9042
+      local-datacenter: datacenter1
+      #Keys for astra
+      astra:
+        enabled: true
+        secure-connect-bundle: /Users/cedricklunven/Downloads/secure-connect-demos.zip
+
+# Custom keys
+petclinic.security.enable: false

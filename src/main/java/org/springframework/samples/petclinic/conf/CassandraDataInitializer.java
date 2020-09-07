@@ -4,6 +4,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.UUID;
 
+import javax.annotation.PreDestroy;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -12,6 +14,8 @@ import org.springframework.samples.petclinic.reflist.ReferenceListReactiveDao;
 import org.springframework.samples.petclinic.vet.db.VetEntity;
 import org.springframework.samples.petclinic.vet.db.VetReactiveDao;
 import org.springframework.stereotype.Component;
+
+import com.datastax.oss.driver.api.core.CqlSession;
 
 /**
  * After application initialization the table have been created (@Configuration beans)
@@ -30,12 +34,13 @@ public class CassandraDataInitializer implements ApplicationListener<Application
     
     /** Vetirinians repository. */
     private VetReactiveDao vetRepo;
+
+    /** Reference to CQLSession to close. */
+    private CqlSession cqlSession;
    
-    /**
-     * @param cqlSession
-     * @param refRepo
-     */
-    public CassandraDataInitializer(VetReactiveDao vetDao, ReferenceListReactiveDao refRepo) {
+    public CassandraDataInitializer(CqlSession cqlSession, 
+            VetReactiveDao vetDao, ReferenceListReactiveDao refRepo) {
+        this.cqlSession    = cqlSession;
         this.refRepository = refRepo;
         this.vetRepo       = vetDao;
     }
@@ -64,6 +69,14 @@ public class CassandraDataInitializer implements ApplicationListener<Application
         vetRepo.save(new VetEntity(UUID.fromString("66666666-6666-6666-6666-666666666666"),
                 "Sharon", "Jenkins", new HashSet<String>())).subscribe();
         LOGGER.info("[OK] Tables have been populated.");
+    }
+    
+    @PreDestroy
+    public void cleanUp() {
+        if (null != cqlSession) {
+            cqlSession.close();
+            LOGGER.info("(Cleanup) CqlSession has now been closed.");
+        }
     }
 
 }

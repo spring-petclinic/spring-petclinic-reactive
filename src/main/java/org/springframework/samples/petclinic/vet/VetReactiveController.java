@@ -16,6 +16,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.samples.petclinic.vet.db.VetEntity;
 import org.springframework.samples.petclinic.vet.db.VetReactiveDao;
+import org.springframework.samples.petclinic.vet.db.VetReactiveDaoMapperBuilder;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -71,6 +73,7 @@ public class VetReactiveController {
      * @return
      *   a {@link Flux} containing {@link VetEntity}
      */
+    @PreAuthorize( "hasRole(@roles.VET_ADMIN)" )
     @GetMapping(produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value= "Read all veterinarians in database", response=Vet.class)
     @ApiResponses({
