@@ -10,6 +10,9 @@ import com.datastax.oss.driver.api.mapper.annotations.CqlName;
 import com.datastax.oss.driver.api.mapper.annotations.Entity;
 import com.datastax.oss.driver.api.mapper.annotations.PartitionKey;
 
+/**
+ * Simple JavaBean domain object representing a pet
+ */
 @Entity
 @CqlName(CassandraPetClinicSchema.PET_TABLE)
 public class PetEntity implements CassandraPetClinicSchema {
@@ -29,7 +32,7 @@ public class PetEntity implements CassandraPetClinicSchema {
     private String name;
     
     /**
-     * A Date is mapped as java LocalDate
+     *  A CQL Date is mapped as java LocalDate
      * - Date      <-> java.time.LocalDate
      * - Timestamp <-> java.time.LocalDate
      * - Time      <-> java.time.LocalTime
