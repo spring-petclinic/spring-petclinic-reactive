@@ -1,6 +1,5 @@
 package org.springframework.samples.petclinic.reflist;
 
-import static com.datastax.oss.driver.api.querybuilder.QueryBuilder.bindMarker;
 import static com.datastax.oss.driver.api.querybuilder.QueryBuilder.literal;
 import static com.datastax.oss.driver.api.querybuilder.QueryBuilder.update;
 
@@ -11,7 +10,6 @@ import org.springframework.stereotype.Component;
 
 import com.datastax.oss.driver.api.core.CqlSession;
 import com.datastax.oss.driver.api.core.cql.PreparedStatement;
-import com.datastax.oss.driver.api.core.cql.SimpleStatement;
 
 import reactor.core.publisher.Mono;
 
@@ -91,17 +89,6 @@ public class ReferenceListReactiveDao implements CassandraPetClinicSchema {
         return Mono.from(cqlSession.executeReactive(psReadList.bind(listName)))
                    .map(rr -> rr.getSet(REFLIST_ATT_VALUES, String.class));
     }
-    
-    /* 
-     * update petclinic_reference_lists 
-     * set values = values + {'something'} 
-     * where list_name='vet_specialty';
-     */
-    SimpleStatement STMT_ADD_TO_LIST = 
-            update(REFLIST_TABLE)
-            .appendSetElement(REFLIST_ATT_VALUES, bindMarker())
-            .whereColumn(REFLIST_ATT_LISTNAME).isEqualTo(bindMarker())
-            .build();
     
     protected Mono<String> addToReferenceList(String listName, String newValue) {
         return Mono.fromDirect(cqlSession.executeReactive(update(REFLIST_TABLE)

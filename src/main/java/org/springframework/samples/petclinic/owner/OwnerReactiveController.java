@@ -8,14 +8,13 @@ import static org.springframework.web.bind.annotation.RequestMethod.PATCH;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
-import java.net.URI;
 import java.util.Objects;
 import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.samples.petclinic.owner.db.OwnerEntity;
-import org.springframework.samples.petclinic.vet.Vet;
+import org.springframework.samples.petclinic.vet.db.VetEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -83,7 +82,7 @@ public class OwnerReactiveController {
      * Read all owners from database.
      *
      * @return
-     *   a {@link Flux} containing {@link Vet}
+     *   a {@link Flux} containing {@link VetEntity}
      */
     @GetMapping(produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value= "Read all owners in database", response=Owner.class)
@@ -135,18 +134,17 @@ public class OwnerReactiveController {
         @ApiResponse(code = 400, message= "The JSON body was not valid"), 
         @ApiResponse(code = 500, message= "Internal technical error") })
     public Mono<ResponseEntity<Owner>> createOwner(
-            UriComponentsBuilder ucb, 
-            @RequestBody Owner owner) {
+            UriComponentsBuilder uc, @RequestBody Owner owner) {
       Objects.requireNonNull(owner);
       owner.setId(UUID.randomUUID());
       return ownerServices.createOwner(owner)
-                          .map(created -> ResponseEntity
-                                  .created(buildLocation(ucb, owner.getId().toString()))
-                                  .body(created));
+                          .map(created -> mapOwnerAsHttpResponse(uc,created));
     }
     
-    private URI buildLocation(UriComponentsBuilder ucBuilder, String id) {
-        return ucBuilder.path("/api/owners/{id}").buildAndExpand(id).toUri();
+    protected ResponseEntity<Owner> mapOwnerAsHttpResponse(UriComponentsBuilder ucBuilder, Owner created) {
+        return ResponseEntity.created(ucBuilder.path("/api/owners/{id}")
+                        .buildAndExpand(created.getId().toString())
+                        .toUri()).body(created);
     }
     
     /**
@@ -171,14 +169,12 @@ public class OwnerReactiveController {
         @ApiResponse(code = 400, message= "The owner bean was not OK"), 
         @ApiResponse(code = 500, message= "Internal technical error") })
     public Mono<ResponseEntity<Owner>> upsertOwner(
-            UriComponentsBuilder ucb, 
+            UriComponentsBuilder uc, 
             @PathVariable("ownerId") String ownerId, 
             @RequestBody Owner owner) {
       Objects.requireNonNull(owner);
       return ownerServices.updateOwner(owner)
-                          .map(created -> ResponseEntity
-                                  .created(buildLocation(ucb, owner.getId().toString()))
-                                  .body(created));
+                          .map(created -> mapOwnerAsHttpResponse(uc, created));
     }
     
     /**

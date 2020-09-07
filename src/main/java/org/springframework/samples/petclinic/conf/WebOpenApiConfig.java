@@ -36,11 +36,13 @@ public class WebOpenApiConfig {
     private ApiInfo apiInfo() {
         return new ApiInfo(
                 "Spring Pet Clinic Application Reactive",
-                "Leveraging Spring-data-cassandra-reactive and Astra Cassandra-as-a-service",
+                "Leveraging Reactive Datastax driver and Astra Cassandra-as-a-service",
                 "1.0.0-SNAPSHOT",
                 "Terms of service",
-                new Contact("DataStax Examples", "https://www.datastax.com/examples", "examples@datastax.com"),
-                "Apache v2.0", "https://www.apache.org/licenses/LICENSE-2.0", Collections.emptyList());
+                new Contact("DataStax Examples", 
+                    "https://www.datastax.com/examples", 
+                    "examples@datastax.com"), "Apache v2.0", 
+                    "https://www.apache.org/licenses/LICENSE-2.0", Collections.emptyList());
     }
 
 }

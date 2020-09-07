@@ -11,15 +11,11 @@ import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.samples.petclinic.conf.MappingUtils;
 import org.springframework.samples.petclinic.owner.db.OwnerEntity;
-import org.springframework.samples.petclinic.reflist.ReferenceListReactiveDao;
-import org.springframework.samples.petclinic.visit.VisitReactiveDao;
-import org.springframework.samples.petclinic.visit.VisitReactiveDaoMapperBuilder;
+import org.springframework.samples.petclinic.pet.db.PetEntity;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -31,8 +27,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
-
-import com.datastax.oss.driver.api.core.CqlSession;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -58,41 +52,26 @@ import reactor.core.publisher.Mono;
 @Api(value="/api/pets", tags = {"Pets Api"})
 public class PetReactiveController {
     
-    /** Implementation of Crud for repo. */
-    private PetReactiveDao petDao;
+    private PetReactiveServices petServices;
     
-    /** Implementation of Crud for repo. */
-    private VisitReactiveDao visitDao;
-    
-    /** List available lists. */
-    private final ReferenceListReactiveDao refList;
-    
-    /**
-     * Injection with controller
-     */
-    public PetReactiveController(CqlSession cqlSession, ReferenceListReactiveDao refList) {
-        this.petDao = new PetReactiveDaoMapperBuilder(cqlSession).build()
-                            .petDao(cqlSession.getKeyspace().get());
-        this.visitDao = new VisitReactiveDaoMapperBuilder(cqlSession).build()
-                .visitDao(cqlSession.getKeyspace().get());
-        this.refList = refList;
+    /** Injection with controller. */
+    public PetReactiveController(PetReactiveServices petServices) {
+        this.petServices = petServices;
     }
     
     /**
      * Read all pets from database.
      *
      * @return
-     *   a {@link Flux} containing {@link Pet}
+     *   a {@link Flux} containing {@link PetEntity}
      */
     @GetMapping(produces = APPLICATION_JSON_VALUE)
-    @ApiOperation(value= "Read all pets in database", response=WebBeanPet.class)
+    @ApiOperation(value= "Read all pets in database", response=Pet.class)
     @ApiResponses({
         @ApiResponse(code = 200, message= "List of pets (even if empty)"), 
         @ApiResponse(code = 500, message= "Internal technical error") })
-    public Flux<WebBeanPet> findAllPets() {
-        return Flux.from(petDao.findAllReactive())
-                   .map(MappingUtils::fromPetEntityToWebBean)
-                   .flatMap(visitDao::populateVisitsForPet);
+    public Flux<Pet> findAllPets() {
+        return petServices.findAllPets();
     }
     
     /**
@@ -104,42 +83,36 @@ public class PetReactiveController {
      *      a {@link Mono} of {@link OwnerEntity} or empty response with not found (404) code
      */
     @GetMapping(value = "/{petId}", produces = APPLICATION_JSON_VALUE)
-    @ApiOperation(value= "Retrieve pet information from its unique identifier", response=WebBeanPet.class)
+    @ApiOperation(value= "Retrieve pet information from its unique identifier", response=Pet.class)
     @ApiResponses({
         @ApiResponse(code = 200, message= "the identifier exists and related pet is returned"), 
         @ApiResponse(code = 400, message= "The uid was not a valid UUID"), 
         @ApiResponse(code = 404, message= "the identifier does not exists in DB"), 
         @ApiResponse(code = 500, message= "Internal technical error") })
-    public Mono<ResponseEntity<WebBeanPet>> findPetById(@PathVariable("petId") @Parameter(
+    public Mono<ResponseEntity<Pet>> findPetById(@PathVariable("petId") @Parameter(
                required = true,example = "1ff2fbd9-bbb0-4cc1-ba37-61966aa7c5e6",
                description = "Unique identifier of a Pet") String petId) {
-        return petDao.findByPetIdReactive((UUID.fromString(petId)))
-                   .map(MappingUtils::fromPetEntityToWebBean)
-                   .flatMap(visitDao::populateVisitsForPet)
-                   .map(ResponseEntity::ok)
-                   .defaultIfEmpty(ResponseEntity.notFound().build());
+        return petServices.findPetByPetId(UUID.fromString(petId))
+                          .map(ResponseEntity::ok)
+                          .defaultIfEmpty(ResponseEntity.notFound().build());
     }
     
     /**
-     * TODO: This is a duplications from PetTypeController.
+     * This is a duplications from PetTypeController.
      * - (copied behaviour from existing REST implementation)
      */
     @GetMapping(value = "/pettypes", produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value= "Read all pet typesfrom database", 
-                  response=WebBeanPetType.class)
+                  response=PetType.class)
     @ApiResponses({
       @ApiResponse(code = 200, message= "List of pet types"), 
       @ApiResponse(code = 500, message= "Internal technical error") })
-    public Mono<ResponseEntity<Set<WebBeanPetType>>> getAllPetTypes() {
-        // TODO get rid of streams
-        return refList.listPetType()
-                .map(Set::stream)
-                .map(s -> s.map(WebBeanPetType::new).collect(Collectors.toSet()))
-                .map(ResponseEntity::ok);
+    public Mono<ResponseEntity<Set<PetType>>> getAllPetTypes() {
+        return petServices.findAllPetTypes().map(ResponseEntity::ok);
     }
     
     /**
-     * Create a {@link Pet} when we don't know the identifier.
+     * Create a {@link PetEntity} when we don't know the identifier.
      *
      * @param request
      *      current http request
@@ -150,27 +123,20 @@ public class PetReactiveController {
      */
     @PostMapping(produces = APPLICATION_JSON_VALUE, consumes=APPLICATION_JSON_VALUE)
     @ApiOperation(value= "Create a new Pet, an unique identifier is generated and returned", 
-                  response=WebBeanPet.class)
+                  response=Pet.class)
     @ApiResponses({
         @ApiResponse(code = 201, message= "The pet has been created, uuid is provided in header"), 
         @ApiResponse(code = 400, message= "Invalid Dto provided"), 
         @ApiResponse(code = 500, message= "Internal technical error") })
-    public Mono<ResponseEntity<WebBeanPet>> createPet(
-            UriComponentsBuilder ucBuilder,
-            @RequestBody WebBeanPetCreation dto) {
-      Pet pet = MappingUtils.fromPetWebBeanCreationToEntity(dto);
-      pet.setPetId(UUID.randomUUID());
-      return petDao.save(pet)
-              .map(MappingUtils::fromPetEntityToWebBean)
-              .map(created -> ResponseEntity.created(
-                      ucBuilder.path("/api/owners/{id}")
-                               .buildAndExpand(created.getId().toString())
-                               .toUri())
-              .body(created));
+    public Mono<ResponseEntity<Pet>> createPet(UriComponentsBuilder uc, @RequestBody Pet pet) {
+        Objects.requireNonNull(pet);
+        pet.setId(UUID.randomUUID());
+        return petServices.createPet(pet)
+                          .map(created -> mapPetAsHttpResponse(uc, created));
     }
     
     /**
-     * Create or update a {@link Pet}. We do not throw exception is already exist
+     * Create or update a {@link PetEntity}. We do not throw exception is already exist
      * or check existence as this is the behavirous in a cassandra table to read
      * before write.
      *
@@ -185,25 +151,19 @@ public class PetReactiveController {
                 consumes=APPLICATION_JSON_VALUE,
                 produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value= "Upsert a pet (no read before write as for Cassandra)", 
-                  response=Pet.class)
+                  response=PetEntity.class)
     @ApiResponses({
         @ApiResponse(code = 201, message= "The owner has been created, uuid is provided in header"), 
         @ApiResponse(code = 400, message= "The owner bean was not OK"), 
         @ApiResponse(code = 500, message= "Internal technical error") })
-    public Mono<ResponseEntity<WebBeanPet>> upsertPet(
-            UriComponentsBuilder ucBuilder, 
-            @PathVariable("petId") String petId, @RequestBody WebBeanPet pet) {
+    public Mono<ResponseEntity<Pet>> upsertPet(
+            UriComponentsBuilder uc, 
+            @PathVariable("petId") String petId, @RequestBody Pet pet) {
       Objects.requireNonNull(pet);
       Assert.isTrue(UUID.fromString(petId).equals(pet.getId()), 
               "Pet identifier provided in pet does not match the value if path");
-      return petDao.save(MappingUtils.fromPetWebBeanToEntity(pet)) // change to entity
-                   .map(MappingUtils::fromPetEntityToWebBean)      // back to web
-                   .flatMap(visitDao::populateVisitsForPet)
-                   .map(created -> ResponseEntity.created(
-                      ucBuilder.path("/api/owners/{id}")
-                               .buildAndExpand(created.getId().toString())
-                               .toUri())
-                   .body(created));
+      return petServices.createPet(pet)
+                        .map(created -> mapPetAsHttpResponse(uc, created));
     }
     
     /**
@@ -223,9 +183,14 @@ public class PetReactiveController {
             required = true,example = "1ff2fbd9-bbb0-4cc1-ba37-61966aa7c5e6",
             description = "Unique identifier of a pet") String petId) {
         // We need the owner id first to delete
-        return petDao.findByPetIdReactive(UUID.fromString(petId))
-                     .flatMap(petDao::delete)
+        return petServices.deletePetById(UUID.fromString(petId))
                      .map(v -> new ResponseEntity<Void>(HttpStatus.NO_CONTENT));
+    }
+    
+    protected ResponseEntity<Pet> mapPetAsHttpResponse(UriComponentsBuilder ucBuilder, Pet created) {
+        return ResponseEntity.created(ucBuilder.path("/api/pets/{id}")
+                        .buildAndExpand(created.getId().toString())
+                        .toUri()).body(created);
     }
     
 }

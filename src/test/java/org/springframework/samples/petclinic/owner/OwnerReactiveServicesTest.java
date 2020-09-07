@@ -12,8 +12,8 @@ import org.springframework.samples.petclinic.conf.MappingUtils;
 import org.springframework.samples.petclinic.owner.db.OwnerEntity;
 import org.springframework.samples.petclinic.owner.db.OwnerReactiveDao;
 import org.springframework.samples.petclinic.owner.db.OwnerReactiveServicesImpl;
-import org.springframework.samples.petclinic.pet.PetReactiveDao;
-import org.springframework.samples.petclinic.visit.VisitReactiveDao;
+import org.springframework.samples.petclinic.pet.db.PetReactiveDao;
+import org.springframework.samples.petclinic.visit.db.VisitReactiveDao;
 
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;

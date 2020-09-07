@@ -1,4 +1,4 @@
-package org.springframework.samples.petclinic.vet;
+package org.springframework.samples.petclinic.vet.db;
 
 import java.util.UUID;
 
@@ -16,32 +16,32 @@ import reactor.core.publisher.Mono;
 public interface VetReactiveDao {
     
     @Select
-    MappedReactiveResultSet<Vet> findByIdReactive(UUID vetid);
+    MappedReactiveResultSet<VetEntity> findByIdReactive(UUID vetid);
     
-    default Mono<Vet> findById(UUID vetid) {
+    default Mono<VetEntity> findById(UUID vetid) {
         return Mono.from(findByIdReactive(vetid));
     }
     
     @Select
-    MappedReactiveResultSet<Vet> findAllReactive();
+    MappedReactiveResultSet<VetEntity> findAllReactive();
     
-    default Flux<Vet> findAll() {
+    default Flux<VetEntity> findAll() {
         return Flux.from(findAllReactive());
     }
     
     @Update
-    ReactiveResultSet updateReactive(Vet vet);
+    ReactiveResultSet updateReactive(VetEntity vet);
     
-    default Mono<Vet> save(Vet vet) {
+    default Mono<VetEntity> save(VetEntity vet) {
         // must be applied as not LWT, no checks
         return Mono.from(updateReactive(vet))
                    .map(rr -> vet);
     }
     
     @Delete
-    ReactiveResultSet deleteReactive(Vet vet);
+    ReactiveResultSet deleteReactive(VetEntity vet);
     
-    default Mono<Boolean> delete(Vet vet) {
+    default Mono<Boolean> delete(VetEntity vet) {
         return Mono.from(deleteReactive(vet))
                    .map(rr -> rr.wasApplied());
     }

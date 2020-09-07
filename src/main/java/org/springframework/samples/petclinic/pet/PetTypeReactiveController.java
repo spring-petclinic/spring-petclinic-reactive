@@ -9,11 +9,9 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.samples.petclinic.reflist.ReferenceListReactiveDao;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,8 +21,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.datastax.oss.driver.api.core.CqlSession;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -43,78 +39,66 @@ import reactor.core.publisher.Mono;
  origins = "*"
 )
 @Api(value="/petclinic/api/pettypes", tags = {"Pet Types Api"})
-public class PetTypeController {
+public class PetTypeReactiveController {
     
-    /** List available lists. */
-    private final ReferenceListReactiveDao refList;
+    private PetReactiveServices petServices;
     
-    /**
-     * Injection with controller
-     */
-    public PetTypeController(CqlSession cqlSession, ReferenceListReactiveDao refList) {
-        this.refList = refList;
+    /** Injection with controller. */
+    public PetTypeReactiveController(PetReactiveServices petServices) {
+        this.petServices = petServices;
     }
     
     /**
      * Read all pet types from database.
      *
      * @return
-     *   a {@link Flux} containing {@link WebBeanPetType}
+     *   a {@link Flux} containing {@link PetType}
      */
     @GetMapping(produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value= "Read all pet types from database", 
-                  response=WebBeanPetType.class)
+                  response=PetType.class)
     @ApiResponses({
         @ApiResponse(code = 200, message= "List of pet types"), 
         @ApiResponse(code = 500, message= "Internal technical error") })
-    public Mono<ResponseEntity<Set<WebBeanPetType>>> getAllPetTypes() {
-        return refList.listPetType()
-                      .map(Set::stream)
-                      .map(s -> s.map(WebBeanPetType::new).collect(Collectors.toSet()))
-                      .map(ResponseEntity::ok);
+    public Mono<ResponseEntity<Set<PetType>>> getAllPetTypes() {
+        return petServices.findAllPetTypes()
+                          .map(ResponseEntity::ok);
     }
     
     @GetMapping(value = "/{petTypeId}", produces = APPLICATION_JSON_VALUE)
-    @ApiOperation(value= "Retrieve pet information information from its unique identifier", response=WebBeanPetType.class)
+    @ApiOperation(value= "Retrieve pet information information from its unique identifier", response=PetType.class)
     @ApiResponses({
         @ApiResponse(code = 200, message= "the identifier exists and related pet type is returned"), 
         @ApiResponse(code = 400, message= "The name was not valid"), 
         @ApiResponse(code = 500, message= "Internal technical error") })        
-    public Mono<ResponseEntity<WebBeanPetType>> getType(
+    public Mono<ResponseEntity<PetType>> getType(
             @PathVariable("petTypeId") 
             @Parameter(required = true,example = "surgery",
             description = "Unique identifier of a Pet Type") String name) {
-        return refList.listPetType()
-                      .map(set -> {
-                          if (set.contains(name)) {
-                              return new ResponseEntity<WebBeanPetType>(new WebBeanPetType(name), HttpStatus.OK);
-                          }
-                          return new ResponseEntity<WebBeanPetType>(HttpStatus.NOT_FOUND);
-                      });
+        return petServices.listPetType()
+                          .map(set -> (set.contains(name) ? 
+                        new ResponseEntity<PetType>(new PetType(name), HttpStatus.OK) :
+                        new ResponseEntity<PetType>(HttpStatus.NOT_FOUND)));
     }
     
     @PostMapping(produces = APPLICATION_JSON_VALUE)
-    public Mono<ResponseEntity<WebBeanPetType>> addType(
-            @RequestBody WebBeanPetType petType) {
-        return refList.addPetType(petType.getName())
-                      .thenReturn(petType)
-                      .map(ResponseEntity::ok);
+    public Mono<ResponseEntity<PetType>> addType(@RequestBody PetType petType) {
+        return petServices.addPetType(petType).map(ResponseEntity::ok);
     }
     
     @PutMapping(value = "/{petTypeId}", produces = APPLICATION_JSON_VALUE)
-    public Mono<ResponseEntity<WebBeanPetType>> updatePetType(
+    public Mono<ResponseEntity<PetType>> updatePetType(
             @PathVariable("petTypeId") String name, 
-            @RequestBody WebBeanPetType petType) {
+            @RequestBody PetType petType) {
         petType.setId(petType.getName());
-        return refList.replacePetType(name, petType.getName())
-                      .map(WebBeanPetType::new)
-                      .map(ResponseEntity::ok);
+        return petServices.replacePetType(name, petType.getName())
+                          .map(ResponseEntity::ok);
     }
     
     @DeleteMapping(value = "/{petTypeId}", produces = APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<Void>> deletePetType(@PathVariable("petTypeId") String name){
-        return refList.removePetType(name)
-                      .then(Mono.just(new ResponseEntity<Void>(HttpStatus.NO_CONTENT)));
+        return petServices.removePetType(name)
+                          .then(Mono.just(new ResponseEntity<Void>(HttpStatus.NO_CONTENT)));
     }
 
 }

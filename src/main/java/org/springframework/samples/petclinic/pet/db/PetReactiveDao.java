@@ -1,4 +1,4 @@
-package org.springframework.samples.petclinic.pet;
+package org.springframework.samples.petclinic.pet.db;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -8,7 +8,8 @@ import java.util.function.Supplier;
 import org.springframework.samples.petclinic.conf.CassandraPetClinicSchema;
 import org.springframework.samples.petclinic.conf.MappingUtils;
 import org.springframework.samples.petclinic.owner.Owner;
-import org.springframework.samples.petclinic.visit.WebBeanVisit;
+import org.springframework.samples.petclinic.pet.Pet;
+import org.springframework.samples.petclinic.visit.Visit;
 
 import com.datastax.dse.driver.api.core.cql.reactive.ReactiveResultSet;
 import com.datastax.dse.driver.api.mapper.reactive.MappedReactiveResultSet;
@@ -24,43 +25,43 @@ import reactor.core.publisher.Mono;
 public interface PetReactiveDao extends CassandraPetClinicSchema {
     
     @Select
-    MappedReactiveResultSet<Pet> findAllReactive();
+    MappedReactiveResultSet<PetEntity> findAllReactive();
     
     @Select(customWhereClause = PET_ATT_PET_ID + "= :petId", allowFiltering = true)
-    MappedReactiveResultSet<Pet> findByPetIdReactiveRs(UUID petId);
-    default Mono<Pet> findByPetIdReactive(UUID petId) {
+    MappedReactiveResultSet<PetEntity> findByPetIdReactiveRs(UUID petId);
+    default Mono<PetEntity> findByPetIdReactive(UUID petId) {
         return Mono.from(findByPetIdReactiveRs(petId));
     }
 
     @Select(customWhereClause = PET_ATT_OWNER_ID + "= :ownerId", allowFiltering = true)
-    MappedReactiveResultSet<Pet> findAllByOwnerIdReactiveRs(UUID ownerId);
-    default Flux<Pet> findAllByOwnerIdReactive(UUID ownerId) {
+    MappedReactiveResultSet<PetEntity> findAllByOwnerIdReactiveRs(UUID ownerId);
+    default Flux<PetEntity> findAllByOwnerIdReactive(UUID ownerId) {
         return Flux.from(findAllByOwnerIdReactiveRs(ownerId));
     }
     
     @Update
-    ReactiveResultSet updateReactive(Pet pet);
-    default Mono<Pet> save(Pet pet) {
+    ReactiveResultSet updateReactive(PetEntity pet);
+    default Mono<PetEntity> save(PetEntity pet) {
         return Mono.from(updateReactive(pet)).map(rr -> pet);
     }
     
     @Delete
-    ReactiveResultSet deleteReactive(Pet pet);
-    default Mono<Boolean> delete(Pet pet) {
+    ReactiveResultSet deleteReactive(PetEntity pet);
+    default Mono<Boolean> delete(PetEntity pet) {
         return Mono.from(deleteReactive(pet)).map(rr -> rr.wasApplied());
     }
     
     default Mono<Owner> populatePetsForOwner(Owner wbo) {
         return findAllByOwnerIdReactive(wbo.getId())
-                    .map(MappingUtils::fromPetEntityToWebBean)
-                    .collect((Supplier<Set<WebBeanPet>>) HashSet::new, Set::add)
+                    .map(MappingUtils::mapEntityAsPet)
+                    .collect((Supplier<Set<Pet>>) HashSet::new, Set::add)
                     .doOnNext(wbo::setPets)
                     .map(set -> wbo);
     }
     
-    default Mono<WebBeanVisit> populatePetForVisit(WebBeanVisit wbv) {
+    default Mono<Visit> populatePetForVisit(Visit wbv) {
         return findByPetIdReactive(wbv.getPet().getId())
-                    .map(MappingUtils::fromPetEntityToWebBean)
+                    .map(MappingUtils::mapEntityAsPet)
                     .doOnNext(wbv::setPet)
                     .map(set -> wbv);
     }

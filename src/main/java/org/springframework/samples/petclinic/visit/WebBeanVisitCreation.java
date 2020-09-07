@@ -2,7 +2,7 @@ package org.springframework.samples.petclinic.visit;
 
 import java.io.Serializable;
 
-import org.springframework.samples.petclinic.pet.WebBeanPet;
+import org.springframework.samples.petclinic.pet.Pet;
 
 public class WebBeanVisitCreation implements Serializable {
 
@@ -10,7 +10,7 @@ public class WebBeanVisitCreation implements Serializable {
     private static final long serialVersionUID = -787431802048881983L;
     protected String date;
     protected String description;
-    protected WebBeanPet pet;
+    protected Pet pet;
     
     /**
      * Getter accessor for attribute 'description'.
@@ -37,7 +37,7 @@ public class WebBeanVisitCreation implements Serializable {
      * @return
      *       current value of 'pet'
      */
-    public WebBeanPet getPet() {
+    public Pet getPet() {
         return pet;
     }
     
@@ -46,7 +46,7 @@ public class WebBeanVisitCreation implements Serializable {
      * @param pet
      *      new value for 'pet '
      */
-    public void setPet(WebBeanPet pet) {
+    public void setPet(Pet pet) {
         this.pet = pet;
     }
     

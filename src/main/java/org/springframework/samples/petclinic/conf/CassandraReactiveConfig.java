@@ -12,10 +12,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.samples.petclinic.owner.db.OwnerReactiveDao;
 import org.springframework.samples.petclinic.owner.db.OwnerReactiveDaoMapperBuilder;
-import org.springframework.samples.petclinic.pet.PetReactiveDao;
 import org.springframework.samples.petclinic.pet.PetReactiveDaoMapperBuilder;
-import org.springframework.samples.petclinic.visit.VisitReactiveDao;
+import org.springframework.samples.petclinic.pet.db.PetReactiveDao;
+import org.springframework.samples.petclinic.vet.VetReactiveDaoMapperBuilder;
+import org.springframework.samples.petclinic.vet.db.VetReactiveDao;
 import org.springframework.samples.petclinic.visit.VisitReactiveDaoMapperBuilder;
+import org.springframework.samples.petclinic.visit.db.VisitReactiveDao;
 
 import com.datastax.oss.driver.api.core.ConsistencyLevel;
 import com.datastax.oss.driver.api.core.CqlSession;
@@ -96,22 +98,40 @@ public class CassandraReactiveConfig implements CassandraPetClinicSchema {
         return cqlSession;
     }
     
+    /**
+     * Initialized {@link OwnerReactiveDao} as a Spring Singleton.
+     */
     @Bean
     public OwnerReactiveDao ownerDao(CqlSession cqlSession) {
         return new OwnerReactiveDaoMapperBuilder(cqlSession)
             .build().ownerDao(cqlSession.getKeyspace().get());
     }
     
+    /**
+     * Initialized {@link PetReactiveDao} as a Spring Singleton.
+     */
     @Bean
     public PetReactiveDao petDao(CqlSession cqlSession) {
         return new PetReactiveDaoMapperBuilder(cqlSession).build()
                 .petDao(cqlSession.getKeyspace().get());
     }
     
+    /**
+     * Initialized {@link VisitReactiveDao} as a Spring Singleton.
+     */
     @Bean
     public VisitReactiveDao visitDao(CqlSession cqlSession) {
         return new VisitReactiveDaoMapperBuilder(cqlSession).build()
                 .visitDao(cqlSession.getKeyspace().get());
+    }
+    
+    /**
+     * Initialized {@link VetReactiveDaos} as a Spring Singleton.
+     */
+    @Bean
+    public VetReactiveDao vetDao(CqlSession cqlSession) {
+        return new VetReactiveDaoMapperBuilder(cqlSession).build()
+                .vetDao(cqlSession.getKeyspace().get());
     }
     
     

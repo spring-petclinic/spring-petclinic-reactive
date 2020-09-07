@@ -1,115 +1,104 @@
 package org.springframework.samples.petclinic.pet;
 
-import java.time.LocalDate;
+import java.io.Serializable;
+import java.util.Set;
 import java.util.UUID;
 
-import org.springframework.samples.petclinic.conf.CassandraPetClinicSchema;
+import org.springframework.samples.petclinic.owner.Owner;
+import org.springframework.samples.petclinic.visit.Visit;
 
-import com.datastax.oss.driver.api.mapper.annotations.ClusteringColumn;
-import com.datastax.oss.driver.api.mapper.annotations.CqlName;
-import com.datastax.oss.driver.api.mapper.annotations.Entity;
-import com.datastax.oss.driver.api.mapper.annotations.PartitionKey;
-
-@Entity
-@CqlName(CassandraPetClinicSchema.PET_TABLE)
-public class Pet implements CassandraPetClinicSchema {
+/**
+ * Bean expected by the UI with heriarchy owner 1..n -> Pet 1..n -> Visit.
+ *
+ * @author Cedrick LUNVEN (@clunven)
+ */
+public class Pet implements Serializable {
     
-    @PartitionKey
-    @CqlName(PET_ATT_OWNER_ID)
-    private UUID ownerId;
+    /** Serial. */
+    private static final long serialVersionUID = 6533528868325708859L;
     
-    @ClusteringColumn
-    @CqlName(PET_ATT_PET_ID)
-    private UUID petId;
+    protected UUID id;
     
-    @CqlName(PET_ATT_PET_TYPE)
-    private String petType;
+    /** Pet name. */
+    protected String name;
     
-    @CqlName(PET_ATT_NAME)
-    private String name;
+    /** Pet Type. */
+    protected PetType type;
     
-    /**
-     * A Date is mapped as java LocalDate
-     * - Date      <-> java.time.LocalDate
-     * - Timestamp <-> java.time.LocalDate
-     * - Time      <-> java.time.LocalTime
-     * 
-     * @see https://docs.datastax.com/en/developer/java-driver/4.8/manual/core/#cql-to-java-type-mapping
-     */
-    @CqlName(PET_ATT_BIRTHDATE)
-    private LocalDate birthDate;
+    // When creating a pet the full owner is sent even if only id is used
+    protected Owner owner;
     
-    public Pet() {}
+    // Not used for creation but rendering
+    protected Set<Visit> visits;
+    
+    // Format "yyyy/MM/dd"
+    protected String birthDate;
+    
+    public Pet() {
+        super();
+    }
     
     public Pet(UUID petId) {
-        this.petId = petId;
+        this.id = petId;
+    }
+   
+    /**
+     * Getter accessor for attribute 'id'.
+     *
+     * @return
+     *       current value of 'id'
+     */
+    public UUID getId() {
+        return id;
     }
     
-    public Pet(UUID ownerId, UUID petId, String petType, String name, LocalDate birthDate) {
-        this.ownerId   = ownerId;
-        this.petId     = petId;
-        this.petType   = petType;
-        this.name      = name;
-        this.birthDate = birthDate;
-    }
-
     /**
-     * Getter accessor for attribute 'ownerId'.
+     * Setter accessor for attribute 'id'.
+     * @param id
+     * 		new value for 'id '
+     */
+    public void setId(UUID id) {
+        this.id = id;
+    }
+    
+    /**
+     * Getter accessor for attribute 'owner'.
      *
      * @return
-     *       current value of 'ownerId'
+     *       current value of 'owner'
      */
-    public UUID getOwnerId() {
-        return ownerId;
+    public Owner getOwner() {
+        return owner;
     }
 
     /**
-     * Setter accessor for attribute 'ownerId'.
-     * @param ownerId
-     * 		new value for 'ownerId '
+     * Setter accessor for attribute 'owner'.
+     * @param owner
+     *      new value for 'owner '
      */
-    public void setOwnerId(UUID ownerId) {
-        this.ownerId = ownerId;
+    public void setOwner(Owner owner) {
+        this.owner = owner;
     }
 
     /**
-     * Getter accessor for attribute 'petId'.
+     * Getter accessor for attribute 'visits'.
      *
      * @return
-     *       current value of 'petId'
+     *       current value of 'visits'
      */
-    public UUID getPetId() {
-        return petId;
+    public Set<Visit> getVisits() {
+        return visits;
     }
 
     /**
-     * Setter accessor for attribute 'petId'.
-     * @param petId
-     * 		new value for 'petId '
+     * Setter accessor for attribute 'visits'.
+     * @param visits
+     *      new value for 'visits '
      */
-    public void setPetId(UUID petId) {
-        this.petId = petId;
+    public void setVisits(Set<Visit> visits) {
+        this.visits = visits;
     }
-
-    /**
-     * Getter accessor for attribute 'petType'.
-     *
-     * @return
-     *       current value of 'petType'
-     */
-    public String getPetType() {
-        return petType;
-    }
-
-    /**
-     * Setter accessor for attribute 'petType'.
-     * @param petType
-     * 		new value for 'petType '
-     */
-    public void setPetType(String petType) {
-        this.petType = petType;
-    }
-
+    
     /**
      * Getter accessor for attribute 'name'.
      *
@@ -123,7 +112,7 @@ public class Pet implements CassandraPetClinicSchema {
     /**
      * Setter accessor for attribute 'name'.
      * @param name
-     * 		new value for 'name '
+     *      new value for 'name '
      */
     public void setName(String name) {
         this.name = name;
@@ -135,17 +124,36 @@ public class Pet implements CassandraPetClinicSchema {
      * @return
      *       current value of 'birthDate'
      */
-    public LocalDate getBirthDate() {
+    public String getBirthDate() {
         return birthDate;
     }
 
     /**
      * Setter accessor for attribute 'birthDate'.
      * @param birthDate
-     * 		new value for 'birthDate '
+     *      new value for 'birthDate '
      */
-    public void setBirthDate(LocalDate birthDate) {
+    public void setBirthDate(String birthDate) {
         this.birthDate = birthDate;
     }
 
+    /**
+     * Getter accessor for attribute 'type'.
+     *
+     * @return
+     *       current value of 'type'
+     */
+    public PetType getType() {
+        return type;
+    }
+
+    /**
+     * Setter accessor for attribute 'type'.
+     * @param type
+     *      new value for 'type '
+     */
+    public void setType(PetType type) {
+        this.type = type;
+    }
+    
 }
