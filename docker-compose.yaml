@@ -1,25 +1,47 @@
-# docker exec -it `docker ps | grep cassandra:3.11.7 | cut -b 1-12` cqlsh -e "create keyspace petclinic WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : 3 };"
-# docker exec -it `docker ps | grep cassandra:3.11.7 | cut -b 1-12` cqlsh -e "describe keyspaces"
 version: "3.8"
 services:
 
-  cassandra:
-    image: cassandra:3.11.7
-    ports:
-      - 7000:7000
-      - 9042:9042
-    ulimits:
-      memlock: -1
-
-  spring-petclinic-reactive:
-    image: com.springframework/spring-petclinic-reactive:1.0
-    build:
-      context: .
+  #cassandra:
+  #  image: cassandra:3.11.7
+  #  ports:
+  #    - 7000:7000
+  #    - 9042:9042
+  #  ulimits:
+  #    memlock: -1
+  # docker exec -it `docker ps | grep cassandra:3.11.7 | cut -b 1-12` cqlsh -e "create keyspace petclinic WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : 3 };"
+  # docker exec -it `docker ps | grep cassandra:3.11.7 | cut -b 1-12` cqlsh -e "describe keyspaces"
+  
+  #spring-petclinic-reactive:
+  #  image: com.springframework/spring-petclinic-reactive:1.0
+  #  build:
+  #    context: .
       #dockerfile: Dockerfile
-      dockerfile: Dockerfilefast
-      labels:
-        com.springframework.samples.description: "pet Clinic"
+  #    dockerfile: Dockerfilefast
+  #    labels:
+  #      com.springframework.samples.description: "pet Clinic"
+  #  ports:
+  #    - 8081:8081
+  #  depends_on:
+  #    - cassandra
+      
+  tracing-server: 
+    image: openzipkin/zipkin
+    container_name: tracing-server
+    environment:
+    - JAVA_OPTS=-XX:+UnlockExperimentalVMOptions -Djava.security.egd=file:/dev/./urandom
     ports:
-      - 8081:8081
-    depends_on:
-      - cassandra
+     - 9411:9411
+     
+  ## Grafana / Prometheus
+
+  grafana-server:
+    build: ./docker/grafana
+    container_name: grafana-server
+    ports:
+    - 3000:3000
+
+  prometheus-server:
+    build: ./docker/prometheus
+    container_name: prometheus-server
+    ports:
+    - 9091:9090  
