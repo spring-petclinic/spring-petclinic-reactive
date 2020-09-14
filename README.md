@@ -13,11 +13,11 @@ Implementation of the [Spring Pet Clinic] backend including a REST API implement
 
 ## Table of contents
 
-- **(A) [Run the APPLICATION](#run-the-petclinic-application)**
- - [Get the Database running](#1-get-the-database-running) (*using DataStax Astra*)
- - [Get your credentials](#2-copy-database-credentials) (*copied from the UI*)
- - [Setup and run the application on gitpod ](#3-start-in-gitpod) (*no installation required*)
- - [(alternative) Setup and run the application on your laptop](#4-start-locally) (*maven+npm required*)
+- **(A) Run the APPLICATION**
+  - [Get the Database running](#1-get-the-database-running) (*using DataStax Astra*)
+  - [Get your credentials](#2-copy-database-credentials) (*copied from the UI*)
+  - [Setup and run the application on gitpod ](#3-start-in-gitpod) (*no installation required*)
+  - [(alternative) Setup and run the application on your laptop](#4-start-locally) (*maven+npm required*)
 
 - **(B) Architecture**
   - [Understanding the Pet Clinic Application](#)
