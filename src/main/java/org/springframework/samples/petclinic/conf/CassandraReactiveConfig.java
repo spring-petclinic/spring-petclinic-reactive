@@ -56,10 +56,10 @@ public class CassandraReactiveConfig implements CassandraPetClinicSchema {
     @Value("${spring.data.cassandra.port:9042}")
     private int port;
     
-    @Value("#{'${spring.data.cassandra.contact-points}'.split(','):localhost}") 
+    @Value("#{'${spring.data.cassandra.contact-points}'.split(',')}") 
     private List<String> contactPoints;
     
-    @Value("${spring.data.cassandra.astra.enabled;true}")
+    @Value("${spring.data.cassandra.astra.enabled:true}")
     private boolean useAstra;
     
     @Value("${spring.data.cassandra.astra.secure-connect-bundle}")
