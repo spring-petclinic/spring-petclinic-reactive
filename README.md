@@ -13,7 +13,11 @@ Implementation of the [Spring Pet Clinic] backend including a REST API implement
 
 ## Table of contents
 
-- **(A) [Run the APPLICATION](#run-the-application)**
+- **(A) [Run the APPLICATION](#run-the-petclinic-application)**
+ - [Get the Database running](#1-get-the-database-running) (*using DataStax Astra*)
+ - [Get your credentials](#2-copy-database-credentials) (*copied from the UI*)
+ - [Setup and run the application on gitpod ](#3-start-in-gitpod) (*no installation required*)
+ - [(alternative) Setup and run the application on your laptop](#4-start-locally) (*maven+npm required*)
 
 - **(B) Architecture**
   - [Understanding the Pet Clinic Application](#)
@@ -117,7 +121,7 @@ This value copie looks like the following JSON:
 - The Application is ready to go
 ![image](https://user-images.githubusercontent.com/3254549/90944387-439a1f00-e3d3-11ea-9df4-e8a5580c62cd.png)
 
-### A2 - Build and start the Spring Boot backend
+### 4. Start locally
 
 **✅ Download the secure connection bundle** : UI
 
@@ -178,3 +182,6 @@ You should now be able to access the UI at: [http://localhost:4200](http://local
 
 - Veterinians
 ![Pet Clinic Veterinarians Screen](https://raw.githubusercontent.com/clun/spring-petclinic-reactive/master/doc/img/ui-veterinians.png)
+
+
+
