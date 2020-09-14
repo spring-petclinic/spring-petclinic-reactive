@@ -54,7 +54,7 @@ spring:
         enabled: true
         secure-connect-bundle: ${ASTRA_DB_BUNDLE}
       # When using local Cassandra (docker)
-      #contact-points: localhost
+      contact-points: localhost
       #port: 9042
       #local-datacenter: datacenter1
 
