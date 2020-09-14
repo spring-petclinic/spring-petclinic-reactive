@@ -44,7 +44,7 @@ public class CassandraReactiveConfig implements CassandraPetClinicSchema {
     @Value("${spring.data.cassandra.schema-action}")
     private String schemaAction;
     
-    @Value("${spring.data.cassandra.local-datacenter}")
+    @Value("${spring.data.cassandra.local-datacenter:datacenter1}")
     private String dc;
     
     @Value("${spring.data.cassandra.username}")
@@ -53,13 +53,13 @@ public class CassandraReactiveConfig implements CassandraPetClinicSchema {
     @Value("${spring.data.cassandra.password}")
     private String password;
     
-    @Value("${spring.data.cassandra.port}")
+    @Value("${spring.data.cassandra.port:9042}")
     private int port;
     
-    @Value("#{'${spring.data.cassandra.contact-points}'.split(',')}") 
+    @Value("#{'${spring.data.cassandra.contact-points}'.split(','):localhost}") 
     private List<String> contactPoints;
     
-    @Value("${spring.data.cassandra.astra.enabled}")
+    @Value("${spring.data.cassandra.astra.enabled;true}")
     private boolean useAstra;
     
     @Value("${spring.data.cassandra.astra.secure-connect-bundle}")

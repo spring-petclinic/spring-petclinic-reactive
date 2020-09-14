@@ -13,46 +13,35 @@ Implementation of the [Spring Pet Clinic] backend including a REST API implement
 
 ## Table of contents
 
-- **(A) Run the Application on your laptop *(Java + Maven required)***
-  - [Create a DBaaS Cassandra free Account (ASTRA)](#a1---create-a-dbaas-cassandra-free-account-astra)
-  - [Build and start the backend](#a2)
-  - [Build and start the user interface](##a3---build-and-start-the-angular--user-interface)
-  - [Setup the application to run Apache Cassandra locally (docker)](#)
+- **(A) [Run the APPLICATION](#run-the-application)**
 
-- **(B) Run the Sample on Gitpod**
-  - [Create a DBaaS Cassandra free Account (ASTRA)]()
-  - [Open Gitpod and follow instructions](#)
-
-- **(C) Architecture**
+- **(B) Architecture**
   - [Understanding the Pet Clinic Application](#)
   - [Architecture diagram](#)
   - [Data Model diagram](#)
 
-- **(D) Contribute**
+- **(C) Contribute**
   - [Blog post and communications](#)
   - [Architecture diagram](#)
   - [Data Model diagram](#)
 
-## Run the Application on your laptop
+## Run the PetClinic Application
 
-### A1 - Create a DBaaS Cassandra free Account (ASTRA)
+### 1. Get the Database running
 
-`DataStax ASTRA` is available at: [https://astra.datastax.com](https://astra.datastax.com/)
+**✅ Create an FREE FOREVER Apache Cassandra DBaas instance** : 
 
-**✅ Step 1a.Register (if needed) and Sign In to Astra** : You can sign in with your `Github` or `Google` account or sign up with an `email`
+You can sign in with your `Github` or `Google` account or sign up with an `email`
 
-- [Registration Page](https://astra.datastax.com/register)
+- [REGISTER HERE](https://astra.datastax.com/register?utm_source=github&utm_medium=referral&utm_campaign=spring-petclinic-reactive) 🚀
 
 ![Astra Registration Screen](https://github.com/DataStax-Academy/microservices-java-workshop-online/blob/master/z-materials/images/astra-create-register.png?raw=true)
 
-- [Authentication Page](https://astra.datastax.com/)
 
-![Astra Authentication Screen](https://github.com/DataStax-Academy/microservices-java-workshop-online/blob/master/z-materials/images/astra-create-login.png?raw=true)
+**✅ Use the form to create New database** : 
 
+If you don't have an existing instance,  login process will route automatically to the database creation form. You will find below which values to enter for each field.
 
-**✅ Step 1b. Fill the Create New Database Form** : If you don't have an existing Astra database, the login will route automatically to the database creation form. You will find below which values to enter for each field.
-
-- *Initialization Form*
 ![Astra Database Creation Form](https://github.com/DataStax-Academy/microservices-java-workshop-online/blob/master/z-materials/images/astra-create-2.png?raw=true)
 
 - **Set the Compute Size**: For your first Astra database, we recommend using the `Free tier`. You instance will be there forever, free of charge. 
@@ -75,7 +64,7 @@ For the 3 fields below you can pick whatever text you desire:
 
 ![Database launching popup](https://github.com/DataStax-Academy/microservices-java-workshop-online/blob/master/z-materials/images/astra-create-3.png?raw=true)
 
-**✅ Step 1c. View your Database and connect** : View your database. It may take 2-3 minutes for your database to spin up. You will receive an email at that point.
+**✅ View your Database and connect** : View your database. It may take 2-3 minutes for your database to spin up. You will receive an email at that point.
 
 **👁️ Expected output**
 
@@ -85,6 +74,48 @@ For the 3 fields below you can pick whatever text you desire:
 *Database is ready*
 ![Database ready screen](https://github.com/DataStax-Academy/microservices-java-workshop-online/blob/master/z-materials/images/astra-create-5.png?raw=true)
 
+### 2. Copy Database credentials
+   
+- Click `Your Databases`, then `Manage Organizations` on the top navigation: 
+
+![image](https://user-images.githubusercontent.com/3254549/90944069-9f63a880-e3d1-11ea-834a-968ffe69e37b.png)
+
+- On the right side of your organization, click the elipsis (...) then `Manage Organizations`:
+
+![image](https://user-images.githubusercontent.com/3254549/90944096-c02bfe00-e3d1-11ea-9513-b3362cdfd77a.png)
+
+- Click the action menu, then select 'Add Service Account':
+
+![image](https://user-images.githubusercontent.com/3254549/90944155-05503000-e3d2-11ea-9d2a-8c376b027358.png)
+
+- Click the copy icon to copy your Astra service account credentials to your clipboard:
+
+![image](https://user-images.githubusercontent.com/3254549/90944221-3c264600-e3d2-11ea-9d04-46915f1c3731.png)
+
+This value copie looks like the following JSON:
+```json
+{ 
+  "clientId":"149de2c7-9b07-41b3-91ad-9453dee4dc54",
+  "clientName":"cedrick.lunven@datastax.com",
+  "clientSecret":"aaaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"
+}
+```
+
+### 3. Start in Gitpod
+
+- With the credentials in the copy board you can now open gitpod
+
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/clun/spring-petclinic-reactive)
+
+- Once your Gitpod workspace has loaded, you'll be asked to paste your service account credentials in the Gitpod terminal at the bottom of the screen:
+
+![image](https://user-images.githubusercontent.com/3254549/90944321-e900c300-e3d2-11ea-9624-dae5f81b6a0a.png)
+
+- When the app is finished building, click the 'Open Browser' button on the bottom right of the screen:
+![image](https://user-images.githubusercontent.com/3254549/90944371-249b8d00-e3d3-11ea-8305-b7d4fad9742c.png)
+
+- The Application is ready to go
+![image](https://user-images.githubusercontent.com/3254549/90944387-439a1f00-e3d3-11ea-9df4-e8a5580c62cd.png)
 
 ### A2 - Build and start the Spring Boot backend
 
@@ -147,6 +178,3 @@ You should now be able to access the UI at: [http://localhost:4200](http://local
 
 - Veterinians
 ![Pet Clinic Veterinarians Screen](https://raw.githubusercontent.com/clun/spring-petclinic-reactive/master/doc/img/ui-veterinians.png)
-
-
-

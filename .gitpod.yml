@@ -1,0 +1,18 @@
+image: gitpod/workspace-full
+tasks:
+  - init: mvn package
+    command: . setup.sh && java -jar target/spring-petclinic-reactive-1.0.0-SNAPSHOT.jar
+ports:
+  - port: 8081
+    onOpen: open-browser
+github:
+  prebuilds:
+    master: true
+    branches: false
+    pullRequests: false
+    pullRequestsFromForks: false
+    addCheck: false
+    addComment: false
+    addBadge: false
+    addLabel: false
+

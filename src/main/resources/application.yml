@@ -45,18 +45,18 @@ spring:
   # Persistence to Apache Cassandra
   data:
     cassandra:
-      keyspace-name: spring_petclinic
-      username: astra
-      password: astra2020
+      keyspace-name: ${ASTRA_DB_KEYSPACE}
+      username: ${ASTRA_DB_USERNAME}
+      password: ${ASTRA_DB_PASSWORD}
       schema-action: CREATE_IF_NOT_EXISTS
-      # When using local Cassandra (docker)
-      contact-points: localhost
-      port: 9042
-      local-datacenter: datacenter1
       # When using Astra
       astra:
         enabled: true
-        secure-connect-bundle: /Users/cedricklunven/Downloads/secure-connect-demos.zip
+        secure-connect-bundle: ${ASTRA_DB_BUNDLE}
+      # When using local Cassandra (docker)
+      #contact-points: localhost
+      #port: 9042
+      #local-datacenter: datacenter1
 
   # Distributed tracing with Brave/Zipkin/Sleuth
   zipkin:
