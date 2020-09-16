@@ -39,7 +39,7 @@ You can sign in with your `Github` or `Google` account or sign up with an `email
 
 - [REGISTER HERE](https://astra.datastax.com/register?utm_source=github&utm_medium=referral&utm_campaign=spring-petclinic-reactive) 🚀
 
-![Astra Registration Screen](https://github.com/DataStax-Academy/microservices-java-workshop-online/blob/master/z-materials/images/astra-create-register.png?raw=true)
+![Astra Registration Screen](doc/img/db-auth.png?raw=true)
 
 
 **✅ Use the form to create New database** : 
@@ -96,7 +96,7 @@ For the 3 fields below you can pick whatever text you desire:
 
 ![image](https://user-images.githubusercontent.com/3254549/90944221-3c264600-e3d2-11ea-9d04-46915f1c3731.png)
 
-This value copie looks like the following JSON:
+This credentials copied in the clipboard look like the following JSON:
 ```json
 { 
   "clientId":"149de2c7-9b07-41b3-91ad-9453dee4dc54",
@@ -111,9 +111,26 @@ This value copie looks like the following JSON:
 
 [![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/clun/spring-petclinic-reactive)
 
-- Once your Gitpod workspace has loaded, you'll be asked to paste your service account credentials in the Gitpod terminal at the bottom of the screen:
+- Once your Gitpod workspace has loaded, you'll be asked to paste your service account credentials in the Gitpod terminal at the bottom of the screen. This questions is asked from the [setup.sh](setup.sh) script at root of the repository.
 
 ![image](https://user-images.githubusercontent.com/3254549/90944321-e900c300-e3d2-11ea-9624-dae5f81b6a0a.png)
+
+- After parsing this JSON the script will ask you your `password`.  In the end a couple of environment variables has been created for you can list them with 
+
+```
+env | grep ASTRA
+```
+
+Expected output
+```init
+ASTRA_DB_BUNDLE=astra-creds.zip
+ASTRA_DB_USERNAME=petclinic
+ASTRA_SECURE_BUNDLE_URL="https://datastax-cluster-config-prod.s3.us-east-2.amazonaws.com/bd8c8102-aab4-4cbe-81e7-76680c904f26/secure-connect-petclinicdb.zip?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA2AIQRQ76TUCOHUQ4%2F20200916%2Fus-east-2%2Fs3%2Faws4_request&X-Amz-Date=20200916T130746Z&X-Amz-Expires=300&X-Amz-SignedHeaders=host&X-Amz-Signature=4d85e18911153b0954a6adc52ffe8e6ac44b887c3a6d23e6e72fd28d14d934d3"
+ASTRA_DB_REGION=europe-west1
+ASTRA_DB_ID=bd8c8102-aab4-4cbe-81e7-76680c904f26
+ASTRA_DB_PASSWORD=astra2020
+ASTRA_DB_KEYSPACE=spring_petclinic
+```
 
 - When the app is finished building, click the 'Open Browser' button on the bottom right of the screen:
 ![image](https://user-images.githubusercontent.com/3254549/90944371-249b8d00-e3d3-11ea-8305-b7d4fad9742c.png)
@@ -123,31 +140,10 @@ This value copie looks like the following JSON:
 
 ### 4. Start locally
 
-**✅ Download the secure connection bundle** : UI
+**✅ Download the secure connection bundle** : First download the secure connect bundle from the UI save it locally
 
-**✅ Setup the configuration file** : In the folder `src/main/resources` of this repo locate the file `application.yaml` and edit the following keys:
+**✅ Define environment variables** : In the folder `src/main/resources` of this repo locate the file `application.yaml` and edit the following keys:
 
-- `keyspace-name`: Name of the keyspace as stated in the user interface
-- `username`: user credentials
-- `password`: user credentials
-- `secure-connect-bundle` : path of the zip you downloaded
-
-*Sample configuration file*
-```yaml
-server:
-  port: ${PORT:9966}
-spring.data.cassandra:
-  keyspace-name: spring_petclinic
-  username: petclinic
-  password: petclinic
-  schema-action: CREATE_IF_NOT_EXISTS
-  contact-points: localhost
-  port: 9042
-  local-datacenter: datacenter1
-  astra:
-    enabled: true
-    secure-connect-bundle: /Users/cedricklunven/Downloads/secure-connect-demos.zip
-```
 
 **✅ Start the application** : You can now run the application with the command: `mvn spring-boot:run`. This will create the required schema for the application in your Astra database. You should now be able to access
 
