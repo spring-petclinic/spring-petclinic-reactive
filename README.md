@@ -20,12 +20,12 @@ Implementation of the [Spring Pet Clinic] backend including a REST API implement
   - [(alternative) Setup and run the application on your laptop](#4-start-locally) (*maven+npm required*)
 
 - **(B) Architecture**
-  - [Understanding the Pet Clinic Application](#)
-  - [Architecture diagram](#)
-  - [Data Model diagram](#)
+  - [Understanding the Pet Clinic Application](#understanding-the-pet-clinic-application)
+  - [Architecture diagram](#architecture-diagram)
+  - [Data Model diagram](#data-model-diagram)
 
 - **(C) Contribute**
-  - [Blog post and communications](#)
+  - [Blog post and communications](#blog-post-and-communications)
 
 ## Run the PetClinic Application
 
@@ -188,15 +188,19 @@ export ASTRA_DB_BUNDLE=/Users/cedricklunven/Downloads/secure-connect-petclinicdb
 ### 5. More screenShots
 
 - Owners
+
 ![Pet Clinic Owners Screen](https://raw.githubusercontent.com/clun/spring-petclinic-reactive/master/doc/img/ui-owners.png)
 
 - Pet Types
+
 ![Pet Clinic Pets Screen](https://raw.githubusercontent.com/clun/spring-petclinic-reactive/master/doc/img/ui-pettypes.png)
 
 - Vet Specialties
+
 ![Pet Clinic Specialties Screen](https://raw.githubusercontent.com/clun/spring-petclinic-reactive/master/doc/img/ui-specialties.png)
 
 - Veterinians
+
 ![Pet Clinic Veterinarians Screen](https://raw.githubusercontent.com/clun/spring-petclinic-reactive/master/doc/img/ui-veterinians.png)
 
 **✅ Start the WEB UI** : This REST API is meant to be used with the existing **[spring-petclinic-angular](https://github.com/spring-petclinic/spring-petclinic-angular)** user interface. To run the application please execute the following:
