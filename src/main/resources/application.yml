@@ -24,4 +24,5 @@ spring.data.cassandra:
   astra:
     enabled: true
     secure-connect-bundle: /Users/cedricklunven/Downloads/secure-connect-demos.zip
-     
+
+# TODO: should there be a note to developers that they need to change this value?

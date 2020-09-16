@@ -17,10 +17,10 @@ CREATE TABLE IF NOT EXISTS petclinic_vet (
 );
 
 
-/** We could search veterian by their names. */
+/** We could search veterinarian by their names. */
 CREATE INDEX IF NOT EXISTS petclinic_idx_vetname ON petclinic_vet(last_name);
 
-/** We may want to list all radiolog. */
+/** We may want to list all radiologists. */
 CREATE TABLE IF NOT EXISTS petclinic_vet_by_specialty (
  specialty   text,
  vet_id      uuid,
@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS petclinic_reference_lists (
   PRIMARY KEY ((list_name))
 );
 
-/** Expecting a combobox list reference all specialties. */
+/** Expecting a combobox list references all specialties. */
 INSERT INTO petclinic_reference_lists(list_name, values) 
 VALUES ('vet_specialty', {'radiology', 'dentistry', 'surgery'});
 
@@ -53,7 +53,7 @@ CREATE TABLE IF NOT EXISTS petclinic_owner (
   PRIMARY KEY ((id))
 );
 
-/** We could search veterian by their names. */
+/** We could search veterinarians by their names. */
 CREATE INDEX IF NOT EXISTS petclinic_idx_ownername ON petclinic_owner(last_name);
 
 CREATE TABLE IF NOT EXISTS petclinic_pet_by_owner (
@@ -74,3 +74,5 @@ CREATE TABLE IF NOT EXISTS petclinic_visit_by_pet (
 
 INSERT INTO petclinic_reference_lists(list_name, values) 
 VALUES ('pet_type ', {'bird', 'cat', 'dog', 'lizard','hamster','snake'});
+
+/** TODO: should we note that this schema definition file is redundant with CassandraPetClinicSchema class? **/

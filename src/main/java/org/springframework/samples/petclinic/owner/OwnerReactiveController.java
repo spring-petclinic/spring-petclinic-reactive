@@ -36,7 +36,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 /**
- * Reactive CRUD operation (WEbFlux) for entity Vet.
+ * Reactive CRUD operation (WEbFlux) for Owner entity.
  *
  * @author Cedrick LUNVEN (@clunven)
  */
@@ -60,15 +60,16 @@ public class OwnerReactiveController {
     public OwnerReactiveController(OwnerReactiveServices service) {
         this.ownerServices = service;
     }
-    
+
+    // TODO: what does "not mono" mean?
     /**
-     * Search owner by their lastName leveraging a secondary index.
+     * Search owners by their lastName leveraging a secondary index.
      * Flux is returned and NOT mono as lastName is not the full primary key.
      * 
      * @param searchString
      *      input term from user
      * @return
-     *      list of Owner matching the term
+     *      list of Owners matching the term
      */
     @GetMapping(value = "/*/lastname/{lastName}", produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value= "Search owner by their lastName", response=OwnerEntity.class)
@@ -95,7 +96,7 @@ public class OwnerReactiveController {
     }
     
     /**
-     * Retrieve owner information from its unique identifier.
+     * Retrieve owner information by its unique identifier.
      *
      * @param ownerId
      *      unique identifer as a String, to be converted in {@link UUID}.
@@ -103,15 +104,15 @@ public class OwnerReactiveController {
      *      a {@link Mono} of {@link OwnerEntity} or empty response with not found (404) code
      */
     @GetMapping(value = "/{ownerId}", produces = APPLICATION_JSON_VALUE)
-    @ApiOperation(value= "Retrieve owner information from its unique identifier", response=OwnerEntity.class)
+    @ApiOperation(value= "Retrieve owner information by its unique identifier", response=OwnerEntity.class)
     @ApiResponses({
         @ApiResponse(code = 200, message= "the identifier exists and related owner is returned"), 
-        @ApiResponse(code = 400, message= "The uid was not a valid UUID"), 
-        @ApiResponse(code = 404, message= "the identifier does not exists in DB"), 
+        @ApiResponse(code = 400, message= "The identifier was not a valid UUID"),
+        @ApiResponse(code = 404, message= "the identifier does not exist in DB"),
         @ApiResponse(code = 500, message= "Internal technical error") })
     public Mono<ResponseEntity<Owner>> findOwner(@PathVariable("ownerId") @Parameter(
                required = true,example = "1ff2fbd9-bbb0-4cc1-ba37-61966aa7c5e6",
-               description = "Unique identifier of a Owner") String ownerId) {
+               description = "Unique identifier of an Owner") String ownerId) {
         return ownerServices.findOwnerById(ownerId)
                             .map(ResponseEntity::ok)
                             .defaultIfEmpty(ResponseEntity.notFound().build());
@@ -150,9 +151,9 @@ public class OwnerReactiveController {
     }
     
     /**
-     * Create or update a {@link OwnerEntity}. We do not throw exception is already exist
-     * or check existence as this is the behavirous in a cassandra table to read
-     * before write.
+     * Create or update a {@link OwnerEntity}. We do not throw exception if the entity already exists
+     * or check existence, as this is would require a read before write, and Cassandra supports an
+     * upsert style of interaction.
      *
      * @param ownerId
      *      unique identifier for owner
@@ -182,17 +183,17 @@ public class OwnerReactiveController {
     }
     
     /**
-     * Delete a owner from its unique identifier.
+     * Delete a owner by its unique identifier.
      *
      * @param vetId
      *      vetirinian identifier
      * @return
      */
     @DeleteMapping("/{ownerId}")
-    @ApiOperation(value= "Delete a owner from its unique identifier", response=Void.class)
+    @ApiOperation(value= "Delete a owner by its unique identifier", response=Void.class)
     @ApiResponses({
         @ApiResponse(code = 204, message= "The owner has been deleted"), 
-        @ApiResponse(code = 400, message= "The uid was not a valid UUID"),
+        @ApiResponse(code = 400, message= "The identifier was not a valid UUID"),
         @ApiResponse(code = 500, message= "Internal technical error") })
     public Mono<ResponseEntity<Void>> deleteById(@PathVariable("ownerId") @Parameter(
             required = true,example = "1ff2fbd9-bbb0-4cc1-ba37-61966aa7c5e6",

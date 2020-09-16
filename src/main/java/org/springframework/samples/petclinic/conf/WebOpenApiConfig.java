@@ -13,6 +13,7 @@ import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
+// TODO: is this saying that this class is for the purpose of generating Swagger v2 API?
 /**
  * Swagger configuration v3 does not change with Weblux anymore.
  *
@@ -36,7 +37,7 @@ public class WebOpenApiConfig {
     private ApiInfo apiInfo() {
         return new ApiInfo(
                 "Spring Pet Clinic Application Reactive",
-                "Leveraging Spring-data-cassandra-reactive and Astra Cassandra-as-a-service",
+                "Leveraging Spring-data-cassandra-reactive and DataStax Astra Cassandra-as-a-service",
                 "1.0.0-SNAPSHOT",
                 "Terms of service",
                 new Contact("DataStax Examples", "https://www.datastax.com/examples", "examples@datastax.com"),
