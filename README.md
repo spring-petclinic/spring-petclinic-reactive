@@ -46,7 +46,7 @@ You can sign in with your `Github` or `Google` account or sign up with an `email
 
 If you don't have an existing instance,  login process will route automatically to the database creation form. You will find below which values to enter for each field.
 
-![Astra Database Creation Form](https://github.com/DataStax-Academy/microservices-java-workshop-online/blob/master/z-materials/images/astra-create-2.png?raw=true)
+![Astra Database Creation Form](doc/img/db-creation.png?raw=true)
 
 - **Set the Compute Size**: For your first Astra database, we recommend using the `Free tier`. You instance will be there forever, free of charge. 
 
@@ -73,10 +73,10 @@ For the 3 fields below you can pick whatever text you desire:
 **👁️ Expected output**
 
 *Initializing*
-![Initializing Screen](https://github.com/DataStax-Academy/microservices-java-workshop-online/blob/master/z-materials/images/astra-create-4.png?raw=true)
+![Initializing Screen](doc/img/db-initializing.png?raw=true)
 
 *Database is ready*
-![Database ready screen](https://github.com/DataStax-Academy/microservices-java-workshop-online/blob/master/z-materials/images/astra-create-5.png?raw=true)
+![Database ready screen](doc/img/db-ready.png?raw=true)
 
 ### 2. Copy Database credentials
    
@@ -111,17 +111,25 @@ This credentials copied in the clipboard look like the following JSON:
 
 [![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/clun/spring-petclinic-reactive)
 
+
+- At startup gitpod will compile the application. 
+![Initializing Screen](doc/img/exec-home-gitpod.png?raw=true)
+
 - Once your Gitpod workspace has loaded, you'll be asked to paste your service account credentials in the Gitpod terminal at the bottom of the screen. This questions is asked from the [setup.sh](setup.sh) script at root of the repository.
 
-![image](https://user-images.githubusercontent.com/3254549/90944321-e900c300-e3d2-11ea-9624-dae5f81b6a0a.png)
+![image](doc/img/script-copy-creds.png?raw=true)
 
-- After parsing this JSON the script will ask you your `password`.  In the end a couple of environment variables has been created for you can list them with 
+- After parsing this JSON the script will ask you your `password`. 
 
+![image](doc/img/script-ask-password.png?raw=true)
+
+-  In the end,a couple of environment variables has been created for you could list them later this
 ```
 env | grep ASTRA
 ```
 
-Expected output
+**👁️ Expected output**
+
 ```init
 ASTRA_DB_BUNDLE=astra-creds.zip
 ASTRA_DB_USERNAME=petclinic
@@ -133,25 +141,15 @@ ASTRA_DB_KEYSPACE=spring_petclinic
 ```
 
 - When the app is finished building, click the 'Open Browser' button on the bottom right of the screen:
-![image](https://user-images.githubusercontent.com/3254549/90944371-249b8d00-e3d3-11ea-8305-b7d4fad9742c.png)
+![image](doc/img/exec-start.png?raw=true)
 
 - The Application is ready to go
-![image](https://user-images.githubusercontent.com/3254549/90944387-439a1f00-e3d3-11ea-9df4-e8a5580c62cd.png)
+![image](doc/img/exec-api-page.png?raw=true)
 
-### 4. Start locally
+- As schema and reference data are loaded as startup you can already invoke the api like listing the pet types. Locate the resource `GET` on `/petclinic/api/pettypes`, click on the blue bar then `Try it out` and then `execute` you should have the data coming back from the DB. Congratulations you made it !
+![image](doc/img/exec-list-pettypes.png?raw=true)
 
-**✅ Download the secure connection bundle** : First download the secure connect bundle from the UI save it locally
-
-**✅ Define environment variables** : In the folder `src/main/resources` of this repo locate the file `application.yaml` and edit the following keys:
-
-
-**✅ Start the application** : You can now run the application with the command: `mvn spring-boot:run`. This will create the required schema for the application in your Astra database. You should now be able to access
-
-![banner](https://raw.githubusercontent.com/clun/spring-petclinic-reactive/master/doc/img/ui-swagger.png)
-
-### A3 - Build and start the Angular user interface
-
-We suggest using the existing **[spring-petclinic-angular](https://github.com/spring-petclinic/spring-petclinic-angular)** user interface. 
+**✅ Start the WEB UI** : This REST API is meant to be used with the existing **[spring-petclinic-angular](https://github.com/spring-petclinic/spring-petclinic-angular)** user interface. To run the application please execute the following:
 
 ```bash
 git clone https://github.com/spring-petclinic/spring-petclinic-angular.git
@@ -164,8 +162,32 @@ ng build
 ng serve
 ```
 
-You should now be able to access the UI at: [http://localhost:4200](http://localhost:4200)
+You should now be able to access the UI on port 4200.
 ![Pet Clinic Welcome Screen](https://raw.githubusercontent.com/clun/spring-petclinic-reactive/master/doc/img/ui-top.png)
+
+
+### 4. Start locally
+
+**✅ Download the secure connect bundle :** Go to the home page. Execute a refresh of the page using (F5) (the download link will be valid for 5 minutes and we want to ensure NOT to reach the timeout). Locate link Download secure connect bundle and click. You should download a file named secure-connect-<your_db_name>.zip. Please remember the location of the file.
+
+![image](doc/img/cloud-secure-bundle.png?raw=true)
+
+Save the file in a path you will remember, again we will need it for the next exercises.
+
+**✅ Define environment variables** : To start the application needs a few environment variables in order to setup the connection to databases. Please define them like the following
+
+```
+export ASTRA_DB_USERNAME=petclinic
+export ASTRA_DB_PASSWORD=petclinic
+export ASTRA_DB_KEYSPACE=spring_petclinic
+export ASTRA_DB_BUNDLE=/Users/cedricklunven/Downloads/secure-connect-petclinicdb.zip
+```
+
+**✅ Start the application** : You can now run the application with the command: `mvn spring-boot:run`. This will create the required schema for the application in your Astra database.
+
+![image](doc/img/exec-local.png?raw=true)
+
+### 5. More screenShots
 
 - Owners
 ![Pet Clinic Owners Screen](https://raw.githubusercontent.com/clun/spring-petclinic-reactive/master/doc/img/ui-owners.png)
@@ -179,5 +201,7 @@ You should now be able to access the UI at: [http://localhost:4200](http://local
 - Veterinians
 ![Pet Clinic Veterinarians Screen](https://raw.githubusercontent.com/clun/spring-petclinic-reactive/master/doc/img/ui-veterinians.png)
 
+## Architecture
 
+## Contribute
 
