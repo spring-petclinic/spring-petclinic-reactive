@@ -21,12 +21,15 @@ import com.datastax.oss.driver.api.mapper.annotations.Update;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+// TODO: add interface comment
 @Dao
 public interface VisitReactiveDao extends CassandraPetClinicSchema {
     
     @Select
     MappedReactiveResultSet<VisitEntity> findAllReactive();
-    
+
+    // TODO: seems like it would be a good idea to explain why we need custom where clauses
+    //  and possibly add link to documentation
     @Select(customWhereClause = VISIT_ATT_PET_ID + "= :petId")
     MappedReactiveResultSet<VisitEntity> findAllVisitsByPetIdReactive(UUID petId);
     default Flux<VisitEntity> findAllVisitsForAPet(UUID petId) {

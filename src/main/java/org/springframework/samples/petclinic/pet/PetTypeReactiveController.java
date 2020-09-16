@@ -66,7 +66,7 @@ public class PetTypeReactiveController {
     }
     
     @GetMapping(value = "/{petTypeId}", produces = APPLICATION_JSON_VALUE)
-    @ApiOperation(value= "Retrieve pet information information from its unique identifier", response=PetType.class)
+    @ApiOperation(value= "Retrieve pet information information by its unique identifier", response=PetType.class)
     @ApiResponses({
         @ApiResponse(code = 200, message= "the identifier exists and related pet type is returned"), 
         @ApiResponse(code = 400, message= "The name was not valid"), 

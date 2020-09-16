@@ -9,7 +9,6 @@ import java.util.UUID;
  */
 public class Visit extends WebBeanVisitCreation  {
 
-    /** Serial. */
     private static final long serialVersionUID = -7178251172136975063L;
 
     protected UUID id;

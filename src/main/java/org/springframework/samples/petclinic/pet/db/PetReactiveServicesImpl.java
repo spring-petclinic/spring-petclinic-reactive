@@ -19,12 +19,13 @@ import reactor.core.publisher.Mono;
 @Component
 public class PetReactiveServicesImpl implements PetReactiveServices {
 
-    /** Implementation of Crud for repo. */
+    /** Implementation of Crud for pets. */
     private PetReactiveDao petDao;
     
-    /** Implementation of Crud for repo. */
+    /** Implementation of Crud for visits. */
     private VisitReactiveDao visitDao;
     
+    // TODO: Comment sounds odd
     /** List available lists. */
     private ReferenceListReactiveDao refDao;
 

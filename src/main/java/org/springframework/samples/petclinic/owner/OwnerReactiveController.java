@@ -149,8 +149,8 @@ public class OwnerReactiveController {
     }
     
     /**
-     * Create or update a {@link OwnerEntity}. We do not throw exception if the entity already exists
-     * or check existence, as this is would require a read before write, and Cassandra supports an
+     * Create or update a {@link OwnerEntity}. We do not throw an exception if the entity already exists
+     * or check existence, as this would require a read before write, and Cassandra supports an
      * upsert style of interaction.
      *
      * @param ownerId
@@ -167,7 +167,7 @@ public class OwnerReactiveController {
                   response=Owner.class)
     @ApiResponses({
         @ApiResponse(code = 201, message= "The owner has been created, uuid is provided in header"), 
-        @ApiResponse(code = 400, message= "The owner bean was not OK"), 
+        @ApiResponse(code = 400, message= "The owner bean was not OK"),  // TODO: what does "not OK" mean"? malformed?
         @ApiResponse(code = 500, message= "Internal technical error") })
     public Mono<ResponseEntity<Owner>> upsertOwner(
             UriComponentsBuilder uc, 
@@ -182,7 +182,7 @@ public class OwnerReactiveController {
      * Delete a owner by its unique identifier.
      *
      * @param vetId
-     *      vetirinian identifier
+     *      veterinarian identifier
      * @return
      */
     @DeleteMapping("/{ownerId}")

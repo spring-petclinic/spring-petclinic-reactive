@@ -14,7 +14,6 @@ import org.springframework.samples.petclinic.visit.Visit;
  */
 public class Pet implements Serializable {
 
-    /** Serial. */
     private static final long serialVersionUID = 6533528868325708859L;
     
     protected UUID id;

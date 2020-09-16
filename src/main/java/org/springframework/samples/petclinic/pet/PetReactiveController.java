@@ -37,7 +37,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 /**
- * Reactive CRUD operation (WEbFlux) for entity Vet.
+ * Reactive CRUD operation (WEbFlux) for pet entity.
  *
  * @author Cedrick LUNVEN (@clunven)
  */
@@ -73,9 +73,11 @@ public class PetReactiveController {
     public Flux<Pet> findAllPets() {
         return petServices.findAllPets();
     }
-    
+
+    // TODO: I don't understand the significance of "(even if not PK)".
+    //  Why is this important to know? Are we taking advantage of an index in some circumstances but not others?
     /**
-     * Retrieve pets information from its unique identifier (even if not PK)
+     * Retrieve a pet's information by its unique identifier (even if not PK)
      *
      * @param ownerId
      *      unique identifer as a String, to be converted in {@link UUID}.
@@ -83,11 +85,11 @@ public class PetReactiveController {
      *      a {@link Mono} of {@link OwnerEntity} or empty response with not found (404) code
      */
     @GetMapping(value = "/{petId}", produces = APPLICATION_JSON_VALUE)
-    @ApiOperation(value= "Retrieve pet information from its unique identifier", response=Pet.class)
+    @ApiOperation(value= "Retrieve pet information by its unique identifier", response=Pet.class)
     @ApiResponses({
         @ApiResponse(code = 200, message= "the identifier exists and related pet is returned"), 
         @ApiResponse(code = 400, message= "The uid was not a valid UUID"), 
-        @ApiResponse(code = 404, message= "the identifier does not exists in DB"), 
+        @ApiResponse(code = 404, message= "the identifier does not exist in DB"),
         @ApiResponse(code = 500, message= "Internal technical error") })
     public Mono<ResponseEntity<Pet>> findPetById(@PathVariable("petId") @Parameter(
                required = true,example = "1ff2fbd9-bbb0-4cc1-ba37-61966aa7c5e6",
@@ -97,9 +99,11 @@ public class PetReactiveController {
                           .defaultIfEmpty(ResponseEntity.notFound().build());
     }
     
+    // TODO: Not sure why this duplication is needed.
+    //  And I don't see a "PetTypeController" only a "PetTypeReactiveController"
     /**
-     * This is a duplications from PetTypeController.
-     * - (copied behaviour from existing REST implementation)
+     * This is a duplication from PetTypeController.
+     * - (copied behavior from existing REST implementation)
      */
     @GetMapping(value = "/pettypes", produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value= "Read all pet typesfrom database", 
@@ -136,9 +140,9 @@ public class PetReactiveController {
     }
     
     /**
-     * Create or update a {@link PetEntity}. We do not throw exception is already exist
-     * or check existence as this is the behavirous in a cassandra table to read
-     * before write.
+     * Create or update a {@link PetEntity}. We do not throw an exception if the entity already exists
+     * or check existence, as this would require a read before write, and Cassandra supports an
+     * upsert style of interaction.
      *
      * @param ownerId
      *      unique identifier for pet
@@ -154,7 +158,7 @@ public class PetReactiveController {
                   response=PetEntity.class)
     @ApiResponses({
         @ApiResponse(code = 201, message= "The owner has been created, uuid is provided in header"), 
-        @ApiResponse(code = 400, message= "The owner bean was not OK"), 
+        @ApiResponse(code = 400, message= "The owner bean was not OK"), // TODO: what does "not OK" mean"? malformed?
         @ApiResponse(code = 500, message= "Internal technical error") })
     public Mono<ResponseEntity<Pet>> upsertPet(
             UriComponentsBuilder uc, 
@@ -167,14 +171,14 @@ public class PetReactiveController {
     }
     
     /**
-     * Delete a pet from its unique identifier.
+     * Delete a pet by its unique identifier.
      *
      * @param vetId
-     *      vetirinian identifier
+     *      veterinarian identifier
      * @return
      */
     @DeleteMapping("/{petId}")
-    @ApiOperation(value= "Delete a pet from its unique identifier", response=Void.class)
+    @ApiOperation(value= "Delete a pet by its unique identifier", response=Void.class)
     @ApiResponses({
         @ApiResponse(code = 204, message= "The pet has been deleted"), 
         @ApiResponse(code = 400, message= "The uid was not a valid UUID"),

@@ -41,7 +41,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 /**
- * Reactive CRUD operation (WEbFlux) for entity Vet.
+ * Reactive CRUD operation (WEbFlux) for vet entity.
  *
  * @author Cedrick LUNVEN (@clunven)
  */
@@ -56,7 +56,7 @@ import reactor.core.publisher.Mono;
 @Api(value="/petclinic/api/vets", tags = {"Veterinarians Api"})
 public class VetReactiveController {
     
-    /** Implementation of Crud for repo. */
+    /** Implementation of Crud operations for vets. */
     private final VetReactiveDao vetRepo;
     
     /**
@@ -84,15 +84,15 @@ public class VetReactiveController {
     }
     
     /**
-     * Retrieve veterinarian information from its unique identifier.
+     * Retrieve veterinarian information by its unique identifier.
      *
      * @param vetId
-     *      unique identifer as a String, to be converted in {@link UUID}.
+     *      unique identifier as a String, to be converted in {@link UUID}.
      * @return
      *      a {@link Mono} of {@link VetEntity} or empty response with not found (404) code
      */
     @GetMapping(value = "/{vetId}", produces = APPLICATION_JSON_VALUE)
-    @ApiOperation(value= "Retrieve veterinarian information from its unique identifier", response=Vet.class)
+    @ApiOperation(value= "Retrieve veterinarian information by its unique identifier", response=Vet.class)
     @ApiResponses({
         @ApiResponse(code = 200, message= "the identifier exists and related veterinarian is returned"), 
         @ApiResponse(code = 400, message= "The uid was not a valid UUID"), 
@@ -119,7 +119,7 @@ public class VetReactiveController {
     @PostMapping(produces = APPLICATION_JSON_VALUE, consumes=APPLICATION_JSON_VALUE)
     @ApiOperation(value= "Create a new veterinarian, an unique identifier is generated and returned", response=Vet.class)
     @ApiResponses({
-        @ApiResponse(code = 201, message= "The veterinian has been created, uuid is provided in header"), 
+        @ApiResponse(code = 201, message= "The veterinarian has been created, uuid is provided in header"),
         @ApiResponse(code = 400, message= "The uid was not a valid UUID"), 
         @ApiResponse(code = 500, message= "Internal technical error") })
     public Mono<ResponseEntity<Vet>> createVet(UriComponentsBuilder ucBuilder, @RequestBody Vet vetRequest) {
@@ -136,9 +136,9 @@ public class VetReactiveController {
     }
     
     /**
-     * Create or update a {@link VetEntity}. We do not throw exception is already exist
-     * or check existence as this is the behavirous in a cassandra table to read
-     * before write.
+     * Create or update a {@link VetEntity}. We do not throw an exception if the entity already exists
+     * or check existence, as this would require a read before write, and Cassandra supports an
+     * upsert style of interaction.
      *
      * @param request
      *      current http request
@@ -148,9 +148,9 @@ public class VetReactiveController {
      *      the create vet.
      */
     @PutMapping(value="/{vetId}", produces = APPLICATION_JSON_VALUE, consumes=APPLICATION_JSON_VALUE)
-    @ApiOperation(value= "Upsert a veterinian (no read before write as for Cassandra)", response=Vet.class)
+    @ApiOperation(value= "Upsert a veterinarian (no read before write as for Cassandra)", response=Vet.class)
     @ApiResponses({
-        @ApiResponse(code = 201, message= "The veterinian has been created, uuid is provided in header"), 
+        @ApiResponse(code = 201, message= "The veterinarian has been created, uuid is provided in header"),
         @ApiResponse(code = 400, message= "The uid was not a valid UUID"), 
         @ApiResponse(code = 500, message= "Internal technical error") })
     public Mono<ResponseEntity<Vet>> upsert(
@@ -170,16 +170,16 @@ public class VetReactiveController {
     }
     
     /**
-     * Delete a vetirinian from its unique identifier.
+     * Delete a veterinarian by its unique identifier.
      *
      * @param vetId
-     *      vetirinian identifier
+     *      veterinarian identifier
      * @return
      */
     @DeleteMapping("/{vetId}")
-    @ApiOperation(value= "Delete a veterinarian from its unique identifier", response=Void.class)
+    @ApiOperation(value= "Delete a veterinarian by its unique identifier", response=Void.class)
     @ApiResponses({
-        @ApiResponse(code = 204, message= "The veterinian has been deleted"), 
+        @ApiResponse(code = 204, message= "The veterinarian has been deleted"),
         @ApiResponse(code = 400, message= "The uid was not a valid UUID"),
         @ApiResponse(code = 500, message= "Internal technical error") })
     public Mono<ResponseEntity<Void>> deleteById(@PathVariable("vetId") @Parameter(

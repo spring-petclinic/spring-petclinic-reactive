@@ -4,9 +4,9 @@ import java.io.Serializable;
 
 import org.springframework.samples.petclinic.pet.Pet;
 
+// TODO: add class comment
 public class WebBeanVisitCreation implements Serializable {
 
-    /** Serial. */
     private static final long serialVersionUID = -787431802048881983L;
     protected String date;
     protected String description;
