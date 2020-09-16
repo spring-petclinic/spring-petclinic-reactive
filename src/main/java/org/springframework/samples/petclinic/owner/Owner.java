@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-import org.springframework.samples.petclinic.pet.WebBeanPet;
+import org.springframework.samples.petclinic.pet.Pet;
 
 /**
  * Bean expected by the UI with hierarchy owner 1..n -> Pet 1..n -> Visit.
@@ -15,15 +15,15 @@ import org.springframework.samples.petclinic.pet.WebBeanPet;
 public class Owner implements Serializable {
 
     private static final long serialVersionUID = -140951859331681727L;
-
+    
     private UUID id;
     private String firstName;
     private String lastName;
     private String address;
     private String city;
     private String telephone;
-    private Set<WebBeanPet> pets = new HashSet<>();
-
+    private Set<Pet> pets = new HashSet<>();
+    
     public Owner() {}
     
     public Owner(UUID ownerId) {
@@ -64,7 +64,7 @@ public class Owner implements Serializable {
      * @return
      *       current value of 'pets'
      */
-    public Set<WebBeanPet> getPets() {
+    public Set<Pet> getPets() {
         return pets;
     }
     /**
@@ -72,7 +72,7 @@ public class Owner implements Serializable {
      * @param pets
      * 		new value for 'pets '
      */
-    public void setPets(Set<WebBeanPet> pets) {
+    public void setPets(Set<Pet> pets) {
         this.pets = pets;
     }
 
@@ -179,5 +179,5 @@ public class Owner implements Serializable {
             return false;
         return true;
     }
-
+    
 }

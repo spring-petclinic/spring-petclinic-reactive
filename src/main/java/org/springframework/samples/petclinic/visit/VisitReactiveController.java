@@ -15,10 +15,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.samples.petclinic.conf.MappingUtils;
 import org.springframework.samples.petclinic.owner.db.OwnerEntity;
-import org.springframework.samples.petclinic.pet.Pet;
-import org.springframework.samples.petclinic.pet.PetReactiveDao;
-import org.springframework.samples.petclinic.pet.PetReactiveDaoMapperBuilder;
+import org.springframework.samples.petclinic.pet.db.PetEntity;
+import org.springframework.samples.petclinic.pet.db.PetReactiveDao;
+import org.springframework.samples.petclinic.pet.db.PetReactiveDaoMapperBuilder;
 import org.springframework.samples.petclinic.reflist.ReferenceListReactiveDao;
+import org.springframework.samples.petclinic.visit.db.VisitEntity;
+import org.springframework.samples.petclinic.visit.db.VisitReactiveDao;
+import org.springframework.samples.petclinic.visit.db.VisitReactiveDaoMapperBuilder;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -77,16 +80,16 @@ public class VisitReactiveController {
      * Read all pets from database.
      *
      * @return
-     *   a {@link Flux} containing {@link Pet}
+     *   a {@link Flux} containing {@link PetEntity}
      */
     @GetMapping(produces = APPLICATION_JSON_VALUE)
-    @ApiOperation(value= "Read all visits in database", response=WebBeanVisit.class)
+    @ApiOperation(value= "Read all visits in database", response=Visit.class)
     @ApiResponses({
         @ApiResponse(code = 200, message= "List of visits (even if empty)"), 
         @ApiResponse(code = 500, message= "Internal technical error") })
-    public Flux<WebBeanVisit> findAllVisits() {
+    public Flux<Visit> findAllVisits() {
         return Flux.from(visitDao.findAllReactive())
-                   .map(MappingUtils::fromVisitEntityToWebBean)
+                   .map(MappingUtils::mapEntityToVisit)
                    .flatMap(petDao::populatePetForVisit);
     }
     
@@ -99,24 +102,24 @@ public class VisitReactiveController {
      *      a {@link Mono} of {@link OwnerEntity} or empty response with not found (404) code
      */
     @GetMapping(value = "/{visitId}", produces = APPLICATION_JSON_VALUE)
-    @ApiOperation(value= "Retrieve visit information from its unique identifier", response=WebBeanVisit.class)
+    @ApiOperation(value= "Retrieve visit information from its unique identifier", response=Visit.class)
     @ApiResponses({
         @ApiResponse(code = 200, message= "the identifier exists and related visit is returned"), 
         @ApiResponse(code = 400, message= "The uid was not a valid UUID"), 
         @ApiResponse(code = 404, message= "the identifier does not exists in DB"), 
         @ApiResponse(code = 500, message= "Internal technical error") })
-    public Mono<ResponseEntity<WebBeanVisit>> findVisitById(@PathVariable("visitId") @Parameter(
+    public Mono<ResponseEntity<Visit>> findVisitById(@PathVariable("visitId") @Parameter(
                required = true,example = "1ff2fbd9-bbb0-4cc1-ba37-61966aa7c5e6",
                description = "Unique identifier of a Owner") String visitId) {
         return visitDao.findByVisitIdReactive((UUID.fromString(visitId)))
-                   .map(MappingUtils::fromVisitEntityToWebBean)
+                   .map(MappingUtils::mapEntityToVisit)
                    .flatMap(petDao::populatePetForVisit)
                    .map(ResponseEntity::ok)
                    .defaultIfEmpty(ResponseEntity.notFound().build());
     }
     
     /**
-     * Create a {@link Visit} when we don't know the visit identifier.
+     * Create a {@link VisitEntity} when we don't know the visit identifier.
      *
      * @param request
      *      current http request
@@ -127,18 +130,18 @@ public class VisitReactiveController {
      */
     @PostMapping(produces = APPLICATION_JSON_VALUE, consumes=APPLICATION_JSON_VALUE)
     @ApiOperation(value= "Create a new visit, an unique identifier is generated and returned", 
-                  response=WebBeanVisit.class)
+                  response=Visit.class)
     @ApiResponses({
         @ApiResponse(code = 201, message= "The visit has been created, uuid is provided in header"), 
         @ApiResponse(code = 400, message= "Invalid Dto provided"), 
         @ApiResponse(code = 500, message= "Internal technical error") })
-    public Mono<ResponseEntity<WebBeanVisit>> createVisit(
+    public Mono<ResponseEntity<Visit>> createVisit(
             UriComponentsBuilder ucBuilder,
             @RequestBody WebBeanVisitCreation dto) {
-      Visit v = MappingUtils.fromVisitWebBeanCreationToEntity(dto);
+      VisitEntity v = MappingUtils.fromVisitWebBeanCreationToEntity(dto);
       v.setVisitId(UUID.randomUUID());
       return visitDao.save(v)
-              .map(MappingUtils::fromVisitEntityToWebBean)
+              .map(MappingUtils::mapEntityToVisit)
               .map(created -> ResponseEntity.created(
                       ucBuilder.path("/api/owners/{id}")
                                .buildAndExpand(created.getId().toString())
@@ -147,7 +150,7 @@ public class VisitReactiveController {
     }
     
     /**
-     * Create or update a {@link Visit}. We do not throw exception is already exist
+     * Create or update a {@link VisitEntity}. We do not throw exception is already exist
      * or check existence as this is the behavirous in a cassandra table to read
      * before write.
      *
@@ -162,20 +165,20 @@ public class VisitReactiveController {
                 consumes=APPLICATION_JSON_VALUE,
                 produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value= "Upsert a pet (no read before write as for Cassandra)", 
-                  response=WebBeanVisit.class)
+                  response=Visit.class)
     @ApiResponses({
         @ApiResponse(code = 201, message= "The visit has been created, uuid is provided in header"), 
         @ApiResponse(code = 400, message= "The visit bean was not OK"), 
         @ApiResponse(code = 500, message= "Internal technical error") })
-    public Mono<ResponseEntity<WebBeanVisit>> upsertVisit(
+    public Mono<ResponseEntity<Visit>> upsertVisit(
             UriComponentsBuilder ucBuilder, 
             @PathVariable("visitId") String visitId, 
-            @RequestBody WebBeanVisit visit) {
+            @RequestBody Visit visit) {
       Objects.requireNonNull(visit);
       Assert.isTrue(UUID.fromString(visitId).equals(visit.getId()), 
               "Visit");
-      return visitDao.save(MappingUtils.fromVisitWebBeanToEntity(visit)) // change to entity
-                   .map(MappingUtils::fromVisitEntityToWebBean)          // back to web
+      return visitDao.save(MappingUtils.mapVisitToEntity(visit)) // change to entity
+                   .map(MappingUtils::mapEntityToVisit)          // back to web
                    .flatMap(petDao::populatePetForVisit)
                    .map(created -> ResponseEntity.created(
                       ucBuilder.path("/api/owners/{id}")

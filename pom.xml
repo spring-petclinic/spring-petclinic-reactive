@@ -22,20 +22,61 @@
 		<cassandra-native-protocol.version>1.4.11</cassandra-native-protocol.version>
 		<springfox.version>3.0.0</springfox.version>
 		<slf4j.version>1.7.30</slf4j.version>
+		<spring-cloud.version>Hoxton.SR8</spring-cloud.version>
 	</properties>
+
+	<!-- Enabling SpringCloud features -->
+	<dependencyManagement>
+	    <dependencies>
+	        <dependency>
+	            <groupId>org.springframework.cloud</groupId>
+	            <artifactId>spring-cloud-dependencies</artifactId>
+	            <version>${spring-cloud.version}</version>
+	            <type>pom</type>
+	            <scope>import</scope>
+	        </dependency>
+	    </dependencies>
+	</dependencyManagement>
 
 	<dependencies>
 
-		<!-- API -->
+		<!-- Reactive REST API -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-webflux</artifactId>
 		</dependency>
+		
+		<!-- Api documentation -->
 		<dependency>
 			<groupId>io.springfox</groupId>
 			<artifactId>springfox-boot-starter</artifactId>
 			<version>${springfox.version}</version>
 		</dependency>
+		
+		<!-- AuthenticationAuthorization -->
+		 <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+        
+        <!-- Distributed Tracing (ZipKin) -->
+    	<dependency>
+        	<groupId>org.springframework.cloud</groupId>
+        	<artifactId>spring-cloud-starter-sleuth</artifactId>
+    	</dependency>
+    	<dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-sleuth-zipkin</artifactId>
+        </dependency>
+        <!-- Export to Prometheus -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+    	<dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-registry-prometheus</artifactId>
+        </dependency>
 
 		<!-- Driver (overriding spring defaults) -->
 		<dependency>
@@ -152,6 +193,17 @@
 					</annotationProcessorPaths>
 				</configuration>
 			</plugin>
+			<plugin>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-jar-plugin</artifactId>
+            <configuration>
+            	<archive>
+                	<manifest>
+                    	<mainClass>org.springframework.samples.petclinic.PetClinicApplication</mainClass>
+                    </manifest>
+                 </archive>
+            </configuration>
+    	    </plugin>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>

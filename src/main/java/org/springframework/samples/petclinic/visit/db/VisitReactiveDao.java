@@ -1,4 +1,4 @@
-package org.springframework.samples.petclinic.visit;
+package org.springframework.samples.petclinic.visit.db;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -8,7 +8,8 @@ import java.util.function.Supplier;
 import org.springframework.samples.petclinic.conf.CassandraPetClinicSchema;
 import org.springframework.samples.petclinic.conf.MappingUtils;
 import org.springframework.samples.petclinic.owner.Owner;
-import org.springframework.samples.petclinic.pet.WebBeanPet;
+import org.springframework.samples.petclinic.pet.Pet;
+import org.springframework.samples.petclinic.visit.Visit;
 
 import com.datastax.dse.driver.api.core.cql.reactive.ReactiveResultSet;
 import com.datastax.dse.driver.api.mapper.reactive.MappedReactiveResultSet;
@@ -24,40 +25,40 @@ import reactor.core.publisher.Mono;
 public interface VisitReactiveDao extends CassandraPetClinicSchema {
     
     @Select
-    MappedReactiveResultSet<Visit> findAllReactive();
+    MappedReactiveResultSet<VisitEntity> findAllReactive();
     
     @Select(customWhereClause = VISIT_ATT_PET_ID + "= :petId")
-    MappedReactiveResultSet<Visit> findAllVisitsByPetIdReactive(UUID petId);
-    default Flux<Visit> findAllVisitsForAPet(UUID petId) {
+    MappedReactiveResultSet<VisitEntity> findAllVisitsByPetIdReactive(UUID petId);
+    default Flux<VisitEntity> findAllVisitsForAPet(UUID petId) {
         return Flux.from(findAllVisitsByPetIdReactive(petId));
     }
 
     @Select(customWhereClause = VISIT_ATT_VISIT_ID + "= :visitId", allowFiltering = true)
-    MappedReactiveResultSet<Visit> findByVisitIdReactiveRs(UUID visitId);
-    default Mono<Visit> findByVisitIdReactive(UUID visitId) {
+    MappedReactiveResultSet<VisitEntity> findByVisitIdReactiveRs(UUID visitId);
+    default Mono<VisitEntity> findByVisitIdReactive(UUID visitId) {
         return Mono.from(findByVisitIdReactiveRs(visitId));
     }
     
     @Update
-    ReactiveResultSet updateReactive(Visit visit);
-    default Mono<Visit> save(Visit visit) {
+    ReactiveResultSet updateReactive(VisitEntity visit);
+    default Mono<VisitEntity> save(VisitEntity visit) {
         return Mono.from(updateReactive(visit)).map(rr -> visit);
     }
     
     @Delete
-    ReactiveResultSet deleteReactive(Visit visit);
-    default Mono<Boolean> delete(Visit visit) {
+    ReactiveResultSet deleteReactive(VisitEntity visit);
+    default Mono<Boolean> delete(VisitEntity visit) {
         return Mono.from(deleteReactive(visit))
                    .map(rr -> rr.wasApplied());
     }
     
-    default Mono<WebBeanPet> populateVisitsForPet(WebBeanPet wbp) {
+    default Mono<Pet> populateVisitsForPet(Pet wbp) {
         // Flux<Visit> 
         return findAllVisitsForAPet(wbp.getId())
             // Flux<VisitWebBean>
-            .map(MappingUtils::fromVisitEntityToWebBean)
+            .map(MappingUtils::mapEntityToVisit)
             // Mono<HashSet<Object>>
-            .collect((Supplier<Set<WebBeanVisit>>) HashSet::new, Set::add)
+            .collect((Supplier<Set<Visit>>) HashSet::new, Set::add)
             // Populate input
             .doOnNext(wbp::setVisits)
             // return object populated

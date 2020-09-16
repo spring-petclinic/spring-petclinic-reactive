@@ -1,28 +1,69 @@
-# --------------------------------
-#  Spring Core
-# --------------------------------
+###
+#              |\      _,,,--,,_
+#             /,`.-'`'   ._  \-;;,_
+#  _______ __|,4-  ) )_   .;.(__`'-'__     ___ __    _ ___ _______
+# |       | '---''(_/._)-'(_\_)   |   |   |   |  |  | |   |       |
+# |    _  |    ___|_     _|       |   |   |   |   |_| |   |       | __ _ _
+# |   |_| |   |___  |   | |       |   |   |   |       |   |       | \ \ \ \
+# |    ___|    ___| |   | |      _|   |___|   |  _    |   |      _|  \ \ \ \
+# |   |   |   |___  |   | |     |_|       |   | | |   |   |     |_    ) ) ) )
+# |___|   |_______| |___| |_______|_______|___|_|  |__|___|_______|  / / / /
+# ==================================================================/_/_/_/
+#
+# Implementation of Pet Clinic using Spring WebFlux
+# - Persistence is Apache Cassandra (Astra = DBaas)
+# - Authentication is enabled with Spring Security
+# - Distributed tracing is done through brave => Zipkins with spring-cloud-sleuth
+# - Actuator export metrics and health
+#
+# authors: DataStax developer team
+#
+
+# Expose API through this port (setup the UI accordingly)
 server:
   port: ${PORT:9966}
-    
-# --------------------------------
-#  Connectivity to Cassandra
-# --------------------------------
-spring.data.cassandra:
-  
-  # keys for all
-  keyspace-name: spring_petclinic
-  username: petclinic
-  password: petclinic
-  schema-action: CREATE_IF_NOT_EXISTS
-  
-  # Keys for local
-  contact-points: localhost
-  port: 9042
-  local-datacenter: datacenter1
-  
-  #Keys for astra
-  astra:
-    enabled: true
-    secure-connect-bundle: /Users/cedricklunven/Downloads/secure-connect-demos.zip
 
-# TODO: should there be a note to developers that they need to change this value?
+# Expose Management endpoint through this port (setup prometheus accordingly)
+management:
+  server:
+    port: 9967
+  endpoint:
+    env:
+      enabled: true
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+# Spring Configuration
+spring:
+  
+  # Persistence to Apache Cassandra
+  data:
+    cassandra:
+      keyspace-name: ${ASTRA_DB_KEYSPACE}
+      username: ${ASTRA_DB_USERNAME}
+      password: ${ASTRA_DB_PASSWORD}
+      schema-action: CREATE_IF_NOT_EXISTS
+      # When using Astra
+      astra:
+        enabled: true
+        secure-connect-bundle: ${ASTRA_DB_BUNDLE}
+      # When using local Cassandra (docker)
+      contact-points: localhost
+      #port: 9042
+      #local-datacenter: datacenter1
+
+  # Distributed tracing with Brave/Zipkin/Sleuth
+  zipkin:
+    enabled: false
+    baseUrl: http://localhost:9411
+    sender:
+      type: web
+
+# Enable Spring Security through Flag
+petclinic.security.enable: false

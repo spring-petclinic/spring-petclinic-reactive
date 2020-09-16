@@ -9,9 +9,9 @@ import java.util.function.Supplier;
 import org.springframework.samples.petclinic.conf.MappingUtils;
 import org.springframework.samples.petclinic.owner.Owner;
 import org.springframework.samples.petclinic.owner.OwnerReactiveServices;
-import org.springframework.samples.petclinic.pet.PetReactiveDao;
-import org.springframework.samples.petclinic.pet.WebBeanPet;
-import org.springframework.samples.petclinic.visit.VisitReactiveDao;
+import org.springframework.samples.petclinic.pet.Pet;
+import org.springframework.samples.petclinic.pet.db.PetReactiveDao;
+import org.springframework.samples.petclinic.visit.db.VisitReactiveDao;
 import org.springframework.stereotype.Component;
 
 import reactor.core.publisher.Flux;
@@ -95,13 +95,11 @@ public class OwnerReactiveServicesImpl implements OwnerReactiveServices {
     // TODO: inherit doc?
     private Mono<Owner> populateOwner(Owner wbo) {
         return petDao.findAllByOwnerIdReactive(wbo.getId())
-                .map(MappingUtils::fromPetEntityToWebBean)
+                .map(MappingUtils::mapEntityAsPet)
                 .flatMap(visitDao::populateVisitsForPet)
-                .collect((Supplier<Set<WebBeanPet>>) HashSet::new, Set::add)
+                .collect((Supplier<Set<Pet>>) HashSet::new, Set::add)
                 .doOnNext(wbo::setPets)
                 .map(set -> wbo);
     }
-    
-    
 
 }

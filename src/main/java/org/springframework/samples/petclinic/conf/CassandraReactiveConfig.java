@@ -12,10 +12,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.samples.petclinic.owner.db.OwnerReactiveDao;
 import org.springframework.samples.petclinic.owner.db.OwnerReactiveDaoMapperBuilder;
-import org.springframework.samples.petclinic.pet.PetReactiveDao;
-import org.springframework.samples.petclinic.pet.PetReactiveDaoMapperBuilder;
-import org.springframework.samples.petclinic.visit.VisitReactiveDao;
-import org.springframework.samples.petclinic.visit.VisitReactiveDaoMapperBuilder;
+import org.springframework.samples.petclinic.pet.db.PetReactiveDao;
+import org.springframework.samples.petclinic.pet.db.PetReactiveDaoMapperBuilder;
+import org.springframework.samples.petclinic.vet.db.VetReactiveDao;
+import org.springframework.samples.petclinic.vet.db.VetReactiveDaoMapperBuilder;
+import org.springframework.samples.petclinic.visit.db.VisitReactiveDao;
+import org.springframework.samples.petclinic.visit.db.VisitReactiveDaoMapperBuilder;
 
 import com.datastax.oss.driver.api.core.ConsistencyLevel;
 import com.datastax.oss.driver.api.core.CqlSession;
@@ -44,7 +46,7 @@ public class CassandraReactiveConfig implements CassandraPetClinicSchema {
     @Value("${spring.data.cassandra.schema-action}")
     private String schemaAction;
     
-    @Value("${spring.data.cassandra.local-datacenter}")
+    @Value("${spring.data.cassandra.local-datacenter:datacenter1}")
     private String dc;
     
     @Value("${spring.data.cassandra.username}")
@@ -53,13 +55,13 @@ public class CassandraReactiveConfig implements CassandraPetClinicSchema {
     @Value("${spring.data.cassandra.password}")
     private String password;
     
-    @Value("${spring.data.cassandra.port}")
+    @Value("${spring.data.cassandra.port:9042}")
     private int port;
     
     @Value("#{'${spring.data.cassandra.contact-points}'.split(',')}") 
     private List<String> contactPoints;
     
-    @Value("${spring.data.cassandra.astra.enabled}")
+    @Value("${spring.data.cassandra.astra.enabled:true}")
     private boolean useAstra;
     
     @Value("${spring.data.cassandra.astra.secure-connect-bundle}")
@@ -75,7 +77,6 @@ public class CassandraReactiveConfig implements CassandraPetClinicSchema {
         om.put(TypedDriverOption.CONNECTION_SET_KEYSPACE_TIMEOUT, Duration.ofSeconds(20));
         om.put(TypedDriverOption.CONTROL_CONNECTION_AGREEMENT_TIMEOUT, Duration.ofSeconds(20));
         om.put(TypedDriverOption.REQUEST_CONSISTENCY, ConsistencyLevel.LOCAL_QUORUM.name());
-        
         
         if (useAstra) {
             LOGGER.info("+ Connection to Datastax Astra:");
@@ -98,22 +99,40 @@ public class CassandraReactiveConfig implements CassandraPetClinicSchema {
         return cqlSession;
     }
     
+    /**
+     * Initialized {@link OwnerReactiveDao} as a Spring Singleton.
+     */
     @Bean
     public OwnerReactiveDao ownerDao(CqlSession cqlSession) {
         return new OwnerReactiveDaoMapperBuilder(cqlSession)
             .build().ownerDao(cqlSession.getKeyspace().get());
     }
     
+    /**
+     * Initialized {@link PetReactiveDao} as a Spring Singleton.
+     */
     @Bean
     public PetReactiveDao petDao(CqlSession cqlSession) {
         return new PetReactiveDaoMapperBuilder(cqlSession).build()
                 .petDao(cqlSession.getKeyspace().get());
     }
     
+    /**
+     * Initialized {@link VisitReactiveDao} as a Spring Singleton.
+     */
     @Bean
     public VisitReactiveDao visitDao(CqlSession cqlSession) {
         return new VisitReactiveDaoMapperBuilder(cqlSession).build()
                 .visitDao(cqlSession.getKeyspace().get());
+    }
+    
+    /**
+     * Initialized {@link VetReactiveDaos} as a Spring Singleton.
+     */
+    @Bean
+    public VetReactiveDao vetDao(CqlSession cqlSession) {
+        return new VetReactiveDaoMapperBuilder(cqlSession).build()
+                .vetDao(cqlSession.getKeyspace().get());
     }
     
     

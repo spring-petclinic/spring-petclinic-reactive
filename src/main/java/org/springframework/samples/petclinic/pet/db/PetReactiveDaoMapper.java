@@ -1,6 +1,4 @@
-package org.springframework.samples.petclinic.visit;
-
-import org.springframework.samples.petclinic.conf.CassandraPetClinicSchema;
+package org.springframework.samples.petclinic.pet.db;
 
 import com.datastax.oss.driver.api.core.CqlIdentifier;
 import com.datastax.oss.driver.api.mapper.annotations.DaoFactory;
@@ -8,8 +6,9 @@ import com.datastax.oss.driver.api.mapper.annotations.DaoKeyspace;
 import com.datastax.oss.driver.api.mapper.annotations.Mapper;
 
 @Mapper
-public interface VisitReactiveDaoMapper extends CassandraPetClinicSchema {
+public interface PetReactiveDaoMapper {
     
     @DaoFactory
-    VisitReactiveDao visitDao(@DaoKeyspace CqlIdentifier keyspace);
+    PetReactiveDao petDao(@DaoKeyspace CqlIdentifier keyspace);
+    
 }

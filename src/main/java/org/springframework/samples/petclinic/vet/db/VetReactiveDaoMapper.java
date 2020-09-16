@@ -1,4 +1,4 @@
-package org.springframework.samples.petclinic.pet;
+package org.springframework.samples.petclinic.vet.db;
 
 import com.datastax.oss.driver.api.core.CqlIdentifier;
 import com.datastax.oss.driver.api.mapper.annotations.DaoFactory;
@@ -6,9 +6,9 @@ import com.datastax.oss.driver.api.mapper.annotations.DaoKeyspace;
 import com.datastax.oss.driver.api.mapper.annotations.Mapper;
 
 @Mapper
-public interface PetReactiveDaoMapper {
+public interface VetReactiveDaoMapper {
     
     @DaoFactory
-    PetReactiveDao petDao(@DaoKeyspace CqlIdentifier keyspace);
-    
+    VetReactiveDao vetDao(@DaoKeyspace CqlIdentifier keyspace);
+     
 }

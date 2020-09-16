@@ -38,8 +38,7 @@ public interface CassandraPetClinicSchema {
      * );
      */
     SimpleStatement CREATE_TABLE_VET = 
-            createTable(VET_TABLE)
-            .ifNotExists()
+            createTable(VET_TABLE).ifNotExists()
             .withPartitionKey(VET_ATT_ID, DataTypes.UUID)
             .withColumn(VET_ATT_FIRSTNAME, DataTypes.TEXT)
             .withColumn(VET_ATT_LASTNAME, DataTypes.TEXT)
@@ -47,8 +46,7 @@ public interface CassandraPetClinicSchema {
             .build();
     
     SimpleStatement CREATE_INDEX_VETNAME = 
-            createIndex(VET_IDX_NAME)
-            .ifNotExists()
+            createIndex(VET_IDX_NAME).ifNotExists()
             .onTable(VET_TABLE)
             .andColumn(VET_ATT_LASTNAME)
             .build();
@@ -74,8 +72,7 @@ public interface CassandraPetClinicSchema {
      *);
      */
     SimpleStatement CREATE_TABLE_OWNER = 
-            createTable(OWNER_TABLE)
-            .ifNotExists()
+            createTable(OWNER_TABLE).ifNotExists()
             .withPartitionKey(OWNER_ATT_ID, DataTypes.UUID)
             .withColumn(OWNER_ATT_FIRSTNAME, DataTypes.TEXT)
             .withColumn(OWNER_ATT_LASTNAME, DataTypes.TEXT)
@@ -85,8 +82,7 @@ public interface CassandraPetClinicSchema {
             .build();
     
     SimpleStatement CREATE_INDEX_OWNERNAME = 
-            createIndex(OWNER_IDX_NAME)
-            .ifNotExists()
+            createIndex(OWNER_IDX_NAME).ifNotExists()
             .onTable(OWNER_TABLE)
             .andColumn(OWNER_ATT_LASTNAME)
             .build();
@@ -116,8 +112,7 @@ public interface CassandraPetClinicSchema {
      *);
      */
     SimpleStatement CREATE_TABLE_VET_SPECIALTY =
-            createTable(VET_SPECIALTY_TABLE)
-            .ifNotExists()
+            createTable(VET_SPECIALTY_TABLE).ifNotExists()
             .withPartitionKey(VET_SPECIALTY_ATT_SPECIALTY, DataTypes.TEXT)
             .withClusteringColumn(VET_SPECIALTY_ATT_VETID, DataTypes.UUID)
             .withColumn(VET_SPECIALTY_ATT_LASTNAME, DataTypes.TEXT)
@@ -141,8 +136,7 @@ public interface CassandraPetClinicSchema {
      * );
      */
     SimpleStatement CREATE_TABLE_REFLIST = 
-            createTable(REFLIST_TABLE)
-            .ifNotExists()
+            createTable(REFLIST_TABLE).ifNotExists()
             .withPartitionKey(REFLIST_ATT_LISTNAME, DataTypes.TEXT)
             .withColumn(REFLIST_ATT_VALUES, DataTypes.setOf(DataTypes.TEXT))
             .build();
@@ -161,9 +155,7 @@ public interface CassandraPetClinicSchema {
             .value(REFLIST_ATT_LISTNAME, QueryBuilder.bindMarker())
             .value(REFLIST_ATT_VALUES, QueryBuilder.bindMarker())
             .build();
-    
-    
-    
+
     String PET_TABLE          = "petclinic_pet_by_owner";
     String PET_ATT_OWNER_ID   = "owner_id";
     String PET_ATT_PET_ID     = "pet_id";
@@ -189,19 +181,6 @@ public interface CassandraPetClinicSchema {
             .withColumn(PET_ATT_PET_TYPE, DataTypes.TEXT)
             .withColumn(PET_ATT_NAME, DataTypes.TEXT)
             .withColumn(PET_ATT_BIRTHDATE, DataTypes.DATE)
-            .build();
-
-    // TODO: unused variables, not schema definition
-    SimpleStatement STMT_PET_FINDBY_PET_ID =
-            selectFrom(PET_TABLE).all()
-            .whereColumn(PET_ATT_PET_ID)
-            .isEqualTo(QueryBuilder.bindMarker(PET_ATT_PET_ID))
-            .allowFiltering()
-            .build();
-    SimpleStatement STMT_PET_FINDBY_OWNER_ID =
-            selectFrom(PET_TABLE).all()
-            .whereColumn(PET_ATT_OWNER_ID)
-            .isEqualTo(QueryBuilder.bindMarker(PET_ATT_OWNER_ID))
             .build();
     
     String VISIT_TABLE           = "petclinic_visit_by_pet";

@@ -1,7 +1,8 @@
-package org.springframework.samples.petclinic.conf;
+package org.springframework.samples.petclinic.conf.security;
 
 import java.util.Collections;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -21,7 +22,8 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
  */
 @Configuration
 @EnableSwagger2
-public class WebOpenApiConfig {
+@ConditionalOnProperty(name = "petclinic.security.enable", havingValue = "false")
+public class ApiDocSecurityDisabled {
     
     @Bean
     public Docket api() {
@@ -37,11 +39,13 @@ public class WebOpenApiConfig {
     private ApiInfo apiInfo() {
         return new ApiInfo(
                 "Spring Pet Clinic Application Reactive",
-                "Leveraging Spring-data-cassandra-reactive and DataStax Astra Cassandra-as-a-service",
+                "Leveraging Reactive Datastax driver and DataStax Astra Cassandra-as-a-service",
                 "1.0.0-SNAPSHOT",
                 "Terms of service",
-                new Contact("DataStax Examples", "https://www.datastax.com/examples", "examples@datastax.com"),
-                "Apache v2.0", "https://www.apache.org/licenses/LICENSE-2.0", Collections.emptyList());
+                new Contact("DataStax Examples",
+                    "https://www.datastax.com/examples",
+                    "examples@datastax.com"), "Apache v2.0",
+                    "https://www.apache.org/licenses/LICENSE-2.0", Collections.emptyList());
     }
 
 }
