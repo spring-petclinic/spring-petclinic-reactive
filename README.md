@@ -26,8 +26,6 @@ Implementation of the [Spring Pet Clinic] backend including a REST API implement
 
 - **(C) Contribute**
   - [Blog post and communications](#)
-  - [Architecture diagram](#)
-  - [Data Model diagram](#)
 
 ## Run the PetClinic Application
 
@@ -201,7 +199,43 @@ export ASTRA_DB_BUNDLE=/Users/cedricklunven/Downloads/secure-connect-petclinicdb
 - Veterinians
 ![Pet Clinic Veterinarians Screen](https://raw.githubusercontent.com/clun/spring-petclinic-reactive/master/doc/img/ui-veterinians.png)
 
-## Architecture
+**✅ Start the WEB UI** : This REST API is meant to be used with the existing **[spring-petclinic-angular](https://github.com/spring-petclinic/spring-petclinic-angular)** user interface. To run the application please execute the following:
 
-## Contribute
+```bash
+git clone https://github.com/spring-petclinic/spring-petclinic-angular.git
+cd spring-petclinic-angular
+npm uninstall -g angular-cli @angular/cli
+npm cache clean
+npm install -g @angular/cli@8.0.3
+npm install --save-dev @angular/cli@8.0.3
+ng build
+ng serve
+```
+
+You should now be able to access the UI on [localhost:4200](http://localhost:4200).
+![Pet Clinic Welcome Screen](https://raw.githubusercontent.com/clun/spring-petclinic-reactive/master/doc/img/ui-top.png)
+
+## B. Architecture
+
+### Understanding the Pet Clinic Application
+
+Best resources is probably https://spring-petclinic.github.io/.  The Spring PetClinic is a sample application designed to show how the Spring stack can be used to build simple, but powerful database-oriented applications.
+
+![image](doc/img/pet-clinic.png?raw=true)
+
+### Architecture diagram
+
+*in progress*
+
+### Data Model diagram
+
+*in progress*
+
+## C. Contribute
+
+### Blog post and communications
+
+*in progress*
+
+
 
