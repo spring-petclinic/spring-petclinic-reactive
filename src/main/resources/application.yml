@@ -1,4 +1,4 @@
-### 
+###
 #              |\      _,,,--,,_
 #             /,`.-'`'   ._  \-;;,_
 #  _______ __|,4-  ) )_   .;.(__`'-'__     ___ __    _ ___ _______
@@ -18,11 +18,11 @@
 #
 # authors: DataStax developer team
 #
- 
+
 # Expose API through this port (setup the UI accordingly)
 server:
   port: ${PORT:9966}
-  
+
 # Expose Management endpoint through this port (setup prometheus accordingly)
 management:
   server:
@@ -39,7 +39,7 @@ management:
       exposure:
         include: "*"
 
-# Spring Configuration  
+# Spring Configuration
 spring:
   
   # Persistence to Apache Cassandra
@@ -63,7 +63,7 @@ spring:
     enabled: false
     baseUrl: http://localhost:9411
     sender:
-      type: web         
+      type: web
 
 # Enable Spring Security through Flag
 petclinic.security.enable: false

@@ -34,6 +34,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+// TODO: add interface comment
 @RestController
 @RequestMapping("/petclinic/api/specialties")
 @CrossOrigin(
@@ -68,14 +69,14 @@ public class VetSpecialtyController {
         @ApiResponse(code = 200, message= "List of veterinarians specialties"), 
         @ApiResponse(code = 500, message= "Internal technical error") })
     public Mono<ResponseEntity<Set<VetSpecialty>>> getAllVetsSpecialties() {
-        return refList.listVeretinianSpecialties()
+        return refList.listVetSpecialties()
                       .map(Set::stream)
                       .map(s -> s.map(VetSpecialty::new).collect(Collectors.toSet()))
                       .map(ResponseEntity::ok);
     }
     
     @GetMapping(value = "/{specialtyId}", produces = APPLICATION_JSON_VALUE)
-    @ApiOperation(value= "Retrieve veterinarian information from its unique identifier", response=VetSpecialty.class)
+    @ApiOperation(value= "Retrieve veterinarian information by its unique identifier", response=VetSpecialty.class)
     @ApiResponses({
         @ApiResponse(code = 200, message= "the identifier exists and related veterinarian specialty is returned"), 
         @ApiResponse(code = 400, message= "The name was not valid"), 
@@ -84,7 +85,7 @@ public class VetSpecialtyController {
             @PathVariable("specialtyId") 
             @Parameter(required = true,example = "surgery",
             description = "Unique identifier of a Veterinarian specialty") String name) {
-        return refList.listVeretinianSpecialties()
+        return refList.listVetSpecialties()
                       .map(set -> {
                           if (set.contains(name)) {
                               return new ResponseEntity<VetSpecialty>(new VetSpecialty(name), HttpStatus.OK);
@@ -96,7 +97,7 @@ public class VetSpecialtyController {
     @PostMapping(produces = APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<VetSpecialty>> addSpecialty(
             @RequestBody VetSpecialty specialty) {
-        return refList.addVeretinianSpecialty(specialty.getName())
+        return refList.addVetSpecialty(specialty.getName())
                       .thenReturn(specialty)
                       .map(ResponseEntity::ok);
     }
@@ -106,14 +107,14 @@ public class VetSpecialtyController {
             @PathVariable("specialtyId") String name, 
             @RequestBody VetSpecialty specialty) {
         specialty.setId(specialty.getName());
-        return refList.replaceVeretinianSpecialty(name, specialty.getName())
+        return refList.replaceVetSpecialty(name, specialty.getName())
                       .map(VetSpecialty::new)
                       .map(ResponseEntity::ok);
     }
     
     @DeleteMapping(value = "/{specialtyId}", produces = APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<Void>> deleteSpecialty(@PathVariable("specialtyId") String name){
-        return refList.removeFromVeretinianSpecialty(name)
+        return refList.removeVetSpecialty(name)
                       .then(Mono.just(new ResponseEntity<Void>(HttpStatus.NO_CONTENT)));
     }
 

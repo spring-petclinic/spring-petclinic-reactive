@@ -2,6 +2,7 @@ package org.springframework.samples.petclinic.vet;
 
 import java.io.Serializable;
 
+// TODO: return value for what? operations on REST API?
 /**
  * Return Value.
  *
@@ -9,7 +10,6 @@ import java.io.Serializable;
  */
 public class VetSpecialty implements Serializable {
     
-    /** Serial. */
     private static final long serialVersionUID = -6848331396030706076L;
 
     private String id;

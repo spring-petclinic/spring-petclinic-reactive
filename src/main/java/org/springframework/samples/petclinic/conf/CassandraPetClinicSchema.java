@@ -17,6 +17,8 @@ import static com.datastax.oss.driver.api.querybuilder.QueryBuilder.*;
  *
  * @author Cedrick LUNVEN (@clunven)
  */
+// TODO: why is this an interface?
+//  Maybe I'm too old school but I'm confused by an interface that has implementation code in it
 public interface CassandraPetClinicSchema {
     
     String VET_TABLE            = "petclinic_vet";
@@ -84,7 +86,10 @@ public interface CassandraPetClinicSchema {
             .onTable(OWNER_TABLE)
             .andColumn(OWNER_ATT_LASTNAME)
             .build();
-    
+
+    // TODO: this is unused
+    //  Also, why would a schema definition class contain functionality for a SELECT?
+    //  Wouldn't we be advocating use of PreparedStatements where possible?
     SimpleStatement STMT_OWNER_SEARCHBYNAME =
             selectFrom(OWNER_TABLE).all()
             .whereColumn(OWNER_ATT_LASTNAME)
@@ -117,10 +122,12 @@ public interface CassandraPetClinicSchema {
     String REFLIST_TABLE         = "petclinic_reference_lists";
     String REFLIST_ATT_LISTNAME  = "list_name";
     String REFLIST_ATT_VALUES    = "values";
-    
+
+    // TODO: what does "on a single node" mean in this context? A single Cassandra node?
+    //  Is this about how the partition key has been designed?
     /** 
      * Here we want all values on a single node, avoiding full scan. 
-     * We pick am unordered set to avoid duplication, list to be sorted at ui side.
+     * We pick am unordered set to avoid duplication, list will be sorted in the UI.
      * 
      * CREATE TABLE IF NOT EXISTS petclinic_reference_lists (
      *  list_name text,
@@ -133,19 +140,22 @@ public interface CassandraPetClinicSchema {
             .withPartitionKey(REFLIST_ATT_LISTNAME, DataTypes.TEXT)
             .withColumn(REFLIST_ATT_VALUES, DataTypes.setOf(DataTypes.TEXT))
             .build();
-    
+
+    // TODO: seems like this should be in the ReferenceListReactiveDao class
+    //  reference my comments above asking why have non-schema definition code here
     SimpleStatement STMT_REFLIST_READ =
             selectFrom(REFLIST_TABLE).column(REFLIST_ATT_VALUES)
             .whereColumn(REFLIST_ATT_LISTNAME)
             .isEqualTo(QueryBuilder.bindMarker())
             .build();
-    
+
+    // TODO: seems like this should be in the ReferenceListReactiveDao class
     SimpleStatement STMT_REFLIST_INSERT =
             insertInto(REFLIST_TABLE)
             .value(REFLIST_ATT_LISTNAME, QueryBuilder.bindMarker())
             .value(REFLIST_ATT_VALUES, QueryBuilder.bindMarker())
             .build();
-    
+
     String PET_TABLE          = "petclinic_pet_by_owner";
     String PET_ATT_OWNER_ID   = "owner_id";
     String PET_ATT_PET_ID     = "pet_id";

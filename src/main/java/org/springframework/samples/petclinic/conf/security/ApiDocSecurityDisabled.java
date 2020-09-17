@@ -14,6 +14,7 @@ import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
+// TODO: is this saying that this class is for the purpose of generating Swagger v2 API?
 /**
  * Swagger configuration v3 does not change with Weblux anymore.
  *
@@ -38,12 +39,12 @@ public class ApiDocSecurityDisabled {
     private ApiInfo apiInfo() {
         return new ApiInfo(
                 "Spring Pet Clinic Application Reactive",
-                "Leveraging Reactive Datastax driver and Astra Cassandra-as-a-service",
+                "Leveraging Reactive Datastax driver and DataStax Astra Cassandra-as-a-service",
                 "1.0.0-SNAPSHOT",
                 "Terms of service",
-                new Contact("DataStax Examples", 
-                    "https://www.datastax.com/examples", 
-                    "examples@datastax.com"), "Apache v2.0", 
+                new Contact("DataStax Examples",
+                    "https://www.datastax.com/examples",
+                    "examples@datastax.com"), "Apache v2.0",
                     "https://www.apache.org/licenses/LICENSE-2.0", Collections.emptyList());
     }
 

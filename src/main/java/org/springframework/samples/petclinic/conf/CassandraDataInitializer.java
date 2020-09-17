@@ -18,8 +18,8 @@ import org.springframework.stereotype.Component;
 import com.datastax.oss.driver.api.core.CqlSession;
 
 /**
- * After application initialization the table have been created (@Configuration beans)
- * As such using event ApplicationReadyEvent we can populate the DB with some sample Data.
+ * After application initialization, the tables will have been created (@Configuration beans)
+ * As such, we can populate the DB with some sample data using event ApplicationReadyEvent
  *
  * @author Cedrick LUNVEN (@clunven)
  */
@@ -29,10 +29,10 @@ public class CassandraDataInitializer implements ApplicationListener<Application
     /** Logger for the class. */
     private static final Logger LOGGER = LoggerFactory.getLogger(CassandraDataInitializer.class);
 
-    /** Reference lists are store in table to get all values at once. */
+    /** Reference lists are stored in table to get all values at once. */
     private ReferenceListReactiveDao refRepository;
     
-    /** Vetirinians repository. */
+    /** Veterinarians repository. */
     private VetReactiveDao vetRepo;
 
     /** Reference to CQLSession to close. */
@@ -48,7 +48,7 @@ public class CassandraDataInitializer implements ApplicationListener<Application
     /** {@inheritDoc} */
     @Override
     public void onApplicationEvent(ApplicationReadyEvent event) {
-        LOGGER.info("Populating data sample and indexes");
+        LOGGER.info("Populating sample data and indexes");
         refRepository.saveList(ReferenceListReactiveDao.VET_SPECIALTY, new HashSet<>(
                         Arrays.asList("dentistry", "radiology", "surgery")))
                      .subscribe();

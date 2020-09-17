@@ -13,6 +13,7 @@ import com.datastax.oss.driver.api.core.cql.PreparedStatement;
 
 import reactor.core.publisher.Mono;
 
+// TODO: more descriptive interface comment?
 /**
  * Work with table.
  *
@@ -28,7 +29,8 @@ public class ReferenceListReactiveDao implements CassandraPetClinicSchema {
     private CqlSession          cqlSession   = null;
     private PreparedStatement   psReadList   = null;  
     private PreparedStatement   psUpsertList = null;
-    
+
+    // TODO: param comments don't seem to match actual method signature
     /**
      * Table create could be synchronous here.
      *
@@ -48,7 +50,7 @@ public class ReferenceListReactiveDao implements CassandraPetClinicSchema {
                    .map(rr -> rr.wasApplied());
     }
     
-    // Operation on Pet Types
+    // Operations on Pet Types
     
     public Mono<Set<String>> listPetType() {
         return findReferenceList(PET_TYPE);
@@ -59,30 +61,30 @@ public class ReferenceListReactiveDao implements CassandraPetClinicSchema {
     }
     
     public Mono<Void> removePetType(String value) {
-        return removeFromToReferenceList(PET_TYPE, value);
+        return removeFromReferenceList(PET_TYPE, value);
     }
     
     public Mono<String> replacePetType(String oldValue, String newValue) {
         return removePetType(oldValue).then(addPetType(newValue));
     }
     
-    // Operation on Veterinian Specialties
-    
-    public Mono<Set<String>> listVeretinianSpecialties() {
+    // Operations on Veterinarian Specialties
+
+    public Mono<Set<String>> listVetSpecialties() {
         return findReferenceList(VET_SPECIALTY);
     }
     
-    public Mono<String> addVeretinianSpecialty(String value) {
+    public Mono<String> addVetSpecialty(String value) {
         return addToReferenceList(VET_SPECIALTY, value);
     }
     
-    public Mono<Void> removeFromVeretinianSpecialty(String value) {
-        return removeFromToReferenceList(VET_SPECIALTY, value);
+    public Mono<Void> removeVetSpecialty(String value) {
+        return removeFromReferenceList(VET_SPECIALTY, value);
     }
     
-    public Mono<String> replaceVeretinianSpecialty(String oldValue, String newValue) {
-        return removeFromVeretinianSpecialty(oldValue)
-                .then(addVeretinianSpecialty(newValue));
+    public Mono<String> replaceVetSpecialty(String oldValue, String newValue) {
+        return removeVetSpecialty(oldValue)
+                .then(addVetSpecialty(newValue));
     }
     
     protected Mono<Set<String>> findReferenceList(String listName) {
@@ -97,7 +99,7 @@ public class ReferenceListReactiveDao implements CassandraPetClinicSchema {
                 .build())).then(Mono.just(newValue));
     }
     
-    protected Mono<Void> removeFromToReferenceList(String listName, String newValue) {
+    protected Mono<Void> removeFromReferenceList(String listName, String newValue) {
         return Mono.from(cqlSession.executeReactive(update(REFLIST_TABLE)
                 .removeSetElement(REFLIST_ATT_VALUES, literal(newValue))
                 .whereColumn(REFLIST_ATT_LISTNAME).isEqualTo(literal(listName))

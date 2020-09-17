@@ -45,7 +45,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 /**
- * Reactive CRUD operation (WEbFlux) for entity Visits.
+ * Reactive CRUD operation (WEbFlux) for visit entity.
  *
  * @author Cedrick LUNVEN (@clunven)
  */
@@ -60,10 +60,10 @@ import reactor.core.publisher.Mono;
 @Api(value="/api/visits", tags = {"Visit Api"})
 public class VisitReactiveController {
     
-    /** Implementation of Crud for repo. */
+    /** Implementation of Crud operations for visits. */
     private VisitReactiveDao visitDao;
     
-    /** Implementation of Crud for repo. */
+    /** Implementation of Crud operations for pets. */
     private PetReactiveDao petDao;
     
     /**
@@ -92,9 +92,10 @@ public class VisitReactiveController {
                    .map(MappingUtils::mapEntityToVisit)
                    .flatMap(petDao::populatePetForVisit);
     }
-    
+
+    // TODO: I don't understand the significance of "(even if not PK)".
     /**
-     * Retrieve visit information from its unique identifier (even if not PK)
+     * Retrieve visit information by its unique identifier (even if not PK)
      *
      * @param ownerId
      *      unique identifer as a String, to be converted in {@link UUID}.
@@ -102,11 +103,11 @@ public class VisitReactiveController {
      *      a {@link Mono} of {@link OwnerEntity} or empty response with not found (404) code
      */
     @GetMapping(value = "/{visitId}", produces = APPLICATION_JSON_VALUE)
-    @ApiOperation(value= "Retrieve visit information from its unique identifier", response=Visit.class)
+    @ApiOperation(value= "Retrieve visit information by its unique identifier", response=Visit.class)
     @ApiResponses({
         @ApiResponse(code = 200, message= "the identifier exists and related visit is returned"), 
         @ApiResponse(code = 400, message= "The uid was not a valid UUID"), 
-        @ApiResponse(code = 404, message= "the identifier does not exists in DB"), 
+        @ApiResponse(code = 404, message= "the identifier does not exist in DB"),
         @ApiResponse(code = 500, message= "Internal technical error") })
     public Mono<ResponseEntity<Visit>> findVisitById(@PathVariable("visitId") @Parameter(
                required = true,example = "1ff2fbd9-bbb0-4cc1-ba37-61966aa7c5e6",
@@ -168,7 +169,7 @@ public class VisitReactiveController {
                   response=Visit.class)
     @ApiResponses({
         @ApiResponse(code = 201, message= "The visit has been created, uuid is provided in header"), 
-        @ApiResponse(code = 400, message= "The visit bean was not OK"), 
+        @ApiResponse(code = 400, message= "The visit bean was not OK"), // TODO: what does "not OK" mean"? malformed?
         @ApiResponse(code = 500, message= "Internal technical error") })
     public Mono<ResponseEntity<Visit>> upsertVisit(
             UriComponentsBuilder ucBuilder, 
@@ -188,14 +189,14 @@ public class VisitReactiveController {
     }
     
     /**
-     * Delete a visit from its unique identifier.
+     * Delete a visit by its unique identifier.
      *
      * @param visitid
      *      visit identifier
      * @return
      */
     @DeleteMapping("/{visitId}")
-    @ApiOperation(value= "Delete a visit from its unique identifier", response=Void.class)
+    @ApiOperation(value= "Delete a visit by its unique identifier", response=Void.class)
     @ApiResponses({
         @ApiResponse(code = 204, message= "The pet has been deleted"), 
         @ApiResponse(code = 400, message= "The uid was not a valid UUID"),

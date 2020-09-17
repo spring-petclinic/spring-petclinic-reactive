@@ -9,7 +9,7 @@ import com.datastax.oss.driver.api.mapper.annotations.Entity;
 import com.datastax.oss.driver.api.mapper.annotations.PartitionKey;
 
 /**
- * Simple JavaBean domain object representing an owner.s
+ * Simple JavaBean domain object representing an owner.
  */
 @Entity
 @CqlName(CassandraPetClinicSchema.OWNER_TABLE)
@@ -25,6 +25,7 @@ public class OwnerEntity implements CassandraPetClinicSchema {
     @CqlName(OWNER_ATT_LASTNAME)
     private String lastName;
 
+    // TODO: ADRESS is misspelt -> should be ADDRESS
     @CqlName(OWNER_ATT_ADRESS)
     private String address;
 

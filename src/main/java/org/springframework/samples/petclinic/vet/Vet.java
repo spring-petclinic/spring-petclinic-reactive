@@ -8,10 +8,9 @@ import java.util.stream.Collectors;
 
 import org.springframework.samples.petclinic.vet.db.VetEntity;
 
-
+// TODO: add class comment
 public class Vet implements Serializable {
     
-    /** Serial. */
     private static final long serialVersionUID = 5116674190977860592L;
     
     private UUID id;
@@ -32,8 +31,7 @@ public class Vet implements Serializable {
                               .map(VetSpecialty::new).collect(Collectors.toSet());
         
     }
-    
-    
+
     /**
      * Getter accessor for attribute 'firstName'.
      *

@@ -25,6 +25,7 @@ import com.datastax.oss.driver.api.core.config.DriverConfigLoader;
 import com.datastax.oss.driver.api.core.config.OptionsMap;
 import com.datastax.oss.driver.api.core.config.TypedDriverOption;
 
+// TODO: could we provide a link to Spring Data documentation for the configuration properties?
 /**
  * Using keys from the `application.yaml` to initialize a session with the driver.
  * 
@@ -35,8 +36,9 @@ public class CassandraReactiveConfig implements CassandraPetClinicSchema {
     
     /** Logger for the class. */
     private static final Logger LOGGER = LoggerFactory.getLogger(CassandraReactiveConfig.class);
-    
-    /** Spring Data Keys when autoconfiguration is OK (no AbstractReactiveCassandraConfiguration). **/
+
+    // TODO: should this say "when" or "with"?
+    /** using Spring Data keys when autoconfiguration is OK (no AbstractReactiveCassandraConfiguration). **/
    
     @Value("${spring.data.cassandra.keyspace-name}")
     private String keyspace;
@@ -77,7 +79,7 @@ public class CassandraReactiveConfig implements CassandraPetClinicSchema {
         om.put(TypedDriverOption.REQUEST_CONSISTENCY, ConsistencyLevel.LOCAL_QUORUM.name());
         
         if (useAstra) {
-            LOGGER.info("Connection to Datastax Astrax:");
+            LOGGER.info("+ Connection to Datastax Astra:");
             om.put(TypedDriverOption.CLOUD_SECURE_CONNECT_BUNDLE, secureConnectBundle);
             om.put(TypedDriverOption.AUTH_PROVIDER_CLASS, "PlainTextAuthProvider");
             om.put(TypedDriverOption.AUTH_PROVIDER_USER_NAME, username);

@@ -25,13 +25,13 @@ import reactor.core.publisher.Mono;
 @Component
 public class OwnerReactiveServicesImpl implements OwnerReactiveServices {
 
-    /** Implementation of Crud for repo. */
+    /** Implementation of Crud operations for owners. */
     private OwnerReactiveDao ownerDao;
     
-    /** Implementation of Crud for repo. */
+    /** Implementation of Crud operations for pets. */
     private PetReactiveDao petDao;
     
-    /** Implementation of Crud for repo. */
+    /** Implementation of Crud operations for visits. */
     private VisitReactiveDao visitDao;
     
     /**
@@ -91,7 +91,8 @@ public class OwnerReactiveServicesImpl implements OwnerReactiveServices {
         Objects.requireNonNull(ownerId);
         return ownerDao.delete(new OwnerEntity(UUID.fromString(ownerId)));
     }
-    
+
+    // TODO: inherit doc?
     private Mono<Owner> populateOwner(Owner wbo) {
         return petDao.findAllByOwnerIdReactive(wbo.getId())
                 .map(MappingUtils::mapEntityAsPet)

@@ -15,6 +15,8 @@ import org.springframework.samples.petclinic.visit.Visit;
 import org.springframework.samples.petclinic.visit.WebBeanVisitCreation;
 import org.springframework.samples.petclinic.visit.db.VisitEntity;
 
+// TODO: I don't understand what this class comment is saying.
+//  Are you trying to explain why we are providing custom conversion methods?
 /**
  * No custom Jackson serializer of Spring Convert as the data entities
  * are quite different from exposed web beans.

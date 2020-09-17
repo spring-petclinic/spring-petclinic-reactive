@@ -17,6 +17,7 @@ import org.springframework.web.server.WebFilterChain;
 
 import reactor.core.publisher.Mono;
 
+// TODO: can we add a bit more context? What is the need for cross-origin?
 /**
  * Add a CORS Filter to allow cross-origin
  *

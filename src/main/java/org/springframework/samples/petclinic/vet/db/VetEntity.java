@@ -11,6 +11,7 @@ import com.datastax.oss.driver.api.mapper.annotations.CqlName;
 import com.datastax.oss.driver.api.mapper.annotations.Entity;
 import com.datastax.oss.driver.api.mapper.annotations.PartitionKey;
 
+// TODO: Seems weird that Spring community authors only show up in this entity?
 /**
  * Simple JavaBean domain object representing a veterinarian.
  *
@@ -25,7 +26,6 @@ import com.datastax.oss.driver.api.mapper.annotations.PartitionKey;
 @CqlName(CassandraPetClinicSchema.VET_TABLE)
 public class VetEntity implements Serializable, CassandraPetClinicSchema {
 
-    /** Serial Number. */
     private static final long serialVersionUID = 7407715795842376538L;
 
     @PartitionKey

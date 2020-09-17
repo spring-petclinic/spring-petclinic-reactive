@@ -12,6 +12,7 @@ import com.datastax.oss.driver.api.mapper.annotations.Update;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+// TODO: add interface comment
 @Dao
 public interface VetReactiveDao {
     
@@ -33,6 +34,7 @@ public interface VetReactiveDao {
     ReactiveResultSet updateReactive(VetEntity vet);
     
     default Mono<VetEntity> save(VetEntity vet) {
+        // TODO: should we explain more about what is meant by LWT or even add doc link?
         // must be applied as not LWT, no checks
         return Mono.from(updateReactive(vet))
                    .map(rr -> vet);

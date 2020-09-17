@@ -8,13 +8,12 @@ import org.springframework.samples.petclinic.owner.Owner;
 import org.springframework.samples.petclinic.visit.Visit;
 
 /**
- * Bean expected by the UI with heriarchy owner 1..n -> Pet 1..n -> Visit.
+ * Bean expected by the UI with hierarchy: owner 1..n -> Pet 1..n -> Visit.
  *
  * @author Cedrick LUNVEN (@clunven)
  */
 public class Pet implements Serializable {
-    
-    /** Serial. */
+
     private static final long serialVersionUID = 6533528868325708859L;
     
     protected UUID id;
@@ -37,11 +36,11 @@ public class Pet implements Serializable {
     public Pet() {
         super();
     }
-    
+
     public Pet(UUID petId) {
         this.id = petId;
     }
-   
+
     /**
      * Getter accessor for attribute 'id'.
      *
@@ -51,7 +50,7 @@ public class Pet implements Serializable {
     public UUID getId() {
         return id;
     }
-    
+
     /**
      * Setter accessor for attribute 'id'.
      * @param id
@@ -60,7 +59,7 @@ public class Pet implements Serializable {
     public void setId(UUID id) {
         this.id = id;
     }
-    
+
     /**
      * Getter accessor for attribute 'owner'.
      *
@@ -98,7 +97,7 @@ public class Pet implements Serializable {
     public void setVisits(Set<Visit> visits) {
         this.visits = visits;
     }
-    
+
     /**
      * Getter accessor for attribute 'name'.
      *
@@ -155,5 +154,5 @@ public class Pet implements Serializable {
     public void setType(PetType type) {
         this.type = type;
     }
-    
+
 }

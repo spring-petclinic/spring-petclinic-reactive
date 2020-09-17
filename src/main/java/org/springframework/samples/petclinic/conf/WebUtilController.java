@@ -34,7 +34,7 @@ public class WebUtilController {
     
     /**
      * Converts {@link IllegalArgumentException} into HTTP 400 bad parameter
-     * the response body.
+     * in the response body.
      *
      * @param e The {@link DriverException}.
      * @return The error message to be used as response body.
