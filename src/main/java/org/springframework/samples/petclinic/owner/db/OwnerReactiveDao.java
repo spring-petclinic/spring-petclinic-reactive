@@ -91,7 +91,7 @@ public interface OwnerReactiveDao extends CassandraPetClinicSchema {
                 .withPartitionKey(OWNER_ATT_ID, DataTypes.UUID)
                 .withColumn(OWNER_ATT_FIRSTNAME, DataTypes.TEXT)
                 .withColumn(OWNER_ATT_LASTNAME, DataTypes.TEXT)
-                .withColumn(OWNER_ATT_ADRESS, DataTypes.TEXT)
+                .withColumn(OWNER_ATT_ADDRESS, DataTypes.TEXT)
                 .withColumn(OWNER_ATT_CITY, DataTypes.TEXT)
                 .withColumn(OWNER_ATT_TELEPHONE, DataTypes.TEXT)
                 .build());

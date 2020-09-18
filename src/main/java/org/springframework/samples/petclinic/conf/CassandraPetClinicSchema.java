@@ -18,7 +18,7 @@ public interface CassandraPetClinicSchema {
     String OWNER_ATT_ID         = "id";
     String OWNER_ATT_LASTNAME   = "last_name";
     String OWNER_ATT_FIRSTNAME  = "first_name";
-    String OWNER_ATT_ADRESS     = "address";
+    String OWNER_ATT_ADDRESS    = "address";
     String OWNER_ATT_CITY       = "city";
     String OWNER_ATT_TELEPHONE  = "telephone";
     String OWNER_IDX_NAME       = "petclinic_idx_ownername";

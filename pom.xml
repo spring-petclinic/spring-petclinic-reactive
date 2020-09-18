@@ -83,6 +83,12 @@
             <groupId>io.micrometer</groupId>
             <artifactId>micrometer-registry-prometheus</artifactId>
         </dependency>
+        
+        <!-- Reduce Boilerplate code in POJO -->
+        <dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+		</dependency>
 
 		<!-- Driver (overriding spring defaults) -->
 		<dependency>
@@ -191,6 +197,10 @@
 					<target>${java.version}</target>
 					<showWarnings>false</showWarnings>
 					<annotationProcessorPaths>
+						<path>
+              				<groupId>org.projectlombok</groupId>
+              				<artifactId>lombok</artifactId>
+            			</path>
 						<path>
 							<groupId>com.datastax.oss</groupId>
 							<artifactId>java-driver-mapper-processor</artifactId>
