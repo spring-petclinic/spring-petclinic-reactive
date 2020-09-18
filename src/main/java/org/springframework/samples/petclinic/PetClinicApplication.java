@@ -2,6 +2,7 @@ package org.springframework.samples.petclinic;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.cassandra.CassandraAutoConfiguration;
 
 /**
  * PetClinic Spring Boot Application.
@@ -15,26 +16,25 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * The API uses a relational-style objects layer (owner->pet->visit), but the underlying data model
  * follows Cassandra best practices. (denormalization).
  *
- * TODO: I do not understand this comment. Is this saying the Angular client is expecting a different API?
- * We did not change the API to match the spring-petclinic-angular project where it could have been useful.
+ * We did not change the API specification in order to match existing spring-petclinic-angular project.
  * 
- * Specially:
+ * Specially, it would be more relevant to look for pets based on an owner ID - and not only the pet Id.
+ * As such the resources would have look like.
  * - /owners/{ownerId}/pets/
  * - /owners/{ownerId}/pets/
  * - /owners/{ownerId}/pets/{petId}/visits
  * - /owners/{ownerId}/pets/{petId}/visits/{visitId}
- * would have been more relevant.
+ * 
+ * We exclude {@link CassandraAutoConfiguration} to setup the Datastax driver
+ * the easiest way without spring-data limitations.
  * 
  * @author Cedrick Lunven (@clunven)
  */
-@SpringBootApplication
+@SpringBootApplication(exclude = CassandraAutoConfiguration.class)
 public class PetClinicApplication {
 
-  /**
-   * No args, loading config from `application.yml`
-   */
     public static void main(String[] args) {
-    SpringApplication.run(PetClinicApplication.class, args);
-  }
+        SpringApplication.run(PetClinicApplication.class, args);
+    }
   
 }

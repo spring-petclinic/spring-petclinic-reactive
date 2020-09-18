@@ -41,23 +41,7 @@ management:
 
 # Spring Configuration
 spring:
-  
-  # Persistence to Apache Cassandra
-  data:
-    cassandra:
-      keyspace-name: ${ASTRA_DB_KEYSPACE}
-      username: ${ASTRA_DB_USERNAME}
-      password: ${ASTRA_DB_PASSWORD}
-      schema-action: CREATE_IF_NOT_EXISTS
-      # When using Astra
-      astra:
-        enabled: true
-        secure-connect-bundle: ${ASTRA_DB_BUNDLE}
-      # When using local Cassandra (docker)
-      contact-points: localhost
-      #port: 9042
-      #local-datacenter: datacenter1
-
+ 
   # Distributed tracing with Brave/Zipkin/Sleuth
   zipkin:
     enabled: false
@@ -66,4 +50,6 @@ spring:
       type: web
 
 # Enable Spring Security through Flag
+petclinic.astra.enable: true
 petclinic.security.enable: false
+

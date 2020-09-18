@@ -1,7 +1,10 @@
 package org.springframework.samples.petclinic.reflist;
 
+import static com.datastax.oss.driver.api.querybuilder.QueryBuilder.insertInto;
 import static com.datastax.oss.driver.api.querybuilder.QueryBuilder.literal;
+import static com.datastax.oss.driver.api.querybuilder.QueryBuilder.selectFrom;
 import static com.datastax.oss.driver.api.querybuilder.QueryBuilder.update;
+import static com.datastax.oss.driver.api.querybuilder.SchemaBuilder.createTable;
 
 import java.util.Set;
 
@@ -10,6 +13,8 @@ import org.springframework.stereotype.Component;
 
 import com.datastax.oss.driver.api.core.CqlSession;
 import com.datastax.oss.driver.api.core.cql.PreparedStatement;
+import com.datastax.oss.driver.api.core.type.DataTypes;
+import com.datastax.oss.driver.api.querybuilder.QueryBuilder;
 
 import reactor.core.publisher.Mono;
 
@@ -29,20 +34,42 @@ public class ReferenceListReactiveDao implements CassandraPetClinicSchema {
     private CqlSession          cqlSession   = null;
     private PreparedStatement   psReadList   = null;  
     private PreparedStatement   psUpsertList = null;
-
-    // TODO: param comments don't seem to match actual method signature
+    
     /**
-     * Table create could be synchronous here.
-     *
-     * @param cqlT
-     *      cql template
-     * @param reactCqlT
-     *       cql template reactive
+     * Constructor initializing and preparing statements at launch
+     * to speed-up the queries later on.
+     * 
+     * @param cqlS
+     *      current Cassandra Session injected by Spring
      */
     public ReferenceListReactiveDao(CqlSession cqlS) {
         this.cqlSession  = cqlS;
-        psReadList       = cqlSession.prepare(STMT_REFLIST_READ);
-        psUpsertList     = cqlSession.prepare(STMT_REFLIST_INSERT);
+        
+        /** 
+         * The table has been designed with the list_name as partition key.
+         * We want all values on a single Cassandra node (avoiding full scan cluster).
+         * We pick an unordered set to avoid duplication, list will be sorted in the UI.
+         * 
+         * CREATE TABLE IF NOT EXISTS petclinic_reference_lists (
+         *  list_name text,
+         *  values set<text>,
+         *  PRIMARY KEY ((list_name))
+         * ); */
+        cqlSession.execute(createTable(REFLIST_TABLE).ifNotExists()
+                .withPartitionKey(REFLIST_ATT_LISTNAME, DataTypes.TEXT)
+                .withColumn(REFLIST_ATT_VALUES, DataTypes.setOf(DataTypes.TEXT))
+                .build());
+        
+        psReadList = cqlSession.prepare(
+                selectFrom(REFLIST_TABLE).column(REFLIST_ATT_VALUES)
+                .whereColumn(REFLIST_ATT_LISTNAME)
+                .isEqualTo(QueryBuilder.bindMarker())
+                .build());
+        psUpsertList     = cqlSession.prepare(
+                insertInto(REFLIST_TABLE)
+                .value(REFLIST_ATT_LISTNAME, QueryBuilder.bindMarker())
+                .value(REFLIST_ATT_VALUES, QueryBuilder.bindMarker())
+                .build());
     }
         
     public Mono<Boolean> saveList(String list, Set<String> values) {

@@ -11,6 +11,8 @@ import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 import java.util.Objects;
 import java.util.UUID;
 
+import javax.validation.constraints.NotNull;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.samples.petclinic.owner.db.OwnerEntity;
@@ -35,19 +37,17 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 /**
- * Reactive CRUD operation (WEbFlux) for Owner entity.
+ * Reactive CRUD operations for Owner entity.
  *
  * @author Cedrick LUNVEN (@clunven)
  */
 @RestController
 @RequestMapping("/petclinic/api/owners")
+@Api(value="/api/owners", tags = {"Owners Api"})
 @CrossOrigin(
  methods = {PUT, POST, GET, OPTIONS, DELETE, PATCH},
- maxAge = 3600,
- allowedHeaders = {"x-requested-with", "origin", "content-type", "accept"},
- origins = "*"
+ maxAge = 3600, allowedHeaders = {"x-requested-with", "origin", "content-type", "accept"}, origins = "*"
 )
-@Api(value="/api/owners", tags = {"Owners Api"})
 public class OwnerReactiveController {
    
     /** Implementation of owner CRUD operations. */
@@ -60,10 +60,9 @@ public class OwnerReactiveController {
         this.ownerServices = service;
     }
 
-    // TODO: what does "not mono" mean?
     /**
      * Search owners by their lastName leveraging a secondary index.
-     * Flux is returned and NOT mono as lastName is not the full primary key.
+     * The result having multiple outputs lead to use of Reactor object Flux<T>.
      * 
      * @param searchString
      *      input term from user
@@ -132,7 +131,7 @@ public class OwnerReactiveController {
                   response=Owner.class)
     @ApiResponses({
         @ApiResponse(code = 201, message= "The owner has been created, uuid is provided in header"), 
-        @ApiResponse(code = 400, message= "The JSON body was not valid"), 
+        @ApiResponse(code = 400, message= "The JSON body was not a valid JSON or does not match Owner structure"), 
         @ApiResponse(code = 500, message= "Internal technical error") })
     public Mono<ResponseEntity<Owner>> createOwner(
             UriComponentsBuilder uc, @RequestBody Owner owner) {
@@ -142,11 +141,7 @@ public class OwnerReactiveController {
                           .map(created -> mapOwnerAsHttpResponse(uc,created));
     }
     
-    protected ResponseEntity<Owner> mapOwnerAsHttpResponse(UriComponentsBuilder ucBuilder, Owner created) {
-        return ResponseEntity.created(ucBuilder.path("/api/owners/{id}")
-                        .buildAndExpand(created.getId().toString())
-                        .toUri()).body(created);
-    }
+    
     
     /**
      * Create or update a {@link OwnerEntity}. We do not throw an exception if the entity already exists
@@ -167,13 +162,12 @@ public class OwnerReactiveController {
                   response=Owner.class)
     @ApiResponses({
         @ApiResponse(code = 201, message= "The owner has been created, uuid is provided in header"), 
-        @ApiResponse(code = 400, message= "The owner bean was not OK"),  // TODO: what does "not OK" mean"? malformed?
+        @ApiResponse(code = 400, message= "The JSON body was malformed or does not match Owner structure"), 
         @ApiResponse(code = 500, message= "Internal technical error") })
     public Mono<ResponseEntity<Owner>> upsertOwner(
             UriComponentsBuilder uc, 
             @PathVariable("ownerId") String ownerId, 
-            @RequestBody Owner owner) {
-      Objects.requireNonNull(owner);
+            @RequestBody @NotNull Owner owner) {
       return ownerServices.updateOwner(owner)
                           .map(created -> mapOwnerAsHttpResponse(uc, created));
     }
@@ -196,6 +190,15 @@ public class OwnerReactiveController {
             description = "Unique identifier of a owner") String ownerId) {
         return ownerServices.deleteOwner(ownerId)
                             .map(v -> new ResponseEntity<Void>(HttpStatus.NO_CONTENT));
+    }
+    
+    /**
+     * Create http response for entity creation (syntaxic sugar)
+     */
+    private ResponseEntity<Owner> mapOwnerAsHttpResponse(UriComponentsBuilder ucBuilder, Owner created) {
+        return ResponseEntity.created(ucBuilder.path("/api/owners/{id}")
+                        .buildAndExpand(created.getId().toString())
+                        .toUri()).body(created);
     }
     
 }

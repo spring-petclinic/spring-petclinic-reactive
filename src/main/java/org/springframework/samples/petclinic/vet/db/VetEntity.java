@@ -23,22 +23,22 @@ import com.datastax.oss.driver.api.mapper.annotations.PartitionKey;
  * @author Cedrick Lunven
  */
 @Entity
-@CqlName(CassandraPetClinicSchema.VET_TABLE)
+@CqlName(VetReactiveDao.VET_TABLE)
 public class VetEntity implements Serializable, CassandraPetClinicSchema {
 
     private static final long serialVersionUID = 7407715795842376538L;
 
     @PartitionKey
-    @CqlName(VET_ATT_ID)
+    @CqlName(VetReactiveDao.VET_ATT_ID)
     private UUID id;
 
-    @CqlName(VET_ATT_FIRSTNAME)
+    @CqlName(VetReactiveDao.VET_ATT_FIRSTNAME)
     private String firstName;
 
-    @CqlName(VET_ATT_LASTNAME)
+    @CqlName(VetReactiveDao.VET_ATT_LASTNAME)
     private String lastName;
     
-    @CqlName(VET_ATT_SPECIALTIES)
+    @CqlName(VetReactiveDao.VET_ATT_SPECIALTIES)
     private Set<String> specialties = new HashSet<>();  
 
     public VetEntity() {}

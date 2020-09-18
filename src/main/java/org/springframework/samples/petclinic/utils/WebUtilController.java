@@ -1,9 +1,14 @@
-package org.springframework.samples.petclinic.conf;
+package org.springframework.samples.petclinic.utils;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -15,14 +20,18 @@ import com.datastax.oss.driver.api.core.DriverException;
 import reactor.core.publisher.Mono;
 
 /**
- * Home:  API documentation page
+ * Serve as the home page the application redirecting to the Swagger Documentation page.
+ *
+ * Here are also the ampping for Java exception to proper HTTP response codes
+ * -  IllegalArgumentException => 400,invalid parameter
+ * -  DriverException => 500, internal server error
  */
 @Controller
 public class WebUtilController {
     
     /**
      * As the application does not provide any views (HTTP only) we
-     * can enforce a manual HTTP REDIRECT.
+     * need to enforce a manual HTTP REDIRECT.
      */
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public Mono<Void> redir(ServerWebExchange exchange) {
@@ -57,4 +66,21 @@ public class WebUtilController {
     public String _errorDriverHandler(DriverException e) {
       return e.getMessage();
     }
+    
+    /**
+     * Mapping Spring validation error as Bad Requests. (http 400)
+     */
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public Map<String, String> handleValidationExceptions(
+      MethodArgumentNotValidException ex) {
+        Map<String, String> errors = new HashMap<>();
+        ex.getBindingResult().getAllErrors().forEach((error) -> {
+            String fieldName = ((FieldError) error).getField();
+            String errorMessage = error.getDefaultMessage();
+            errors.put(fieldName, errorMessage);
+        });
+        return errors;
+    }
+    
 }

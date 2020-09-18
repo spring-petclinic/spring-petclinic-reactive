@@ -100,7 +100,7 @@ public class VetReactiveController {
     public Mono<ResponseEntity<Vet>> getVet(@PathVariable("vetId") @Parameter(
                required = true,example = "1ff2fbd9-bbb0-4cc1-ba37-61966aa7c5e6",
                description = "Unique identifier of a Veterinarian") String vetId) {
-        return vetRepo.findById(UUID.fromString(vetId))
+        return Mono.from(vetRepo.findByIdReactive(UUID.fromString(vetId)))
                       .map(Vet::new)
                       .map(ResponseEntity::ok)
                       .defaultIfEmpty(ResponseEntity.notFound().build());

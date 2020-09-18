@@ -17,40 +17,41 @@ import org.springframework.web.server.WebFilterChain;
 
 import reactor.core.publisher.Mono;
 
-// TODO: can we add a bit more context? What is the need for cross-origin?
 /**
- * Add a CORS Filter to allow cross-origin
- *
+ * We need to put in place a CORS (cross-origin resource sharing) web filter in order
+ * to allow a user interfaces (using Javascript) to invoke our API seven if they are not in the 
+ * same domain.
+ * 
+ * - Documentation on CORS
+ * {@link https://www.codecademy.com/articles/what-is-cors}
+ * 
+ * - Documentaton on WebFluxConfigurer 
+ * {@link https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/reactive/config/WebFluxConfigurer.html}
+ * 
  * @author Cedrick LUNVEN (@clunven)
  */
 @Configuration
 @EnableWebFlux
 public class WebFluxConfig implements WebFluxConfigurer {
     
-    private static final String ALLOWED_HEADERS = "x-requested-with, authorization, Content-Type, Authorization, credential, X-XSRF-TOKEN";
-    private static final String ALLOWED_METHODS = "GET, PUT, POST, DELETE, OPTIONS";
-    private static final String ALLOWED_ORIGIN = "*";
-    private static final String MAX_AGE = "3600";
-
-    /** {@inheritDoc} */
-    //@Override
-    //public void addCorsMappings(CorsRegistry registry) {
-    //    registry.addMapping("/**")
-    //            .allowedOrigins("*")
-    //           .allowedMethods("*");
-    //}
-    
+    /**
+     * Override the default webfilter to ass a CORS filter.
+     * We pay attention to preflight requets with HTTP verb OPTIONS. 
+     * For this @CorsOrigin may not be enough.
+     */
     @Bean
     public WebFilter corsFilter() {
       return (ServerWebExchange ctx, WebFilterChain chain) -> {
         ServerHttpRequest request = ctx.getRequest();
         if (CorsUtils.isCorsRequest(request)) {
+          // Add an header on the response explaining we are allowing other domains
           ServerHttpResponse response = ctx.getResponse();
           HttpHeaders headers = response.getHeaders();
-          headers.add("Access-Control-Allow-Origin", ALLOWED_ORIGIN);
-          headers.add("Access-Control-Allow-Methods", ALLOWED_METHODS);
-          headers.add("Access-Control-Max-Age", MAX_AGE);
-          headers.add("Access-Control-Allow-Headers",ALLOWED_HEADERS);
+          headers.add("Access-Control-Allow-Origin", "*");
+          headers.add("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE, OPTIONS");
+          headers.add("Access-Control-Max-Age", "3600");
+          headers.add("Access-Control-Allow-Headers", "x-requested-with, authorization, Content-Type, Authorization, credential, X-XSRF-TOKEN");
+          // Specific for preflight request. 
           if (request.getMethod() == HttpMethod.OPTIONS) {
             response.setStatusCode(HttpStatus.OK);
             return Mono.empty();

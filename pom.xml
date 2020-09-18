@@ -59,6 +59,12 @@
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
         
+        <!-- Validation of arguments though annotations -->
+        <dependency> 
+		    <groupId>org.springframework.boot</groupId> 
+    		<artifactId>spring-boot-starter-validation</artifactId> 
+		</dependency>
+
         <!-- Distributed Tracing (ZipKin) -->
     	<dependency>
         	<groupId>org.springframework.cloud</groupId>

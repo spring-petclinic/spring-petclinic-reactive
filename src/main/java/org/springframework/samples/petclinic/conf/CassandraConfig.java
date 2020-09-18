@@ -1,0 +1,108 @@
+package org.springframework.samples.petclinic.conf;
+
+import static com.datastax.oss.driver.api.querybuilder.SchemaBuilder.createKeyspace;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.samples.petclinic.owner.db.OwnerReactiveDao;
+import org.springframework.samples.petclinic.owner.db.OwnerReactiveDaoMapper;
+import org.springframework.samples.petclinic.owner.db.OwnerReactiveDaoMapperBuilder;
+import org.springframework.samples.petclinic.pet.db.PetReactiveDao;
+import org.springframework.samples.petclinic.pet.db.PetReactiveDaoMapper;
+import org.springframework.samples.petclinic.pet.db.PetReactiveDaoMapperBuilder;
+import org.springframework.samples.petclinic.vet.db.VetReactiveDao;
+import org.springframework.samples.petclinic.vet.db.VetReactiveDaoMapper;
+import org.springframework.samples.petclinic.vet.db.VetReactiveDaoMapperBuilder;
+import org.springframework.samples.petclinic.visit.db.VisitReactiveDao;
+import org.springframework.samples.petclinic.visit.db.VisitReactiveDaoMapper;
+import org.springframework.samples.petclinic.visit.db.VisitReactiveDaoMapperBuilder;
+
+import com.datastax.oss.driver.api.core.CqlSession;
+import com.datastax.oss.driver.api.core.config.DriverConfigLoader;
+
+/**
+ * Setup connectivity to Cassandra (locally or using Dbaas) using the Datastax Java driver and configuration files.
+ * Define different dao(s) as singletons for the application, initializing table and statements when relevant.
+ * 
+ * @author Cedrick LUNVEN (@clunven)
+ */
+@Configuration
+public class CassandraConfig implements CassandraPetClinicSchema {
+    
+    @Value("${petclinic.astra.enable:true}")
+    private boolean useAstra;
+    
+    @Bean
+    public CqlSession cqlSession() {
+        DriverConfigLoader configReader;
+        CqlSession cqlSession;
+        if (useAstra) {
+             // the file 'application-astra.conf' contains all configuration keys
+             configReader = DriverConfigLoader.fromClasspath("application-astra.conf");
+             cqlSession   = CqlSession.builder().withConfigLoader(configReader).build();
+        } else {
+             // the file 'application-astra.local' contains all configuration keys to work locally
+             configReader = DriverConfigLoader.fromClasspath("application-local.conf");
+             cqlSession   = CqlSession.builder().withConfigLoader(configReader).build();
+             // If we are working locally (docker) we may need to create the keypace
+             cqlSession.execute(createKeyspace("spring_petclinic").ifNotExists()
+                     .withSimpleStrategy(1)
+                     .withDurableWrites(true)
+                     .build());
+             cqlSession.execute("use spring_petclinic");
+        }
+        return cqlSession;
+    }
+    
+    /**
+     * Initialized {@link VetReactiveDaos} as a Spring Singleton.
+     * It will hold the implementations of access to Cassandra DB
+     */
+    @Bean
+    public VetReactiveDao vetDao(CqlSession cqlSession) {
+        // A mapper is initiliazed with a Session.
+        VetReactiveDaoMapper vetMapper = new VetReactiveDaoMapperBuilder(cqlSession).build();
+        // From the mapper we can access the Dao instance by specifying the proper keyspace.
+        VetReactiveDao       vetDao    = vetMapper.vetDao(cqlSession.getKeyspace().get());
+        // Create tables required for this DAO.
+        vetDao.createSchemaVet(cqlSession);
+        return vetDao;
+    }
+ 
+    /**
+     * Initialized {@link OwnerReactiveDao} as a Spring Singleton.
+     * It will hold the implementations of access to Cassandra DB
+     */
+    @Bean
+    public OwnerReactiveDao ownerDao(CqlSession cqlSession) {
+        OwnerReactiveDaoMapper ownerMapper = new OwnerReactiveDaoMapperBuilder(cqlSession).build();
+        OwnerReactiveDao ownerDao = ownerMapper.ownerDao(cqlSession.getKeyspace().get());
+        ownerDao.createSchemaOwner(cqlSession);
+        return ownerDao;
+    }
+    
+    /**
+     * Initialized {@link PetReactiveDao} as a Spring Singleton.
+     * It will hold the implementations of access to Cassandra DB
+     */
+    @Bean
+    public PetReactiveDao petDao(CqlSession cqlSession) {
+        PetReactiveDaoMapper petMapper = new PetReactiveDaoMapperBuilder(cqlSession).build(); 
+        PetReactiveDao petDao = petMapper.petDao(cqlSession.getKeyspace().get());
+        petDao.createSchemaPet(cqlSession);
+        return petDao;
+    }
+    
+    /**
+     * Initialized {@link VisitReactiveDao} as a Spring Singleton.
+     * It will hold the implementations of access to Cassandra DB
+     */
+    @Bean
+    public VisitReactiveDao visitDao(CqlSession cqlSession) {
+        VisitReactiveDaoMapper visitMapper = new VisitReactiveDaoMapperBuilder(cqlSession).build();
+        VisitReactiveDao visitDao = visitMapper.visitDao(cqlSession.getKeyspace().get());
+        visitDao.createSchemaVisit(cqlSession);
+        return visitDao;
+    }
+}

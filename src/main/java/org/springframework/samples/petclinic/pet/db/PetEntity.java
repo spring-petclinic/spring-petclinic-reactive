@@ -14,21 +14,21 @@ import com.datastax.oss.driver.api.mapper.annotations.PartitionKey;
  * Simple JavaBean domain object representing a pet
  */
 @Entity
-@CqlName(CassandraPetClinicSchema.PET_TABLE)
+@CqlName(PetReactiveDao.PET_TABLE)
 public class PetEntity implements CassandraPetClinicSchema {
     
     @PartitionKey
-    @CqlName(PET_ATT_OWNER_ID)
+    @CqlName(PetReactiveDao.PET_ATT_OWNER_ID)
     private UUID ownerId;
     
     @ClusteringColumn
-    @CqlName(PET_ATT_PET_ID)
+    @CqlName(PetReactiveDao.PET_ATT_PET_ID)
     private UUID petId;
     
-    @CqlName(PET_ATT_PET_TYPE)
+    @CqlName(PetReactiveDao.PET_ATT_PET_TYPE)
     private String petType;
     
-    @CqlName(PET_ATT_NAME)
+    @CqlName(PetReactiveDao.PET_ATT_NAME)
     private String name;
     
     /**
@@ -39,7 +39,7 @@ public class PetEntity implements CassandraPetClinicSchema {
      * 
      * @see https://docs.datastax.com/en/developer/java-driver/4.8/manual/core/#cql-to-java-type-mapping
      */
-    @CqlName(PET_ATT_BIRTHDATE)
+    @CqlName(PetReactiveDao.PET_ATT_BIRTHDATE)
     private LocalDate birthDate;
     
     public PetEntity() {}

@@ -13,12 +13,12 @@ import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.samples.petclinic.conf.MappingUtils;
 import org.springframework.samples.petclinic.owner.db.OwnerEntity;
 import org.springframework.samples.petclinic.pet.db.PetEntity;
 import org.springframework.samples.petclinic.pet.db.PetReactiveDao;
 import org.springframework.samples.petclinic.pet.db.PetReactiveDaoMapperBuilder;
 import org.springframework.samples.petclinic.reflist.ReferenceListReactiveDao;
+import org.springframework.samples.petclinic.utils.MappingUtils;
 import org.springframework.samples.petclinic.visit.db.VisitEntity;
 import org.springframework.samples.petclinic.visit.db.VisitReactiveDao;
 import org.springframework.samples.petclinic.visit.db.VisitReactiveDaoMapperBuilder;
