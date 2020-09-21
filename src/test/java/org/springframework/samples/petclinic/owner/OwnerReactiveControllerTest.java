@@ -3,6 +3,7 @@ package org.springframework.samples.petclinic.owner;
 import static org.mockito.ArgumentMatchers.any;
 
 import java.io.UnsupportedEncodingException;
+import java.util.HashSet;
 import java.util.UUID;
 
 import org.mockito.Mockito;
@@ -11,6 +12,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.samples.petclinic.owner.db.OwnerReactiveDao;
+import org.springframework.samples.petclinic.pet.Pet;
 import org.springframework.samples.petclinic.pet.db.PetReactiveDao;
 import org.springframework.samples.petclinic.visit.db.VisitReactiveDao;
 import org.springframework.test.web.reactive.server.WebTestClient;
@@ -46,9 +48,8 @@ public class OwnerReactiveControllerTest {
  
     //@Test
     void testCreateOwner() throws UnsupportedEncodingException {
-        Owner o1 = new Owner(
-                UUID.fromString("11111111-1111-1111-1111-111111111111"), "John", 
-                                "Connor", "T800 street", "Detroit", "0123456789");
+        Owner o1 = new Owner(UUID.fromString("11111111-1111-1111-1111-111111111111"), "John", 
+                                "Connor", "T800 street", "Detroit", "0123456789", new HashSet<Pet>());
         Mockito.when(ownerServices.createOwner(any())).thenReturn(Mono.just(o1));
         
         webClient.post()

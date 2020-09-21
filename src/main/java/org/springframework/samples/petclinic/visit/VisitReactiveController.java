@@ -8,21 +8,17 @@ import static org.springframework.web.bind.annotation.RequestMethod.PATCH;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
-import java.util.Objects;
 import java.util.UUID;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.samples.petclinic.owner.db.OwnerEntity;
 import org.springframework.samples.petclinic.pet.db.PetEntity;
-import org.springframework.samples.petclinic.pet.db.PetReactiveDao;
-import org.springframework.samples.petclinic.pet.db.PetReactiveDaoMapperBuilder;
-import org.springframework.samples.petclinic.reflist.ReferenceListReactiveDao;
-import org.springframework.samples.petclinic.utils.MappingUtils;
 import org.springframework.samples.petclinic.visit.db.VisitEntity;
-import org.springframework.samples.petclinic.visit.db.VisitReactiveDao;
-import org.springframework.samples.petclinic.visit.db.VisitReactiveDaoMapperBuilder;
 import org.springframework.util.Assert;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,8 +29,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
-
-import com.datastax.oss.driver.api.core.CqlSession;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -50,6 +44,7 @@ import reactor.core.publisher.Mono;
  * @author Cedrick LUNVEN (@clunven)
  */
 @RestController
+@Validated
 @RequestMapping("/petclinic/api/visits")
 @CrossOrigin(
  methods = {PUT, POST, GET, OPTIONS, DELETE, PATCH},
@@ -61,19 +56,13 @@ import reactor.core.publisher.Mono;
 public class VisitReactiveController {
     
     /** Implementation of Crud operations for visits. */
-    private VisitReactiveDao visitDao;
-    
-    /** Implementation of Crud operations for pets. */
-    private PetReactiveDao petDao;
-    
+    private VisitReactiveServices visitService;
+   
     /**
      * Injection with controller
      */
-    public VisitReactiveController(CqlSession cqlSession, ReferenceListReactiveDao refList) {
-        this.visitDao = new VisitReactiveDaoMapperBuilder(cqlSession).build()
-                            .visitDao(cqlSession.getKeyspace().get());
-        this.petDao = new PetReactiveDaoMapperBuilder(cqlSession).build()
-                            .petDao(cqlSession.getKeyspace().get());
+    public VisitReactiveController(VisitReactiveServices visitService) {
+        this.visitService = visitService;
     }
     
     /**
@@ -88,19 +77,16 @@ public class VisitReactiveController {
         @ApiResponse(code = 200, message= "List of visits (even if empty)"), 
         @ApiResponse(code = 500, message= "Internal technical error") })
     public Flux<Visit> findAllVisits() {
-        return Flux.from(visitDao.findAllReactive())
-                   .map(MappingUtils::mapEntityToVisit)
-                   .flatMap(petDao::populatePetForVisit);
+        return visitService.findAllVisits();
     }
 
-    // TODO: I don't understand the significance of "(even if not PK)".
     /**
-     * Retrieve visit information by its unique identifier (even if not PK)
+     * Retrieve visit information by its unique identifier.
      *
-     * @param ownerId
+     * @param visitId
      *      unique identifer as a String, to be converted in {@link UUID}.
      * @return
-     *      a {@link Mono} of {@link OwnerEntity} or empty response with not found (404) code
+     *      a {@link Mono} of {@link Visit} or empty response with not found (404) code
      */
     @GetMapping(value = "/{visitId}", produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value= "Retrieve visit information by its unique identifier", response=Visit.class)
@@ -109,14 +95,15 @@ public class VisitReactiveController {
         @ApiResponse(code = 400, message= "The uid was not a valid UUID"), 
         @ApiResponse(code = 404, message= "the identifier does not exist in DB"),
         @ApiResponse(code = 500, message= "Internal technical error") })
-    public Mono<ResponseEntity<Visit>> findVisitById(@PathVariable("visitId") @Parameter(
-               required = true,example = "1ff2fbd9-bbb0-4cc1-ba37-61966aa7c5e6",
-               description = "Unique identifier of a Owner") String visitId) {
-        return visitDao.findByVisitIdReactive((UUID.fromString(visitId)))
-                   .map(MappingUtils::mapEntityToVisit)
-                   .flatMap(petDao::populatePetForVisit)
-                   .map(ResponseEntity::ok)
-                   .defaultIfEmpty(ResponseEntity.notFound().build());
+    public Mono<ResponseEntity<Visit>> findVisitById(
+            @NotBlank
+            @PathVariable("visitId") 
+            @Parameter(required = true,example = "1ff2fbd9-bbb0-4cc1-ba37-61966aa7c5e6",
+                       description = "Unique identifier of a visit")
+            String visitId) {
+        return visitService.findVisitById(visitId)
+                           .map(ResponseEntity::ok)
+                           .defaultIfEmpty(ResponseEntity.notFound().build());
     }
     
     /**
@@ -134,20 +121,14 @@ public class VisitReactiveController {
                   response=Visit.class)
     @ApiResponses({
         @ApiResponse(code = 201, message= "The visit has been created, uuid is provided in header"), 
-        @ApiResponse(code = 400, message= "Invalid Dto provided"), 
+        @ApiResponse(code = 400, message= "The visit was malformed"),
         @ApiResponse(code = 500, message= "Internal technical error") })
     public Mono<ResponseEntity<Visit>> createVisit(
-            UriComponentsBuilder ucBuilder,
-            @RequestBody WebBeanVisitCreation dto) {
-      VisitEntity v = MappingUtils.fromVisitWebBeanCreationToEntity(dto);
-      v.setVisitId(UUID.randomUUID());
-      return visitDao.save(v)
-              .map(MappingUtils::mapEntityToVisit)
-              .map(created -> ResponseEntity.created(
-                      ucBuilder.path("/api/owners/{id}")
-                               .buildAndExpand(created.getId().toString())
-                               .toUri())
-              .body(created));
+            UriComponentsBuilder uc,
+            @RequestBody @Valid Visit visit) {
+        visit.setId(UUID.randomUUID());
+        return visitService.createVisit(visit)
+                           .map(created -> mapVisitAsHttpResponse(uc, created));
     }
     
     /**
@@ -169,23 +150,14 @@ public class VisitReactiveController {
                   response=Visit.class)
     @ApiResponses({
         @ApiResponse(code = 201, message= "The visit has been created, uuid is provided in header"), 
-        @ApiResponse(code = 400, message= "The visit bean was not OK"), // TODO: what does "not OK" mean"? malformed?
+        @ApiResponse(code = 400, message= "The visit was malformed or uid was not valid"),
         @ApiResponse(code = 500, message= "Internal technical error") })
     public Mono<ResponseEntity<Visit>> upsertVisit(
-            UriComponentsBuilder ucBuilder, 
-            @PathVariable("visitId") String visitId, 
-            @RequestBody Visit visit) {
-      Objects.requireNonNull(visit);
-      Assert.isTrue(UUID.fromString(visitId).equals(visit.getId()), 
-              "Visit");
-      return visitDao.save(MappingUtils.mapVisitToEntity(visit)) // change to entity
-                   .map(MappingUtils::mapEntityToVisit)          // back to web
-                   .flatMap(petDao::populatePetForVisit)
-                   .map(created -> ResponseEntity.created(
-                      ucBuilder.path("/api/owners/{id}")
-                               .buildAndExpand(created.getId().toString())
-                               .toUri())
-                   .body(created));
+            UriComponentsBuilder uc, 
+            @PathVariable("visitId") @NotBlank String visitId, 
+            @RequestBody @Valid Visit visit) {
+        Assert.isTrue(UUID.fromString(visitId).equals(visit.getId()), "Visit");
+        return visitService.createVisit(visit).map(created -> mapVisitAsHttpResponse(uc, created));
     }
     
     /**
@@ -203,10 +175,17 @@ public class VisitReactiveController {
         @ApiResponse(code = 500, message= "Internal technical error") })
     public Mono<ResponseEntity<Void>> deleteById(@PathVariable("visitId") @Parameter(
             required = true,example = "1ff2fbd9-bbb0-4cc1-ba37-61966aa7c5e6",
-            description = "Unique identifier of a visit") String visitId) {
-        // We need the owner id first to delete
-        return visitDao.findByVisitIdReactive(UUID.fromString(visitId))
-                       .flatMap(visitDao::delete)
-                       .map(v -> new ResponseEntity<Void>(HttpStatus.NO_CONTENT));
+            description = "Unique identifier of a visit") @NotBlank String visitId) {
+        return visitService.deleteVisitById(UUID.fromString(visitId))
+                           .map(v -> new ResponseEntity<Void>(HttpStatus.NO_CONTENT));
+    }
+    
+    /**
+     * Syntaxic sugar to create the body when create new visit
+     */
+    private ResponseEntity<Visit> mapVisitAsHttpResponse(UriComponentsBuilder ucBuilder, Visit created) {
+        return ResponseEntity.created(ucBuilder.path("/api/visits/{id}")
+                        .buildAndExpand(created.getId().toString())
+                        .toUri()).body(created);
     }
 }

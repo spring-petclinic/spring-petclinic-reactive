@@ -8,15 +8,18 @@ import static org.springframework.web.bind.annotation.RequestMethod.PATCH;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
-import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.samples.petclinic.owner.db.OwnerEntity;
 import org.springframework.samples.petclinic.pet.db.PetEntity;
 import org.springframework.util.Assert;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,11 +40,10 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 /**
- * Reactive CRUD operation (WEbFlux) for pet entity.
- *
- * @author Cedrick LUNVEN (@clunven)
+ * Reactive CRUD operations for Pets using Spring WebFlux
  */
 @RestController
+@Validated
 @RequestMapping("/petclinic/api/pets")
 @CrossOrigin(
  methods = {PUT, POST, GET, OPTIONS, DELETE, PATCH},
@@ -52,6 +54,7 @@ import reactor.core.publisher.Mono;
 @Api(value="/api/pets", tags = {"Pets Api"})
 public class PetReactiveController {
     
+    /** Inject service implementation layer. */
     private PetReactiveServices petServices;
     
     /** Injection with controller. */
@@ -74,10 +77,8 @@ public class PetReactiveController {
         return petServices.findAllPets();
     }
 
-    // TODO: I don't understand the significance of "(even if not PK)".
-    //  Why is this important to know? Are we taking advantage of an index in some circumstances but not others?
     /**
-     * Retrieve a pet's information by its unique identifier (even if not PK)
+     * Retrieve a pet's information by its unique identifier.
      *
      * @param ownerId
      *      unique identifer as a String, to be converted in {@link UUID}.
@@ -93,20 +94,22 @@ public class PetReactiveController {
         @ApiResponse(code = 500, message= "Internal technical error") })
     public Mono<ResponseEntity<Pet>> findPetById(@PathVariable("petId") @Parameter(
                required = true,example = "1ff2fbd9-bbb0-4cc1-ba37-61966aa7c5e6",
-               description = "Unique identifier of a Pet") String petId) {
+               description = "Unique identifier of a Pet") @NotBlank String petId) {
         return petServices.findPetByPetId(UUID.fromString(petId))
                           .map(ResponseEntity::ok)
                           .defaultIfEmpty(ResponseEntity.notFound().build());
     }
-    
-    // TODO: Not sure why this duplication is needed.
-    //  And I don't see a "PetTypeController" only a "PetTypeReactiveController"
+  
     /**
-     * This is a duplication from PetTypeController.
-     * - (copied behavior from existing REST implementation)
+     * List all pet types from reference tables.
+     *
+     * TODO (CLUN) : What about a flux of PetType?
+     *
+     * @return
+     *      A set of all pets
      */
     @GetMapping(value = "/pettypes", produces = APPLICATION_JSON_VALUE)
-    @ApiOperation(value= "Read all pet typesfrom database", 
+    @ApiOperation(value= "Read all pet types from database", 
                   response=PetType.class)
     @ApiResponses({
       @ApiResponse(code = 200, message= "List of pet types"), 
@@ -132,8 +135,9 @@ public class PetReactiveController {
         @ApiResponse(code = 201, message= "The pet has been created, uuid is provided in header"), 
         @ApiResponse(code = 400, message= "Invalid Dto provided"), 
         @ApiResponse(code = 500, message= "Internal technical error") })
-    public Mono<ResponseEntity<Pet>> createPet(UriComponentsBuilder uc, @RequestBody Pet pet) {
-        Objects.requireNonNull(pet);
+    public Mono<ResponseEntity<Pet>> createPet(
+            UriComponentsBuilder uc, 
+            @RequestBody @Valid Pet pet) {
         pet.setId(UUID.randomUUID());
         return petServices.createPet(pet)
                           .map(created -> mapPetAsHttpResponse(uc, created));
@@ -144,12 +148,12 @@ public class PetReactiveController {
      * or check existence, as this would require a read before write, and Cassandra supports an
      * upsert style of interaction.
      *
-     * @param ownerId
+     * @param petId
      *      unique identifier for pet
-     * @param owner
-     *      person as owner
+     * @param pet
+     *      pet as Pet
      * @return
-     *      the created owner.
+     *      the created Pet.
      */
     @PutMapping(value="/{petId}",  
                 consumes=APPLICATION_JSON_VALUE,
@@ -157,13 +161,13 @@ public class PetReactiveController {
     @ApiOperation(value= "Upsert a pet (no read before write as for Cassandra)", 
                   response=PetEntity.class)
     @ApiResponses({
-        @ApiResponse(code = 201, message= "The owner has been created, uuid is provided in header"), 
-        @ApiResponse(code = 400, message= "The owner bean was not OK"), // TODO: what does "not OK" mean"? malformed?
+        @ApiResponse(code = 201, message= "The pet has been created, uuid is provided in header"), 
+        @ApiResponse(code = 400, message= "The pet bean was malformed or does not provide valid id"),
         @ApiResponse(code = 500, message= "Internal technical error") })
     public Mono<ResponseEntity<Pet>> upsertPet(
             UriComponentsBuilder uc, 
-            @PathVariable("petId") String petId, @RequestBody Pet pet) {
-      Objects.requireNonNull(pet);
+            @PathVariable("petId") @NotBlank String petId, 
+            @RequestBody @Valid Pet pet) {
       Assert.isTrue(UUID.fromString(petId).equals(pet.getId()), 
               "Pet identifier provided in pet does not match the value if path");
       return petServices.createPet(pet)
@@ -173,8 +177,8 @@ public class PetReactiveController {
     /**
      * Delete a pet by its unique identifier.
      *
-     * @param vetId
-     *      veterinarian identifier
+     * @param petId
+     *      pet identifier
      * @return
      */
     @DeleteMapping("/{petId}")
@@ -183,14 +187,20 @@ public class PetReactiveController {
         @ApiResponse(code = 204, message= "The pet has been deleted"), 
         @ApiResponse(code = 400, message= "The uid was not a valid UUID"),
         @ApiResponse(code = 500, message= "Internal technical error") })
-    public Mono<ResponseEntity<Void>> deleteById(@PathVariable("petId") @Parameter(
-            required = true,example = "1ff2fbd9-bbb0-4cc1-ba37-61966aa7c5e6",
-            description = "Unique identifier of a pet") String petId) {
-        // We need the owner id first to delete
+    public Mono<ResponseEntity<Void>> deleteById(
+            @NotBlank 
+            @PathVariable("petId") 
+            @Parameter(required = true,
+                       example = "1ff2fbd9-bbb0-4cc1-ba37-61966aa7c5e6",
+                       description = "Unique identifier of a pet") 
+            String petId) {
         return petServices.deletePetById(UUID.fromString(petId))
                      .map(v -> new ResponseEntity<Void>(HttpStatus.NO_CONTENT));
     }
     
+    /**
+     * Syntaxic sugar to create response from call.
+     */
     protected ResponseEntity<Pet> mapPetAsHttpResponse(UriComponentsBuilder ucBuilder, Pet created) {
         return ResponseEntity.created(ucBuilder.path("/api/pets/{id}")
                         .buildAndExpand(created.getId().toString())

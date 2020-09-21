@@ -2,10 +2,16 @@ package org.springframework.samples.petclinic.vet.db;
 
 import static com.datastax.oss.driver.api.querybuilder.SchemaBuilder.createIndex;
 import static com.datastax.oss.driver.api.querybuilder.SchemaBuilder.createTable;
+import static org.springframework.samples.petclinic.vet.db.VetEntity.VET_ATT_FIRSTNAME;
+import static org.springframework.samples.petclinic.vet.db.VetEntity.VET_ATT_ID;
+import static org.springframework.samples.petclinic.vet.db.VetEntity.VET_ATT_LASTNAME;
+import static org.springframework.samples.petclinic.vet.db.VetEntity.VET_ATT_SPECIALTIES;
+import static org.springframework.samples.petclinic.vet.db.VetEntity.VET_IDX_NAME;
+import static org.springframework.samples.petclinic.vet.db.VetEntity.VET_TABLE;
 
 import java.util.UUID;
 
-import org.springframework.samples.petclinic.conf.CassandraPetClinicSchema;
+import javax.validation.constraints.NotNull;
 
 import com.datastax.dse.driver.api.core.cql.reactive.ReactiveResultSet;
 import com.datastax.dse.driver.api.mapper.reactive.MappedReactiveResultSet;
@@ -16,9 +22,6 @@ import com.datastax.oss.driver.api.mapper.annotations.Delete;
 import com.datastax.oss.driver.api.mapper.annotations.Select;
 import com.datastax.oss.driver.api.mapper.annotations.Update;
 
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
-
 /**
  * Definition of operations relative to table 'petclinic_vet'. 
  * 
@@ -28,12 +31,43 @@ import reactor.core.publisher.Mono;
  * @author Cedrick LUNVEN (@clunven)
  */
 @Dao
-public interface VetReactiveDao extends CassandraPetClinicSchema {
+public interface VetReactiveDao {
+    
+    /**
+     * Find an Vet by its unique identifier.
+     *
+     * The Dao layer returned a Publisher<T> and not Flux<T> nor Mono<T>
+     * as those are relative to Reactor only (not Rx Java).
+     */
+    @Select
+    MappedReactiveResultSet<VetEntity> findById(@NotNull UUID vetid);
+    
+    /**
+     * Retrieve all vet from table 'petclinic_vet'. 
+     * 
+     * Note that a query of select all with no where clause is not 
+     * recommended with Cassandra as it cal lead to large number of record. 
+     */
+    @Select
+    MappedReactiveResultSet<VetEntity> findAll();
+    
+    /**
+     * Upsert Vet record.
+     */
+    @Update
+    ReactiveResultSet upsert(VetEntity vet);
+    
+    /**
+     * Delete Vet record.
+     */
+    @Delete
+    ReactiveResultSet delete(VetEntity vet);
     
     /**
      * Create objects required for this business domain (tables, index, udt) if they do not exist.
      */
-    default void createSchemaVet(CqlSession cqlSession) {
+    default void createSchema(CqlSession cqlSession) {
+        
         cqlSession.execute(
                 createTable(VET_TABLE).ifNotExists()
                 .withPartitionKey(VET_ATT_ID, DataTypes.UUID)
@@ -41,57 +75,12 @@ public interface VetReactiveDao extends CassandraPetClinicSchema {
                 .withColumn(VET_ATT_LASTNAME, DataTypes.TEXT)
                 .withColumn(VET_ATT_SPECIALTIES, DataTypes.setOf(DataTypes.TEXT))
                 .build());
+        
         cqlSession.execute( 
                 createIndex(VET_IDX_NAME).ifNotExists()
                 .onTable(VET_TABLE)
                 .andColumn(VET_ATT_LASTNAME)
                 .build());
-        /**
-         * CREATE TABLE IF NOT EXISTS petclinic_vet_by_specialty (
-         *      specialty   text,
-         *      vet_id          uuid,
-         *      first_name  text,
-         *      last_name   text,
-         *      PRIMARY KEY ((specialty), vet_id)
-         *); */
-        cqlSession.execute(
-                createTable(VET_SPECIALTY_TABLE).ifNotExists()
-                .withPartitionKey(VET_SPECIALTY_ATT_SPECIALTY, DataTypes.TEXT)
-                .withClusteringColumn(VET_SPECIALTY_ATT_VETID, DataTypes.UUID)
-                .withColumn(VET_SPECIALTY_ATT_LASTNAME, DataTypes.TEXT)
-                .withColumn(VET_SPECIALTY_ATT_FIRSTNAME, DataTypes.TEXT)
-                .build());
-    }
-    
-    /**
-     * Look for a record based on its id.
-     */
-    @Select
-    MappedReactiveResultSet<VetEntity> findByIdReactive(UUID vetid);
-    
-    @Select
-    MappedReactiveResultSet<VetEntity> findAllReactive();
-    
-    default Flux<VetEntity> findAll() {
-        return Flux.from(findAllReactive());
-    }
-    
-    @Update
-    ReactiveResultSet updateReactive(VetEntity vet);
-    
-    default Mono<VetEntity> save(VetEntity vet) {
-        // TODO: should we explain more about what is meant by LWT or even add doc link?
-        // must be applied as not LWT, no checks
-        return Mono.from(updateReactive(vet))
-                   .map(rr -> vet);
-    }
-    
-    @Delete
-    ReactiveResultSet deleteReactive(VetEntity vet);
-    
-    default Mono<Boolean> delete(VetEntity vet) {
-        return Mono.from(deleteReactive(vet))
-                   .map(rr -> rr.wasApplied());
     }
     
 }

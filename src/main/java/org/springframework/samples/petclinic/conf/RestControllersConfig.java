@@ -1,4 +1,4 @@
-package org.springframework.samples.petclinic.utils;
+package org.springframework.samples.petclinic.conf;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,7 +27,7 @@ import reactor.core.publisher.Mono;
  * -  DriverException => 500, internal server error
  */
 @Controller
-public class WebUtilController {
+public class RestControllersConfig {
     
     /**
      * As the application does not provide any views (HTTP only) we

@@ -25,14 +25,28 @@ import com.datastax.oss.driver.api.core.config.DriverConfigLoader;
  * Setup connectivity to Cassandra (locally or using Dbaas) using the Datastax Java driver and configuration files.
  * Define different dao(s) as singletons for the application, initializing table and statements when relevant.
  * 
+ * - Documentation on CqlSession with Java Driver
+ * {@link https://docs.datastax.com/en/developer/java-driver/latest/manual/core/}
+ * 
  * @author Cedrick LUNVEN (@clunven)
  */
 @Configuration
-public class CassandraConfig implements CassandraPetClinicSchema {
+public class CassandraConfig {
     
+    /**
+     * This flag will help us decide between 2 configurations files
+     * `application-astra.conf` or `application-local.conf`
+     * 
+     * Why not simply injecting the filename ? If we are using local
+     * we also create the keyspace.
+     */
     @Value("${petclinic.astra.enable:true}")
     private boolean useAstra;
     
+    /**
+     * Create the Singleton {@link CqlSession} used everywhere to 
+     * access the Cassandra DB.
+     */
     @Bean
     public CqlSession cqlSession() {
         DriverConfigLoader configReader;
@@ -52,12 +66,15 @@ public class CassandraConfig implements CassandraPetClinicSchema {
                      .build());
              cqlSession.execute("use spring_petclinic");
         }
+        
         return cqlSession;
     }
     
     /**
      * Initialized {@link VetReactiveDaos} as a Spring Singleton.
-     * It will hold the implementations of access to Cassandra DB
+     * 
+     * It will hold  implementations of accesses to Cassandra DB
+     * for Vet business domain.
      */
     @Bean
     public VetReactiveDao vetDao(CqlSession cqlSession) {
@@ -66,7 +83,7 @@ public class CassandraConfig implements CassandraPetClinicSchema {
         // From the mapper we can access the Dao instance by specifying the proper keyspace.
         VetReactiveDao       vetDao    = vetMapper.vetDao(cqlSession.getKeyspace().get());
         // Create tables required for this DAO.
-        vetDao.createSchemaVet(cqlSession);
+        vetDao.createSchema(cqlSession);
         return vetDao;
     }
  
@@ -78,7 +95,7 @@ public class CassandraConfig implements CassandraPetClinicSchema {
     public OwnerReactiveDao ownerDao(CqlSession cqlSession) {
         OwnerReactiveDaoMapper ownerMapper = new OwnerReactiveDaoMapperBuilder(cqlSession).build();
         OwnerReactiveDao ownerDao = ownerMapper.ownerDao(cqlSession.getKeyspace().get());
-        ownerDao.createSchemaOwner(cqlSession);
+        ownerDao.createSchema(cqlSession);
         return ownerDao;
     }
     
@@ -90,7 +107,7 @@ public class CassandraConfig implements CassandraPetClinicSchema {
     public PetReactiveDao petDao(CqlSession cqlSession) {
         PetReactiveDaoMapper petMapper = new PetReactiveDaoMapperBuilder(cqlSession).build(); 
         PetReactiveDao petDao = petMapper.petDao(cqlSession.getKeyspace().get());
-        petDao.createSchemaPet(cqlSession);
+        petDao.createSchema(cqlSession);
         return petDao;
     }
     

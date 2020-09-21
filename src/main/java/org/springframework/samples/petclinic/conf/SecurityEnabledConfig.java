@@ -1,4 +1,4 @@
-package org.springframework.samples.petclinic.conf.security;
+package org.springframework.samples.petclinic.conf;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,20 +13,25 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 
+/**
+ * Setup of spring-security to enforce authentiation when flag
+ * 'petclinic.security.enable' is set to true.
+ */
 @Configuration
 @EnableWebFluxSecurity
 @EnableReactiveMethodSecurity
 @ConditionalOnProperty(name = "petclinic.security.enable", havingValue = "true")
-public class WebFilterSecurityEnabled {
+public class SecurityEnabledConfig {
 
     /** Logger for the class. */
-    private static final Logger LOGGER = LoggerFactory.getLogger(WebFilterSecurityEnabled.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SecurityEnabledConfig.class);
     
     @Bean
     public SecurityWebFilterChain securityFilterChain(ServerHttpSecurity http) {
         LOGGER.info("Authentication on APIs has been enabled");
         return http.csrf().disable()
                    .authorizeExchange()
+                     // Exclude public resources from the filter
                      .pathMatchers("/", "/csrf", 
                              "/v2/api-docs", 
                              "/swagger-resources/**",

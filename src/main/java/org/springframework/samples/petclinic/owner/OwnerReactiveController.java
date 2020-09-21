@@ -37,9 +37,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 /**
- * Reactive CRUD operations for Owner entity.
- *
- * @author Cedrick LUNVEN (@clunven)
+ * Reactive CRUD operations for Owners using Spring WebFlux
  */
 @RestController
 @RequestMapping("/petclinic/api/owners")
@@ -140,8 +138,6 @@ public class OwnerReactiveController {
       return ownerServices.createOwner(owner)
                           .map(created -> mapOwnerAsHttpResponse(uc,created));
     }
-    
-    
     
     /**
      * Create or update a {@link OwnerEntity}. We do not throw an exception if the entity already exists

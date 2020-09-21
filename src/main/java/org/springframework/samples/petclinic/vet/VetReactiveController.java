@@ -8,15 +8,14 @@ import static org.springframework.web.bind.annotation.RequestMethod.PATCH;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
-import java.util.Objects;
 import java.util.UUID;
-import java.util.stream.Collectors;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.samples.petclinic.vet.db.VetEntity;
-import org.springframework.samples.petclinic.vet.db.VetReactiveDao;
-import org.springframework.samples.petclinic.vet.db.VetReactiveDaoMapperBuilder;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -30,8 +29,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.datastax.oss.driver.api.core.CqlSession;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -41,9 +38,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 /**
- * Reactive CRUD operation (WEbFlux) for vet entity.
- *
- * @author Cedrick LUNVEN (@clunven)
+ * Reactive CRUD operation (WebFlux) for Vet entity.
  */
 @RestController
 @RequestMapping("/petclinic/api/vets")
@@ -56,15 +51,14 @@ import reactor.core.publisher.Mono;
 @Api(value="/petclinic/api/vets", tags = {"Veterinarians Api"})
 public class VetReactiveController {
     
-    /** Implementation of Crud operations for vets. */
-    private final VetReactiveDao vetRepo;
+    /** Implementatopn of Vet Services. */
+    private VetReactiveServices vetServices; 
     
     /**
-     * Injection with controller
+     * Inject service with controller
      */
-    public VetReactiveController(CqlSession cqlSession) {
-        this.vetRepo = new VetReactiveDaoMapperBuilder(cqlSession)
-                .build().vetDao(cqlSession.getKeyspace().get());
+    public VetReactiveController(VetReactiveServices vetServices) {
+        this.vetServices = vetServices;
     }
     
     /**
@@ -73,14 +67,14 @@ public class VetReactiveController {
      * @return
      *   a {@link Flux} containing {@link VetEntity}
      */
-    @PreAuthorize( "hasRole(@roles.VET_ADMIN)" )
+    @PreAuthorize("hasRole(@roles.VET_ADMIN)" )
     @GetMapping(produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value= "Read all veterinarians in database", response=Vet.class)
     @ApiResponses({
         @ApiResponse(code = 200, message= "List of veterinarians"), 
         @ApiResponse(code = 500, message= "Internal technical error") })
     public Flux<Vet> getAllVets() {
-        return vetRepo.findAll().map(Vet::new);
+        return vetServices.findAllVets();
     }
     
     /**
@@ -100,10 +94,9 @@ public class VetReactiveController {
     public Mono<ResponseEntity<Vet>> getVet(@PathVariable("vetId") @Parameter(
                required = true,example = "1ff2fbd9-bbb0-4cc1-ba37-61966aa7c5e6",
                description = "Unique identifier of a Veterinarian") String vetId) {
-        return Mono.from(vetRepo.findByIdReactive(UUID.fromString(vetId)))
-                      .map(Vet::new)
-                      .map(ResponseEntity::ok)
-                      .defaultIfEmpty(ResponseEntity.notFound().build());
+        return Mono.from(vetServices.findVetById(vetId))
+                   .map(ResponseEntity::ok)
+                   .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
     /**
@@ -122,17 +115,11 @@ public class VetReactiveController {
         @ApiResponse(code = 201, message= "The veterinarian has been created, uuid is provided in header"),
         @ApiResponse(code = 400, message= "The uid was not a valid UUID"), 
         @ApiResponse(code = 500, message= "Internal technical error") })
-    public Mono<ResponseEntity<Vet>> createVet(UriComponentsBuilder ucBuilder, @RequestBody Vet vetRequest) {
-      Objects.requireNonNull(vetRequest);
-      VetEntity input = new VetEntity(UUID.randomUUID(), vetRequest.getFirstName(), vetRequest.getLastName(), 
-              vetRequest.getSpecialties().stream()
-                        .map(VetSpecialty::getName)
-                        .collect(Collectors.toSet()));
-      return vetRepo.save(input)
-                    .map(Vet::new)
-                    .map(created -> ResponseEntity
-                    .created(ucBuilder.path("/api/vets/{id}").buildAndExpand(created.getId()).toUri())
-                    .body(created));
+    public Mono<ResponseEntity<Vet>> createVet(UriComponentsBuilder uc, 
+            @RequestBody @Valid Vet vet) {
+        vet.setId(UUID.randomUUID());
+        return vetServices.createVet(vet)
+                          .map(created -> mapVetAsHttpResponse(uc, created));
     }
     
     /**
@@ -151,22 +138,14 @@ public class VetReactiveController {
     @ApiOperation(value= "Upsert a veterinarian (no read before write as for Cassandra)", response=Vet.class)
     @ApiResponses({
         @ApiResponse(code = 201, message= "The veterinarian has been created, uuid is provided in header"),
-        @ApiResponse(code = 400, message= "The uid was not a valid UUID"), 
+        @ApiResponse(code = 400, message= "The vet bean was malformed or does not provide valid id"),
         @ApiResponse(code = 500, message= "Internal technical error") })
     public Mono<ResponseEntity<Vet>> upsert(
-            UriComponentsBuilder ucBuilder, 
-            @PathVariable("vetId") String vetId, @RequestBody Vet vetRequest) {
-      Objects.requireNonNull(vetRequest);
-      VetEntity input = new VetEntity(vetRequest.getId(), vetRequest.getFirstName(), vetRequest.getLastName(), 
-              vetRequest.getSpecialties().stream()
-                        .map(VetSpecialty::getName)
-                        .collect(Collectors.toSet()));
-      Assert.isTrue(UUID.fromString(vetId).equals(vetRequest.getId()), "Vet identifier provided in vet does not match the value if path");
-      return vetRepo.save(input)
-                    .map(Vet::new)
-                    .map(created -> ResponseEntity
-                                .created(ucBuilder.path("/api/vets/{id}").buildAndExpand(created.getId()).toUri())
-                                .body(created));
+            UriComponentsBuilder uc, 
+            @PathVariable("vetId") String vetId, @RequestBody @Valid Vet vet) {
+      Assert.isTrue(UUID.fromString(vetId).equals(vet.getId()), "Vet identifier provided in vet does not match the value if path");
+      return vetServices.createVet(vet)
+                        .map(created -> mapVetAsHttpResponse(uc, created));
     }
     
     /**
@@ -184,7 +163,14 @@ public class VetReactiveController {
         @ApiResponse(code = 500, message= "Internal technical error") })
     public Mono<ResponseEntity<Void>> deleteById(@PathVariable("vetId") @Parameter(
             required = true,example = "1ff2fbd9-bbb0-4cc1-ba37-61966aa7c5e6",
-            description = "Unique identifier of a Veterinarian") String vetId) {
-        return vetRepo.delete(new VetEntity(vetId)).map(v -> new ResponseEntity<Void>(HttpStatus.NO_CONTENT));
+            description = "Unique identifier of a Veterinarian") @NotBlank String vetId) {
+        return vetServices.deleteVetById(UUID.fromString(vetId))
+                          .map(v -> new ResponseEntity<Void>(HttpStatus.NO_CONTENT));
+    }
+    
+    private ResponseEntity<Vet> mapVetAsHttpResponse(UriComponentsBuilder ucBuilder, Vet created) {
+        return ResponseEntity.created(ucBuilder.path("/api/vets/{id}")
+                        .buildAndExpand(created.getId().toString())
+                        .toUri()).body(created);
     }
 }

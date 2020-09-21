@@ -5,133 +5,55 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-import org.springframework.samples.petclinic.conf.CassandraPetClinicSchema;
-
 import com.datastax.oss.driver.api.mapper.annotations.CqlName;
 import com.datastax.oss.driver.api.mapper.annotations.Entity;
 import com.datastax.oss.driver.api.mapper.annotations.PartitionKey;
 
-// TODO: Seems weird that Spring community authors only show up in this entity?
-/**
- * Simple JavaBean domain object representing a veterinarian.
- *
- * @author Ken Krebs
- * @author Juergen Hoeller
- * @author Sam Brannen
- * @author Arjen Poutsma
- * @author Maciej Walkowiak
- * @author Cedrick Lunven
- */
-@Entity
-@CqlName(VetReactiveDao.VET_TABLE)
-public class VetEntity implements Serializable, CassandraPetClinicSchema {
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+/**
+ * Represents a Veterinarians (Vet) in the Data Accesslayer (Cassandra)
+ *
+ * @author Cedrick LUNVEN (@clunven)
+*/
+@Data
+@Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@CqlName(VetEntity.VET_TABLE)
+public class VetEntity implements Serializable {
+
+    /** Serial. */
     private static final long serialVersionUID = 7407715795842376538L;
+    
+    /** Groups Constant. */
+    public static final String VET_TABLE            = "petclinic_vet";
+    public static final String VET_ATT_ID           = "id";
+    public static final String VET_ATT_LASTNAME     = "last_name";
+    public static final String VET_ATT_FIRSTNAME    = "first_name";
+    public static final String VET_ATT_SPECIALTIES  = "specialties";
+    public static final String VET_IDX_NAME         = "petclinic_idx_vetname";
 
     @PartitionKey
-    @CqlName(VetReactiveDao.VET_ATT_ID)
+    @CqlName(VET_ATT_ID)
     private UUID id;
 
-    @CqlName(VetReactiveDao.VET_ATT_FIRSTNAME)
+    @CqlName(VET_ATT_FIRSTNAME)
     private String firstName;
 
-    @CqlName(VetReactiveDao.VET_ATT_LASTNAME)
+    @CqlName(VET_ATT_LASTNAME)
     private String lastName;
     
-    @CqlName(VetReactiveDao.VET_ATT_SPECIALTIES)
+    @CqlName(VET_ATT_SPECIALTIES)
     private Set<String> specialties = new HashSet<>();  
-
-    public VetEntity() {}
         
+    /**
+     * Constructor with initialized uid
+     */
     public VetEntity(String uid) {
         this.id = UUID.fromString(uid);
     }
-    
-    public VetEntity(UUID id, String firstName, String lastName, Set<String> specialties) {
-        super();
-        this.id = id;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.specialties = specialties;
-    }
-
-
-
-    /**
-     * Getter accessor for attribute 'id'.
-     *
-     * @return
-     *       current value of 'id'
-     */
-    public UUID getId() {
-        return id;
-    }
-
-    /**
-     * Setter accessor for attribute 'id'.
-     * @param id
-     * 		new value for 'id '
-     */
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    /**
-     * Getter accessor for attribute 'firstName'.
-     *
-     * @return
-     *       current value of 'firstName'
-     */
-    public String getFirstName() {
-        return firstName;
-    }
-
-    /**
-     * Setter accessor for attribute 'firstName'.
-     * @param firstName
-     * 		new value for 'firstName '
-     */
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    /**
-     * Getter accessor for attribute 'lastName'.
-     *
-     * @return
-     *       current value of 'lastName'
-     */
-    public String getLastName() {
-        return lastName;
-    }
-
-    /**
-     * Setter accessor for attribute 'lastName'.
-     * @param lastName
-     * 		new value for 'lastName '
-     */
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    /**
-     * Getter accessor for attribute 'specialties'.
-     *
-     * @return
-     *       current value of 'specialties'
-     */
-    public Set<String> getSpecialties() {
-        return specialties;
-    }
-
-    /**
-     * Setter accessor for attribute 'specialties'.
-     * @param specialties
-     * 		new value for 'specialties '
-     */
-    public void setSpecialties(Set<String> specialties) {
-        this.specialties = specialties;
-    }
-    
     
 }

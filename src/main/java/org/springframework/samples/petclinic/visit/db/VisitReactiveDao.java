@@ -1,13 +1,17 @@
 package org.springframework.samples.petclinic.visit.db;
 
 import static com.datastax.oss.driver.api.querybuilder.SchemaBuilder.createTable;
+import static org.springframework.samples.petclinic.visit.db.VisitEntity.VISIT_ATT_DESCRIPTION;
+import static org.springframework.samples.petclinic.visit.db.VisitEntity.VISIT_ATT_PET_ID;
+import static org.springframework.samples.petclinic.visit.db.VisitEntity.VISIT_ATT_VISIT_DATE;
+import static org.springframework.samples.petclinic.visit.db.VisitEntity.VISIT_ATT_VISIT_ID;
+import static org.springframework.samples.petclinic.visit.db.VisitEntity.VISIT_TABLE;
 
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Supplier;
 
-import org.springframework.samples.petclinic.conf.CassandraPetClinicSchema;
 import org.springframework.samples.petclinic.owner.Owner;
 import org.springframework.samples.petclinic.pet.Pet;
 import org.springframework.samples.petclinic.utils.MappingUtils;
@@ -25,14 +29,28 @@ import com.datastax.oss.driver.api.mapper.annotations.Update;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-// TODO: add interface comment
+/**
+ * Definition of operations relative to table 'petclinic_visit_by_pet'. 
+ * 
+ * The DataStax Cassandra driver will generate the implementation at compile time.
+ * More information can be found {@link https://docs.datastax.com/en/developer/java-driver/latest/manual/mapper/daos/select/#return-type}
+ * 
+ * @author Cedrick LUNVEN (@clunven)
+ */
 @Dao
-public interface VisitReactiveDao extends CassandraPetClinicSchema {
+public interface VisitReactiveDao {
     
     @Select
-    MappedReactiveResultSet<VisitEntity> findAllReactive();
+    MappedReactiveResultSet<VisitEntity> findAll();
+    
+    @Select(customWhereClause = VISIT_ATT_PET_ID + "= :petId")
+    MappedReactiveResultSet<VisitEntity> findAllVisitsForAPet(UUID petId);
+    
+    @Select(customWhereClause = VISIT_ATT_VISIT_ID + "= :visitId", allowFiltering = true)
+    MappedReactiveResultSet<VisitEntity> findByVisitById(UUID visitId);
     
     default void createSchemaVisit(CqlSession cqlSession) {
+        
         /** 
          * CREATE TABLE IF NOT EXISTS petclinic_visit_by_pet (
          *  pet_id      uuid,
@@ -50,19 +68,9 @@ public interface VisitReactiveDao extends CassandraPetClinicSchema {
                 .build());
     }
 
-    // TODO: seems like it would be a good idea to explain why we need custom where clauses
-    //  and possibly add link to documentation
-    @Select(customWhereClause = VISIT_ATT_PET_ID + "= :petId")
-    MappedReactiveResultSet<VisitEntity> findAllVisitsByPetIdReactive(UUID petId);
-    default Flux<VisitEntity> findAllVisitsForAPet(UUID petId) {
-        return Flux.from(findAllVisitsByPetIdReactive(petId));
-    }
-
-    @Select(customWhereClause = VISIT_ATT_VISIT_ID + "= :visitId", allowFiltering = true)
-    MappedReactiveResultSet<VisitEntity> findByVisitIdReactiveRs(UUID visitId);
-    default Mono<VisitEntity> findByVisitIdReactive(UUID visitId) {
-        return Mono.from(findByVisitIdReactiveRs(visitId));
-    }
+    
+    
+    
     
     @Update
     ReactiveResultSet updateReactive(VisitEntity visit);
@@ -79,9 +87,9 @@ public interface VisitReactiveDao extends CassandraPetClinicSchema {
     
     default Mono<Pet> populateVisitsForPet(Pet wbp) {
         // Flux<Visit> 
-        return findAllVisitsForAPet(wbp.getId())
+        return Flux.from(findAllVisitsForAPet(wbp.getId()))
             // Flux<VisitWebBean>
-            .map(MappingUtils::mapEntityToVisit)
+            .map(MappingUtils::mapEntityAsVisit)
             // Mono<HashSet<Object>>
             .collect((Supplier<Set<Visit>>) HashSet::new, Set::add)
             // Populate input

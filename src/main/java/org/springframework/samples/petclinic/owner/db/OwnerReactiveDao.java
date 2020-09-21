@@ -3,12 +3,19 @@ package org.springframework.samples.petclinic.owner.db;
 import static com.datastax.oss.driver.api.mapper.entity.saving.NullSavingStrategy.DO_NOT_SET;
 import static com.datastax.oss.driver.api.querybuilder.SchemaBuilder.createIndex;
 import static com.datastax.oss.driver.api.querybuilder.SchemaBuilder.createTable;
+import static org.springframework.samples.petclinic.owner.db.OwnerEntity.OWNER_ATT_ADDRESS;
+import static org.springframework.samples.petclinic.owner.db.OwnerEntity.OWNER_ATT_CITY;
+import static org.springframework.samples.petclinic.owner.db.OwnerEntity.OWNER_ATT_FIRSTNAME;
+import static org.springframework.samples.petclinic.owner.db.OwnerEntity.OWNER_ATT_ID;
+import static org.springframework.samples.petclinic.owner.db.OwnerEntity.OWNER_ATT_LASTNAME;
+import static org.springframework.samples.petclinic.owner.db.OwnerEntity.OWNER_ATT_TELEPHONE;
+import static org.springframework.samples.petclinic.owner.db.OwnerEntity.OWNER_IDX_NAME;
+import static org.springframework.samples.petclinic.owner.db.OwnerEntity.OWNER_TABLE;
 
 import java.util.UUID;
 
 import javax.validation.constraints.NotNull;
 
-import org.springframework.samples.petclinic.conf.CassandraPetClinicSchema;
 import org.springframework.validation.annotation.Validated;
 
 import com.datastax.dse.driver.api.core.cql.reactive.ReactiveResultSet;
@@ -22,7 +29,6 @@ import com.datastax.oss.driver.api.mapper.annotations.Select;
 import com.datastax.oss.driver.api.mapper.annotations.Update;
 
 import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
 
 /**
  * Definition of operations relative to table 'petclinic_owner'. 
@@ -30,13 +36,11 @@ import reactor.core.publisher.Mono;
  * The DataStax Cassandra driver will generate the implementation at compile time.
  * More information can be found 
  * {@link https://docs.datastax.com/en/developer/java-driver/latest/manual/mapper/daos/select/#return-type}
- * 
- * @author Cedrick LUNVEN (@clunven)
  */
 @Dao
 @Validated
 @DefaultNullSavingStrategy(DO_NOT_SET)
-public interface OwnerReactiveDao extends CassandraPetClinicSchema {
+public interface OwnerReactiveDao {
     
     /**
      * Find an owner by its unique identifier.
@@ -63,20 +67,22 @@ public interface OwnerReactiveDao extends CassandraPetClinicSchema {
     @Select(customWhereClause = OWNER_ATT_LASTNAME + "= :ownerLastname")
     Flux<OwnerEntity> searchByOwnerName(String ownerLastname);
     
+    /**
+     * Upsert owner record.
+     */
     @Update
     ReactiveResultSet upsert(OwnerEntity owner);
     
+    /**
+     * Delete owner record.
+     */
     @Delete
-    ReactiveResultSet deleteReactive(OwnerEntity owner);
-    default Mono<Boolean> delete(OwnerEntity owner) {
-        return Mono.from(deleteReactive(owner))
-                   .map(rr -> rr.wasApplied());
-    }
+    ReactiveResultSet delete(OwnerEntity owner);
     
     /**
      * Create objects required for this business domain (tables, index, udt) if they do not exist.
      */
-    default void createSchemaOwner(CqlSession cqlSession) {
+    default void createSchema(CqlSession cqlSession) {
         /**
          * CREATE TABLE IF NOT EXISTS petclinic_owner (
          *      id         uuid,

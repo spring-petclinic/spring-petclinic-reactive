@@ -8,7 +8,9 @@ import static com.datastax.oss.driver.api.querybuilder.SchemaBuilder.createTable
 
 import java.util.Set;
 
-import org.springframework.samples.petclinic.conf.CassandraPetClinicSchema;
+import javax.annotation.PreDestroy;
+
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Component;
 
 import com.datastax.oss.driver.api.core.CqlSession;
@@ -18,19 +20,23 @@ import com.datastax.oss.driver.api.querybuilder.QueryBuilder;
 
 import reactor.core.publisher.Mono;
 
-// TODO: more descriptive interface comment?
 /**
- * Work with table.
- *
- * @author Cedrick LUNVEN (@clunven)
+ * Storing all finite list of elements has been implemented using a single
+ * table name `petclinic_reference_lists`. Purpose is to retrieve all the values
+ * of a reference list with a single call, on a SINGLE NODE (aka single partition).
+ * 
+ * - The partition key is the name of the list (list_name)
+ * - The list of values are a saved in 'values'
  */
 @Component
-public class ReferenceListReactiveDao implements CassandraPetClinicSchema {
+public class ReferenceListReactiveDao implements InitializingBean {
     
-    /** Constants in the DB. */
-    public static final String PET_TYPE      = "pet_type";
-    public static final String VET_SPECIALTY = "vet_specialty";
+    /** Group constants .*/
+    public static final String REFLIST_TABLE         = "petclinic_reference_lists";
+    public static final String REFLIST_ATT_LISTNAME  = "list_name";
+    public static final String REFLIST_ATT_VALUES    = "values";
     
+    /** Explicit usage of the CqlSession. */
     private CqlSession          cqlSession   = null;
     private PreparedStatement   psReadList   = null;  
     private PreparedStatement   psUpsertList = null;
@@ -44,7 +50,16 @@ public class ReferenceListReactiveDao implements CassandraPetClinicSchema {
      */
     public ReferenceListReactiveDao(CqlSession cqlS) {
         this.cqlSession  = cqlS;
-        
+    }
+    
+    /**
+     * Spring interface {@link InitializingBean} let you execute some
+     * coode after bean has been initialized.
+     * 
+     * Here we enter default values for pet list.
+     */
+    @Override
+    public void afterPropertiesSet() throws Exception {
         /** 
          * The table has been designed with the list_name as partition key.
          * We want all values on a single Cassandra node (avoiding full scan cluster).
@@ -71,64 +86,77 @@ public class ReferenceListReactiveDao implements CassandraPetClinicSchema {
                 .value(REFLIST_ATT_VALUES, QueryBuilder.bindMarker())
                 .build());
     }
+    
+    /**
+     * CqlSession should be be gracefullyy closed at application shutdown.
+     *
+     * https://docs.datastax.com/en/latest-java-driver-api/com/datastax/oss/driver/api/core/AsyncAutoCloseable.html#close--
+     */
+    @PreDestroy
+    public void cleanUp() {
+        if (null != cqlSession) {
+            cqlSession.closeAsync();
+        }
+    }
         
-    public Mono<Boolean> saveList(String list, Set<String> values) {
-        return Mono.from(cqlSession.executeReactive(psUpsertList.bind(list, values)))
-                   .map(rr -> rr.wasApplied());
+    /**
+     * Save a reference list in one call.
+     *
+     * @param listName
+     *      the list name
+     * @param values
+     *      different values of the list
+     * @return
+     *      nothing to return
+     */
+    public Mono<Void> saveList(String listName, Set<String> values) {
+        return Mono.from(cqlSession.executeReactive(psUpsertList.bind(listName, values)))
+                   .then();
     }
     
-    // Operations on Pet Types
-    
-    public Mono<Set<String>> listPetType() {
-        return findReferenceList(PET_TYPE);
-    }
-    
-    public Mono<String> addPetType(String value) {
-        return addToReferenceList(PET_TYPE, value);
-    }
-    
-    public Mono<Void> removePetType(String value) {
-        return removeFromReferenceList(PET_TYPE, value);
-    }
-    
-    public Mono<String> replacePetType(String oldValue, String newValue) {
-        return removePetType(oldValue).then(addPetType(newValue));
-    }
-    
-    // Operations on Veterinarian Specialties
-
-    public Mono<Set<String>> listVetSpecialties() {
-        return findReferenceList(VET_SPECIALTY);
-    }
-    
-    public Mono<String> addVetSpecialty(String value) {
-        return addToReferenceList(VET_SPECIALTY, value);
-    }
-    
-    public Mono<Void> removeVetSpecialty(String value) {
-        return removeFromReferenceList(VET_SPECIALTY, value);
-    }
-    
-    public Mono<String> replaceVetSpecialty(String oldValue, String newValue) {
-        return removeVetSpecialty(oldValue)
-                .then(addVetSpecialty(newValue));
-    }
-    
-    protected Mono<Set<String>> findReferenceList(String listName) {
+    /**
+     * Retrieve the set of values in one call.
+     * 
+     * @param listName
+     *      list name
+     * @return
+     *      list of values
+     */
+    public Mono<Set<String>> findReferenceList(String listName) {
         return Mono.from(cqlSession.executeReactive(psReadList.bind(listName)))
                    .map(rr -> rr.getSet(REFLIST_ATT_VALUES, String.class));
     }
     
-    protected Mono<String> addToReferenceList(String listName, String newValue) {
+    /**
+     * Add an element to existing list.
+     *
+     * @param listName
+     *      existing list name
+     * @param newValue
+     *      new value to add
+     * @return
+     *      the new value
+     */
+    public Mono<String> addToReferenceList(String listName, String newValue) {
         return Mono.fromDirect(cqlSession.executeReactive(update(REFLIST_TABLE)
                 .appendSetElement(REFLIST_ATT_VALUES, literal(newValue))
                 .whereColumn(REFLIST_ATT_LISTNAME).isEqualTo(literal(listName))
                 .build())).then(Mono.just(newValue));
     }
     
-    protected Mono<Void> removeFromReferenceList(String listName, String newValue) {
+    /**
+     * Remove an element form existing list.
+     *
+     * @param listName
+     *      existing list name
+     * @param valueToDelete
+     *      value to delete
+     * @return
+     *      nothing to return.
+     */
+    public Mono<Void> removeFromReferenceList(String listName, String valueToDelete) {
         return Mono.from(cqlSession.executeReactive(update(REFLIST_TABLE)
-                .removeSetElement(REFLIST_ATT_VALUES, literal(newValue))
+                .removeSetElement(REFLIST_ATT_VALUES, literal(valueToDelete))
                 .whereColumn(REFLIST_ATT_LISTNAME).isEqualTo(literal(listName))
                 .build())).then();
     }

@@ -8,6 +8,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
+import org.springframework.validation.beanvalidation.MethodValidationPostProcessor;
 import org.springframework.web.cors.reactive.CorsUtils;
 import org.springframework.web.reactive.config.EnableWebFlux;
 import org.springframework.web.reactive.config.WebFluxConfigurer;
@@ -27,8 +28,6 @@ import reactor.core.publisher.Mono;
  * 
  * - Documentaton on WebFluxConfigurer 
  * {@link https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/reactive/config/WebFluxConfigurer.html}
- * 
- * @author Cedrick LUNVEN (@clunven)
  */
 @Configuration
 @EnableWebFlux
@@ -60,6 +59,13 @@ public class WebFluxConfig implements WebFluxConfigurer {
         return chain.filter(ctx);
       };
     }
-
+    
+    /**
+     * Enable validation of parameters through Annotation. (spring-validation)
+     */
+    @Bean
+    public MethodValidationPostProcessor methodValidationPostProcessor() {
+        return new MethodValidationPostProcessor();
+    }
     
 }

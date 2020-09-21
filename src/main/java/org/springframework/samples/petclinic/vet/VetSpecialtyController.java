@@ -9,11 +9,9 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.samples.petclinic.reflist.ReferenceListReactiveDao;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,8 +22,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.datastax.oss.driver.api.core.CqlSession;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -34,7 +30,9 @@ import io.swagger.v3.oas.annotations.Parameter;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-// TODO: add interface comment
+/**
+ * Reactive CRUD operation (WebFlux) for Vet specialty entity.
+ */
 @RestController
 @RequestMapping("/petclinic/api/specialties")
 @CrossOrigin(
@@ -46,14 +44,14 @@ import reactor.core.publisher.Mono;
 @Api(value="/petclinic/api/specialties", tags = {"Veterinarian Specialties Api"})
 public class VetSpecialtyController {
     
-    /** List available lists. */
-    private final ReferenceListReactiveDao refList;
+    /** Implementation of services for vet specialties. */
+    private final VetReactiveServices vetServices;
     
     /**
      * Injection with controller
      */
-    public VetSpecialtyController(CqlSession cqlSession, ReferenceListReactiveDao refList) {
-        this.refList = refList;
+    public VetSpecialtyController(VetReactiveServices vetService) {
+        this.vetServices = vetService;
     }
     
     /**
@@ -69,10 +67,7 @@ public class VetSpecialtyController {
         @ApiResponse(code = 200, message= "List of veterinarians specialties"), 
         @ApiResponse(code = 500, message= "Internal technical error") })
     public Mono<ResponseEntity<Set<VetSpecialty>>> getAllVetsSpecialties() {
-        return refList.listVetSpecialties()
-                      .map(Set::stream)
-                      .map(s -> s.map(VetSpecialty::new).collect(Collectors.toSet()))
-                      .map(ResponseEntity::ok);
+        return vetServices.listVetSpecialties().map(ResponseEntity::ok);
     }
     
     @GetMapping(value = "/{specialtyId}", produces = APPLICATION_JSON_VALUE)
@@ -85,19 +80,16 @@ public class VetSpecialtyController {
             @PathVariable("specialtyId") 
             @Parameter(required = true,example = "surgery",
             description = "Unique identifier of a Veterinarian specialty") String name) {
-        return refList.listVetSpecialties()
-                      .map(set -> {
-                          if (set.contains(name)) {
-                              return new ResponseEntity<VetSpecialty>(new VetSpecialty(name), HttpStatus.OK);
-                          }
-                          return new ResponseEntity<VetSpecialty>(HttpStatus.NOT_FOUND);
-                      });
+        return vetServices.listVetSpecialtiesCodes()
+                          .map(set -> (set.contains(name) ? 
+              new ResponseEntity<VetSpecialty>(new VetSpecialty(name), HttpStatus.OK) :
+              new ResponseEntity<VetSpecialty>(HttpStatus.NOT_FOUND)));
     }
     
     @PostMapping(produces = APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<VetSpecialty>> addSpecialty(
             @RequestBody VetSpecialty specialty) {
-        return refList.addVetSpecialty(specialty.getName())
+        return vetServices.addVetSpecialty(specialty.getName())
                       .thenReturn(specialty)
                       .map(ResponseEntity::ok);
     }
@@ -107,14 +99,14 @@ public class VetSpecialtyController {
             @PathVariable("specialtyId") String name, 
             @RequestBody VetSpecialty specialty) {
         specialty.setId(specialty.getName());
-        return refList.replaceVetSpecialty(name, specialty.getName())
+        return vetServices.replaceVetSpecialty(name, specialty.getName())
                       .map(VetSpecialty::new)
                       .map(ResponseEntity::ok);
     }
     
     @DeleteMapping(value = "/{specialtyId}", produces = APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<Void>> deleteSpecialty(@PathVariable("specialtyId") String name){
-        return refList.removeVetSpecialty(name)
+        return vetServices.removeVetSpecialty(name)
                       .then(Mono.just(new ResponseEntity<Void>(HttpStatus.NO_CONTENT)));
     }
 

@@ -1,4 +1,4 @@
-package org.springframework.samples.petclinic.conf.security;
+package org.springframework.samples.petclinic.conf;
 
 import java.util.Collections;
 
@@ -14,16 +14,17 @@ import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
-// TODO: is this saying that this class is for the purpose of generating Swagger v2 API?
 /**
- * Swagger configuration v3 does not change with Weblux anymore.
- *
- * @author Cedrick LUNVEN (@clunven)
+ * This class provides configuration for the Swagger framework to generate a testing client
+ * in the user interface (Swagger UI).
+ *  
+ * This bean is used if 'petclinic.security.enable' property has been set to false. 
+ * => The generated swagger user interface will NOT have any button to define username and password
  */
 @Configuration
 @EnableSwagger2
 @ConditionalOnProperty(name = "petclinic.security.enable", havingValue = "false")
-public class ApiDocSecurityDisabled {
+public class ApiDocSecurityDisabledConfig {
     
     @Bean
     public Docket api() {

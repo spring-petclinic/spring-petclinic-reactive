@@ -4,6 +4,11 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
 import java.util.Objects;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 import org.springframework.lang.NonNull;
 import org.springframework.samples.petclinic.owner.Owner;
@@ -11,8 +16,10 @@ import org.springframework.samples.petclinic.owner.db.OwnerEntity;
 import org.springframework.samples.petclinic.pet.Pet;
 import org.springframework.samples.petclinic.pet.PetType;
 import org.springframework.samples.petclinic.pet.db.PetEntity;
+import org.springframework.samples.petclinic.vet.Vet;
+import org.springframework.samples.petclinic.vet.VetSpecialty;
+import org.springframework.samples.petclinic.vet.db.VetEntity;
 import org.springframework.samples.petclinic.visit.Visit;
-import org.springframework.samples.petclinic.visit.WebBeanVisitCreation;
 import org.springframework.samples.petclinic.visit.db.VisitEntity;
 
 /**
@@ -21,8 +28,6 @@ import org.springframework.samples.petclinic.visit.db.VisitEntity;
  * 
  * We enforce data conversion using a {@link DateTimeFormatter} instead of delegating 
  * data conversion to the Jackson framework.
- * 
- * @author Cedrick LUNVEN (@clunven)
  */
 public class MappingUtils {
     
@@ -42,7 +47,7 @@ public class MappingUtils {
     /**
      * Parse a String as a {@link LocalDate} expecting formay yyyy/MM/dd.
      */
-    public static LocalDate string2LocalDate(@NonNull String source) {
+    public static LocalDate string2LocalDate(@NotBlank String source) {
         return LocalDate.from(FORMATTER.parse(source));
     }
     
@@ -51,7 +56,7 @@ public class MappingUtils {
      *
      * Map the Entity (dao layer) to web bean (exposition layer).
      */
-    public static Pet mapEntityAsPet(@NonNull PetEntity entity) {
+    public static Pet mapEntityAsPet(@NotNull PetEntity entity) {
         Pet wb = new Pet();
         wb.setId(entity.getPetId());
         wb.setOwner(new Owner(entity.getOwnerId()));
@@ -59,6 +64,25 @@ public class MappingUtils {
         wb.setType(new PetType(entity.getPetType()));
         wb.setBirthDate(localDate2String(entity.getBirthDate()));
         return wb;
+    }
+    
+    public static Vet mapEntityAsVet(@NotNull VetEntity dto) {
+        Vet v = new Vet();
+        v.setId(dto.getId());
+        v.setFirstName( dto.getFirstName());
+        v.setLastName(dto.getLastName());
+        v.setSpecialties(dto.getSpecialties()
+                   .stream()
+                   .map(VetSpecialty::new)
+                   .collect(Collectors.toSet()));
+        return v;
+    }
+    
+    public static VetEntity mapVetAsEntity(@NotNull Vet vet) {
+       return new VetEntity(UUID.randomUUID(), vet.getFirstName(), vet.getLastName(), 
+                vet.getSpecialties().stream()
+                          .map(VetSpecialty::getName)
+                          .collect(Collectors.toSet()));
     }
     
     /**
@@ -81,7 +105,7 @@ public class MappingUtils {
      *
      * Map the Entity (dao layer) to web bean (exposition layer).
      */
-    public static Owner mapEntityAsOwner(OwnerEntity o) {
+    public static Owner mapEntityAsOwner(@NotNull OwnerEntity o) {
         Objects.requireNonNull(o);
         Owner wb = new Owner();
         wb.setAddress(o.getAddress());
@@ -99,7 +123,7 @@ public class MappingUtils {
      *
      * Map the web bean (exposition layer) to Entity (dao layer).
      */
-    public static OwnerEntity mapOwnerAsEntity(Owner wb) {
+    public static OwnerEntity mapOwnerAsEntity(@NotNull Owner wb) {
         OwnerEntity o = new OwnerEntity();
         o.setId(wb.getId());
         o.setAddress(wb.getAddress());
@@ -115,7 +139,7 @@ public class MappingUtils {
      *
      * Map the Entity (dao layer) to web bean (exposition layer).
      */
-    public static Visit mapEntityToVisit(VisitEntity entity) {
+    public static Visit mapEntityAsVisit(@NotNull VisitEntity entity) {
         Objects.requireNonNull(entity);
         Visit wb = new Visit();
         wb.setId(entity.getVisitId());
@@ -130,22 +154,14 @@ public class MappingUtils {
      *
      * Map the web bean (exposition layer) to Entity (dao layer).
      */
-    public static VisitEntity mapVisitToEntity(Visit wb) {
+    public static VisitEntity mapVisitAsEntity(@NotNull Visit wb) {
         Objects.requireNonNull(wb);
-        VisitEntity v = fromVisitWebBeanCreationToEntity(wb);
-        v.setVisitId(wb.getId());
-        return v;
-    }
-    
-    public static VisitEntity fromVisitWebBeanCreationToEntity(WebBeanVisitCreation wbc) {
-        Objects.requireNonNull(wbc);
         VisitEntity v = new VisitEntity();
-        v.setPetId(wbc.getPet().getId());
-        v.setDescription(wbc.getDescription());
-        v.setVisitDate(string2LocalDate(wbc.getDate()));
+        v.setVisitId(wb.getId());
+        v.setPetId(wb.getPet().getId());
+        v.setDescription(wb.getDescription());
+        v.setVisitDate(string2LocalDate(wb.getDate()));
         return v;
     }
-    
-    
     
 }

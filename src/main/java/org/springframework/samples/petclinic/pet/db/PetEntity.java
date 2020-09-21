@@ -1,34 +1,50 @@
 package org.springframework.samples.petclinic.pet.db;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.UUID;
-
-import org.springframework.samples.petclinic.conf.CassandraPetClinicSchema;
 
 import com.datastax.oss.driver.api.mapper.annotations.ClusteringColumn;
 import com.datastax.oss.driver.api.mapper.annotations.CqlName;
 import com.datastax.oss.driver.api.mapper.annotations.Entity;
 import com.datastax.oss.driver.api.mapper.annotations.PartitionKey;
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 /**
- * Simple JavaBean domain object representing a pet
+ * Represents a Pet (Pet) in the data access layer (Cassandra)
  */
 @Entity
-@CqlName(PetReactiveDao.PET_TABLE)
-public class PetEntity implements CassandraPetClinicSchema {
+@Data
+@NoArgsConstructor
+@CqlName(PetEntity.PET_TABLE)
+public class PetEntity implements Serializable {
+    
+    /** Serial id. */
+    private static final long serialVersionUID = -5340639715920598448L;
+    
+    /** Group constants in a single Class. */
+    public static final String PET_TABLE          = "petclinic_pet_by_owner";
+    public static final String PET_INDEX          = "petclinic_idx_petid";
+    public static final String PET_ATT_OWNER_ID   = "owner_id";
+    public static final String PET_ATT_PET_ID     = "pet_id";
+    public static final String PET_ATT_PET_TYPE   = "pet_type";
+    public static final String PET_ATT_NAME       = "name";
+    public static final String PET_ATT_BIRTHDATE  = "birth_date";
     
     @PartitionKey
-    @CqlName(PetReactiveDao.PET_ATT_OWNER_ID)
+    @CqlName(PET_ATT_OWNER_ID)
     private UUID ownerId;
     
     @ClusteringColumn
-    @CqlName(PetReactiveDao.PET_ATT_PET_ID)
+    @CqlName(PET_ATT_PET_ID)
     private UUID petId;
     
-    @CqlName(PetReactiveDao.PET_ATT_PET_TYPE)
+    @CqlName(PET_ATT_PET_TYPE)
     private String petType;
     
-    @CqlName(PetReactiveDao.PET_ATT_NAME)
+    @CqlName(PET_ATT_NAME)
     private String name;
     
     /**
@@ -39,116 +55,13 @@ public class PetEntity implements CassandraPetClinicSchema {
      * 
      * @see https://docs.datastax.com/en/developer/java-driver/4.8/manual/core/#cql-to-java-type-mapping
      */
-    @CqlName(PetReactiveDao.PET_ATT_BIRTHDATE)
+    @CqlName(PET_ATT_BIRTHDATE)
     private LocalDate birthDate;
     
-    public PetEntity() {}
-    
+    /**
+     * Constructor from the id.
+     */
     public PetEntity(UUID petId) {
         this.petId = petId;
     }
-    
-    public PetEntity(UUID ownerId, UUID petId, String petType, String name, LocalDate birthDate) {
-        this.ownerId   = ownerId;
-        this.petId     = petId;
-        this.petType   = petType;
-        this.name      = name;
-        this.birthDate = birthDate;
-    }
-
-    /**
-     * Getter accessor for attribute 'ownerId'.
-     *
-     * @return
-     *       current value of 'ownerId'
-     */
-    public UUID getOwnerId() {
-        return ownerId;
-    }
-
-    /**
-     * Setter accessor for attribute 'ownerId'.
-     * @param ownerId
-     * 		new value for 'ownerId '
-     */
-    public void setOwnerId(UUID ownerId) {
-        this.ownerId = ownerId;
-    }
-
-    /**
-     * Getter accessor for attribute 'petId'.
-     *
-     * @return
-     *       current value of 'petId'
-     */
-    public UUID getPetId() {
-        return petId;
-    }
-
-    /**
-     * Setter accessor for attribute 'petId'.
-     * @param petId
-     * 		new value for 'petId '
-     */
-    public void setPetId(UUID petId) {
-        this.petId = petId;
-    }
-
-    /**
-     * Getter accessor for attribute 'petType'.
-     *
-     * @return
-     *       current value of 'petType'
-     */
-    public String getPetType() {
-        return petType;
-    }
-
-    /**
-     * Setter accessor for attribute 'petType'.
-     * @param petType
-     * 		new value for 'petType '
-     */
-    public void setPetType(String petType) {
-        this.petType = petType;
-    }
-
-    /**
-     * Getter accessor for attribute 'name'.
-     *
-     * @return
-     *       current value of 'name'
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * Setter accessor for attribute 'name'.
-     * @param name
-     * 		new value for 'name '
-     */
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    /**
-     * Getter accessor for attribute 'birthDate'.
-     *
-     * @return
-     *       current value of 'birthDate'
-     */
-    public LocalDate getBirthDate() {
-        return birthDate;
-    }
-
-    /**
-     * Setter accessor for attribute 'birthDate'.
-     * @param birthDate
-     * 		new value for 'birthDate '
-     */
-    public void setBirthDate(LocalDate birthDate) {
-        this.birthDate = birthDate;
-    }
-
 }

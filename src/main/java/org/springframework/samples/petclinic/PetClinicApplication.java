@@ -4,6 +4,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.cassandra.CassandraAutoConfiguration;
 
+import com.datastax.oss.driver.api.core.CqlSession;
+
 /**
  * PetClinic Spring Boot Application.
  * 
@@ -13,26 +15,19 @@ import org.springframework.boot.autoconfigure.cassandra.CassandraAutoConfigurati
  * - Swagger3+ (OpenApi) to provide documentation and test client
  * - DataStax v4 driver with reactive support
  * 
- * The API uses a relational-style objects layer (owner->pet->visit), but the underlying data model
- * follows Cassandra best practices. (denormalization).
- *
- * We did not change the API specification in order to match existing spring-petclinic-angular project.
+ * The API uses a relational-style objects layer (owner->pet->visit) but the underlying data model
+ * follows Cassandra best practices (denormalization). We did not change the API specification 
+ * in order to match existing spring-petclinic-angular project.
  * 
- * Specially, it would be more relevant to look for pets based on an owner ID - and not only the pet Id.
- * As such the resources would have look like.
- * - /owners/{ownerId}/pets/
- * - /owners/{ownerId}/pets/
- * - /owners/{ownerId}/pets/{petId}/visits
- * - /owners/{ownerId}/pets/{petId}/visits/{visitId}
- * 
- * We exclude {@link CassandraAutoConfiguration} to setup the Datastax driver
- * the easiest way without spring-data limitations.
+ * As we are NOT using Spring-Data in the version we disable {@link CassandraAutoConfiguration}
+ * and explicitely initialized the {@link CqlSession}.
  * 
  * @author Cedrick Lunven (@clunven)
  */
 @SpringBootApplication(exclude = CassandraAutoConfiguration.class)
 public class PetClinicApplication {
 
+    /** No args needed. */
     public static void main(String[] args) {
         SpringApplication.run(PetClinicApplication.class, args);
     }

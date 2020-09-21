@@ -2,6 +2,7 @@ package org.springframework.samples.petclinic.owner;
 
 import static org.mockito.BDDMockito.given;
 
+import java.util.HashSet;
 import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
@@ -9,6 +10,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.samples.petclinic.owner.db.OwnerReactiveDao;
+import org.springframework.samples.petclinic.pet.Pet;
 import org.springframework.samples.petclinic.pet.db.PetReactiveDao;
 import org.springframework.samples.petclinic.visit.db.VisitReactiveDao;
 
@@ -34,10 +36,10 @@ public class OwnerReactiveServicesTest {
   
   @Mock
   private OwnerReactiveServices ownerServices;
-
+  
   private Owner o1 = new Owner(
           UUID.fromString("11111111-1111-1111-1111-111111111111"), 
-          "John", "Connor", "T800 street", "Detroit", "0123456789");
+          "John", "Connor", "T800 street", "Detroit", "0123456789", new HashSet<Pet>());
   
   @Test
   void should_save_owner_when_save_given_valid_input() {

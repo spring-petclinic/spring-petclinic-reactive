@@ -21,11 +21,8 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 /**
- * Implementation of all required operations for the Owners.
- * 
- * This class uses 3 dao(s) in order to full populate returned bean. 
- * 
- * @author Cedrick LUNVEN (@clunven)
+ * Implementation of services for Owner. This class leverages
+ * on multiple Dao (owner, pet, visit) to compose data needed at UI level.
  */
 @Component
 @Validated
@@ -129,14 +126,15 @@ public class OwnerReactiveServices {
      *      a Mono (Reactor) with {@link Owner} containing only the identifier.
      */
     public Mono<Boolean> deleteOwner(@NotBlank String ownerId) {
-        return ownerDao.delete(new OwnerEntity(UUID.fromString(ownerId)));
+        return Mono.from(ownerDao.delete(new OwnerEntity(UUID.fromString(ownerId))))
+                   .map(rr -> rr.wasApplied());
     }
 
     /**
      * Populate the owner objects with Pets and then Visits user other tables.
      */
     private Mono<Owner> populateOwner(@NotNull Owner wbo) {
-        return Flux.from(petDao.findAllByOwnerId(wbo.getId()))
+        return Flux.from(petDao.findByOwnerId(wbo.getId()))
                 .map(MappingUtils::mapEntityAsPet)
                 .flatMap(visitDao::populateVisitsForPet)
                 .collect((Supplier<Set<Pet>>) HashSet::new, Set::add)

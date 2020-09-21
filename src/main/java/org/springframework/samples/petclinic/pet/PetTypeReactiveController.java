@@ -8,8 +8,6 @@ import static org.springframework.web.bind.annotation.RequestMethod.PATCH;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
-import java.util.Set;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -27,9 +25,11 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import io.swagger.v3.oas.annotations.Parameter;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+/**
+ * Reactive CRUD operations for Pet Types using Spring WebFlux
+ */
 @RestController
 @RequestMapping("/petclinic/api/pettypes")
 @CrossOrigin(
@@ -41,28 +41,12 @@ import reactor.core.publisher.Mono;
 @Api(value="/petclinic/api/pettypes", tags = {"Pet Types Api"})
 public class PetTypeReactiveController {
     
+    /** Inject service implementation layer. */
     private PetReactiveServices petServices;
     
     /** Injection with controller. */
     public PetTypeReactiveController(PetReactiveServices petServices) {
         this.petServices = petServices;
-    }
-    
-    /**
-     * Read all pet types from database.
-     *
-     * @return
-     *   a {@link Flux} containing {@link PetType}
-     */
-    @GetMapping(produces = APPLICATION_JSON_VALUE)
-    @ApiOperation(value= "Read all pet types from database", 
-                  response=PetType.class)
-    @ApiResponses({
-        @ApiResponse(code = 200, message= "List of pet types"), 
-        @ApiResponse(code = 500, message= "Internal technical error") })
-    public Mono<ResponseEntity<Set<PetType>>> getAllPetTypes() {
-        return petServices.findAllPetTypes()
-                          .map(ResponseEntity::ok);
     }
     
     @GetMapping(value = "/{petTypeId}", produces = APPLICATION_JSON_VALUE)
