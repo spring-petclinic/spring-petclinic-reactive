@@ -40,7 +40,7 @@ public interface VetReactiveDao {
      * as those are relative to Reactor only (not Rx Java).
      */
     @Select
-    MappedReactiveResultSet<VetEntity> findById(@NotNull UUID vetid);
+    MappedReactiveResultSet<VetEntity> findById(@NotNull UUID vetId);
     
     /**
      * Retrieve all vet from table 'petclinic_vet'. 

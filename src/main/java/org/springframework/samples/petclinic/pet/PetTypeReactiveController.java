@@ -57,7 +57,7 @@ public class PetTypeReactiveController {
      * @return
      *      A set of all pets
      */
-    @GetMapping(value = "/", produces = APPLICATION_JSON_VALUE)
+    @GetMapping(produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value= "Read all pet types from database", 
                   response=PetType.class)
     @ApiResponses({

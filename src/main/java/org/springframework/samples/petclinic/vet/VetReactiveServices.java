@@ -106,12 +106,15 @@ public class VetReactiveServices implements InitializingBean {
     public Mono< Vet> createVet(@NotNull Vet vet) {
         VetEntity ve = MappingUtils.mapVetAsEntity(vet);
         return Mono.from(vetDao.upsert(ve))
-                .map(rr -> ve)
-                .map(MappingUtils::mapEntityAsVet);
+                   .map(rr -> ve)
+                   .map(MappingUtils::mapEntityAsVet);
     }
     
-    public Mono<Void> deleteVetById(@NotNull UUID vetId) {
-        return Mono.from(vetDao.findById(vetId)).map(vetDao::delete).then();
+    public Mono<Void> deleteVetById(@NotBlank String vetId) {
+        return Mono.from(vetDao.delete(new VetEntity(vetId))).then();
+        //return Mono.from(vetDao.findById(vetId))
+        //           .map(vetDao::delete)
+        //           .then();
     }
     
     // --- Operations on Vet Specialties ---

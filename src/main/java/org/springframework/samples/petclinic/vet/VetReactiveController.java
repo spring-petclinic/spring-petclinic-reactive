@@ -17,7 +17,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.samples.petclinic.conf.SecurityEnabledConfig;
 import org.springframework.samples.petclinic.vet.db.VetEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.Assert;
@@ -177,7 +176,7 @@ public class VetReactiveController {
             required = true,example = "1ff2fbd9-bbb0-4cc1-ba37-61966aa7c5e6",
             description = "Unique identifier of a Veterinarian") @NotBlank String vetId) {
         LOGGER.info("Delete Vet with id {}", vetId);
-        return vetServices.deleteVetById(UUID.fromString(vetId))
+        return vetServices.deleteVetById(vetId)
                           .map(v -> new ResponseEntity<Void>(HttpStatus.NO_CONTENT));
     }
     
