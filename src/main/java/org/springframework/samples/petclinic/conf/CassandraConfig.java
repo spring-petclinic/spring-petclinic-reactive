@@ -67,6 +67,7 @@ public class CassandraConfig {
              cqlSession.execute("use spring_petclinic");
         }
         
+        // Create schema upfront
         return cqlSession;
     }
     
@@ -119,7 +120,7 @@ public class CassandraConfig {
     public VisitReactiveDao visitDao(CqlSession cqlSession) {
         VisitReactiveDaoMapper visitMapper = new VisitReactiveDaoMapperBuilder(cqlSession).build();
         VisitReactiveDao visitDao = visitMapper.visitDao(cqlSession.getKeyspace().get());
-        visitDao.createSchemaVisit(cqlSession);
+        visitDao.createSchema(cqlSession);
         return visitDao;
     }
 }

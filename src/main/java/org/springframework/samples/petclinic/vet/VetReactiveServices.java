@@ -2,7 +2,6 @@ package org.springframework.samples.petclinic.vet;
 
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -104,8 +103,7 @@ public class VetReactiveServices implements InitializingBean {
                    .map(MappingUtils::mapEntityAsVet);
     }
     
-    public Mono< Vet> createVet(Vet vet) {
-        Objects.requireNonNull(vet);
+    public Mono< Vet> createVet(@NotNull Vet vet) {
         VetEntity ve = MappingUtils.mapVetAsEntity(vet);
         return Mono.from(vetDao.upsert(ve))
                 .map(rr -> ve)

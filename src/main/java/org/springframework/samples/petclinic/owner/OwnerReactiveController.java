@@ -57,7 +57,7 @@ public class OwnerReactiveController {
     public OwnerReactiveController(OwnerReactiveServices service) {
         this.ownerServices = service;
     }
-
+   
     /**
      * Search owners by their lastName leveraging a secondary index.
      * The result having multiple outputs lead to use of Reactor object Flux<T>.

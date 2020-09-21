@@ -30,6 +30,7 @@ public class VisitEntity implements Serializable {
     public static final String VISIT_ATT_VISIT_ID    = "visit_id";
     public static final String VISIT_ATT_VISIT_DATE  = "visit_date";
     public static final String VISIT_ATT_DESCRIPTION = "description";
+    public static final String VISIT_IDX_VISITID     = "petclinic_visit_by_pet_idx_visitid";
     
     @PartitionKey
     @CqlName(VISIT_ATT_PET_ID)

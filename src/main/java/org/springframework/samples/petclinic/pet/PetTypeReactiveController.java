@@ -8,6 +8,8 @@ import static org.springframework.web.bind.annotation.RequestMethod.PATCH;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
+import java.util.Set;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -47,6 +49,22 @@ public class PetTypeReactiveController {
     /** Injection with controller. */
     public PetTypeReactiveController(PetReactiveServices petServices) {
         this.petServices = petServices;
+    }
+    
+    /**
+     * List all pet types from reference tables.
+     *
+     * @return
+     *      A set of all pets
+     */
+    @GetMapping(value = "/", produces = APPLICATION_JSON_VALUE)
+    @ApiOperation(value= "Read all pet types from database", 
+                  response=PetType.class)
+    @ApiResponses({
+      @ApiResponse(code = 200, message= "List of pet types"), 
+      @ApiResponse(code = 500, message= "Internal technical error") })
+    public Mono<ResponseEntity<Set<PetType>>> getAllPetTypes() {
+        return petServices.findAllPetTypes().map(ResponseEntity::ok);
     }
     
     @GetMapping(value = "/{petTypeId}", produces = APPLICATION_JSON_VALUE)

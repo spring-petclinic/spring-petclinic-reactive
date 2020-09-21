@@ -67,9 +67,10 @@ public interface PetReactiveDao {
      * Find a pet from its unique identifier id.
      * 
      * As pet is not the partition key and cardinality is low
-     * we created a secondary index and `allowFiltering` is not needed.
+     * we created a secondary index and `allowFiltering` is needed only as start up
+     * before tables exist.
      */
-    @Select(customWhereClause = PET_ATT_PET_ID + "= :petId")
+    @Select(customWhereClause = PET_ATT_PET_ID + "= :petId", allowFiltering = true)
     MappedReactiveResultSet<PetEntity> findByPetId(UUID petId);
 
     /**

@@ -13,8 +13,11 @@ import java.util.UUID;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.samples.petclinic.conf.SecurityEnabledConfig;
 import org.springframework.samples.petclinic.vet.db.VetEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.Assert;
@@ -51,6 +54,9 @@ import reactor.core.publisher.Mono;
 @Api(value="/petclinic/api/vets", tags = {"Veterinarians Api"})
 public class VetReactiveController {
     
+    /** Logger for the class. */
+    private static final Logger LOGGER = LoggerFactory.getLogger(VetReactiveController.class);
+    
     /** Implementatopn of Vet Services. */
     private VetReactiveServices vetServices; 
     
@@ -74,6 +80,7 @@ public class VetReactiveController {
         @ApiResponse(code = 200, message= "List of veterinarians"), 
         @ApiResponse(code = 500, message= "Internal technical error") })
     public Flux<Vet> getAllVets() {
+        LOGGER.info("Listing vets");
         return vetServices.findAllVets();
     }
     
@@ -94,6 +101,7 @@ public class VetReactiveController {
     public Mono<ResponseEntity<Vet>> getVet(@PathVariable("vetId") @Parameter(
                required = true,example = "1ff2fbd9-bbb0-4cc1-ba37-61966aa7c5e6",
                description = "Unique identifier of a Veterinarian") String vetId) {
+        LOGGER.info("Retrieve Vet infos from its id {}", vetId);
         return Mono.from(vetServices.findVetById(vetId))
                    .map(ResponseEntity::ok)
                    .defaultIfEmpty(ResponseEntity.notFound().build());
@@ -118,6 +126,7 @@ public class VetReactiveController {
     public Mono<ResponseEntity<Vet>> createVet(UriComponentsBuilder uc, 
             @RequestBody @Valid Vet vet) {
         vet.setId(UUID.randomUUID());
+        LOGGER.info("Creating Vet with generated id {}", vet.getId());
         return vetServices.createVet(vet)
                           .map(created -> mapVetAsHttpResponse(uc, created));
     }
@@ -142,8 +151,11 @@ public class VetReactiveController {
         @ApiResponse(code = 500, message= "Internal technical error") })
     public Mono<ResponseEntity<Vet>> upsert(
             UriComponentsBuilder uc, 
-            @PathVariable("vetId") String vetId, @RequestBody @Valid Vet vet) {
+            @PathVariable("vetId") String vetId, 
+            @RequestBody @Valid Vet vet) {
       Assert.isTrue(UUID.fromString(vetId).equals(vet.getId()), "Vet identifier provided in vet does not match the value if path");
+      vet.setId(UUID.fromString(vetId));
+      LOGGER.info("Update Vet with id {}", vetId);
       return vetServices.createVet(vet)
                         .map(created -> mapVetAsHttpResponse(uc, created));
     }
@@ -164,6 +176,7 @@ public class VetReactiveController {
     public Mono<ResponseEntity<Void>> deleteById(@PathVariable("vetId") @Parameter(
             required = true,example = "1ff2fbd9-bbb0-4cc1-ba37-61966aa7c5e6",
             description = "Unique identifier of a Veterinarian") @NotBlank String vetId) {
+        LOGGER.info("Delete Vet with id {}", vetId);
         return vetServices.deleteVetById(UUID.fromString(vetId))
                           .map(v -> new ResponseEntity<Void>(HttpStatus.NO_CONTENT));
     }

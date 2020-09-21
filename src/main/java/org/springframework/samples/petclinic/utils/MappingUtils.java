@@ -4,7 +4,6 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
 import java.util.Objects;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.validation.constraints.NotBlank;
@@ -79,7 +78,7 @@ public class MappingUtils {
     }
     
     public static VetEntity mapVetAsEntity(@NotNull Vet vet) {
-       return new VetEntity(UUID.randomUUID(), vet.getFirstName(), vet.getLastName(), 
+       return new VetEntity(vet.getId(), vet.getFirstName(), vet.getLastName(), 
                 vet.getSpecialties().stream()
                           .map(VetSpecialty::getName)
                           .collect(Collectors.toSet()));
