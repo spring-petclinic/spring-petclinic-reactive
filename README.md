@@ -6,7 +6,9 @@
 
 This application serves a REST API that's implemented with Spring WebFlux as the web framework and Apache Cassandra&reg; as the database. This backend is meant to be used with the **[spring-petclinic-angular](https://github.com/spring-petclinic/spring-petclinic-angular)** user interface.
 
-The steps to run the full application are provided below. To get started with a free-forever, zero-install Cassandra database [click here](https://astra.datastax.com/register?utm_source=github&utm_medium=referral&utm_campaign=spring-petclinic-reactive) 🚀
+The steps to run the full application are provided below.
+
+To get started with a free-forever, zero-install Cassandra database **[click here](https://astra.datastax.com/register?utm_source=github&utm_medium=referral&utm_campaign=spring-petclinic-reactive)** 🚀
 
 ![banner](https://raw.githubusercontent.com/clun/spring-petclinic-reactive/master/doc/img/banner.png)
 
@@ -26,7 +28,7 @@ The steps to run the full application are provided below. To get started with a 
 ![Astra Registration Screen](doc/img/db-auth.png?raw=true)
 
 
-**✅ Use the form to create New database**
+**✅ Use the form to create new database**
 
 If you don't have an existing instance,  login process will route automatically to the database creation form. You will find below which values to enter for each field.
 
@@ -40,9 +42,11 @@ View your database. It may take 2-3 minutes for your database to spin up. You wi
 **👁️ Expected output**
 
 *Initializing*
+
 ![Initializing Screen](doc/img/db-initializing.png?raw=true)
 
 *Database is ready*
+
 ![Database ready screen](doc/img/db-ready.png?raw=true)
 
 ### 2. Copy credentials to connect
