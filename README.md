@@ -4,7 +4,7 @@
 [![License Apache2](https://img.shields.io/hexpm/l/plug.svg)](http://www.apache.org/licenses/LICENSE-2.0)
 [![Gitpod ready-to-code](https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/clun/spring-petclinic-reactive)
 
-This application serves a REST API that's implemented with Spring WebFlux as the web framework and Apache Cassandra&reg; as the database. This backend is meant to be used with the **[spring-petclinic-angular](https://github.com/spring-petclinic/spring-petclinic-angular)** user interface.
+This application serves a REST API that's implemented with Spring WebFlux as the web framework and Apache Cassandra&reg; as the database. This backend is meant to be used with the spring-petclinic-angular user interface.
 
 The steps to run the full application are provided below.
 
