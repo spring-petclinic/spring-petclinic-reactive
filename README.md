@@ -111,16 +111,44 @@ You've successfully built the Spring Petclinic Reactive backend application!
 
 This REST API is meant to be used with the existing **[spring-petclinic-angular](https://github.com/spring-petclinic/spring-petclinic-angular)** user interface. To run the application please execute the following:
 
+- Installation of the components
 ```bash
 git clone https://github.com/spring-petclinic/spring-petclinic-angular.git
 cd spring-petclinic-angular
 npm uninstall -g angular-cli @angular/cli
-npm cache clean
 npm install -g @angular/cli@8.0.3
 npm install --save-dev @angular/cli@8.0.3
-ng build
-ng serve
+npm install --save-dev @angular-devkit/build-angular
+npm install -g typescript
+npm install
+npm run build
 ```
+
+- Copy the url of the backend to get it use the following command:
+
+```
+gp url 9966
+```
+
+- Locate the file `src/environments/environment.ts` 
+
+```
+export const environment = {
+  production: false,
+  REST_API_URL: 'https://localhost:9966/petclinic/api/'
+};
+```
+
+- Change `localhost:9966` with valid backend adress. As an EXAMPLE this is what it look like for us
+
+```
+export const environment = {
+  production: false,
+  REST_API_URL: 'https://9966-ea945100-94e7-4790-9b49-9514424ded86.ws-eu01.gitpod.io/petclinic/api/'
+};
+```
+
+- Start the UI with `ng serve`
 
 You should now be able to access the UI on port 4200.
 
