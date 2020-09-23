@@ -23,6 +23,7 @@
 		<springfox.version>3.0.0</springfox.version>
 		<slf4j.version>1.7.30</slf4j.version>
 		<spring-cloud.version>Hoxton.SR8</spring-cloud.version>
+		<lombok.version>1.18.12</lombok.version>
 	</properties>
 
 	<!-- Enabling SpringCloud features -->
@@ -88,6 +89,7 @@
         <dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
+			<version>${lombok.version}</version>
 		</dependency>
 
 		<!-- Driver (overriding spring defaults) -->
@@ -200,6 +202,7 @@
 						<path>
               				<groupId>org.projectlombok</groupId>
               				<artifactId>lombok</artifactId>
+              				<version>${lombok.version}</version>
             			</path>
 						<path>
 							<groupId>com.datastax.oss</groupId>
