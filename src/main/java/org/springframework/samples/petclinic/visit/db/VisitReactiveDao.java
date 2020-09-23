@@ -1,13 +1,7 @@
 package org.springframework.samples.petclinic.visit.db;
 
-import static com.datastax.oss.driver.api.querybuilder.SchemaBuilder.createIndex;
-import static com.datastax.oss.driver.api.querybuilder.SchemaBuilder.createTable;
-import static org.springframework.samples.petclinic.visit.db.VisitEntity.VISIT_ATT_DESCRIPTION;
 import static org.springframework.samples.petclinic.visit.db.VisitEntity.VISIT_ATT_PET_ID;
-import static org.springframework.samples.petclinic.visit.db.VisitEntity.VISIT_ATT_VISIT_DATE;
 import static org.springframework.samples.petclinic.visit.db.VisitEntity.VISIT_ATT_VISIT_ID;
-import static org.springframework.samples.petclinic.visit.db.VisitEntity.VISIT_IDX_VISITID;
-import static org.springframework.samples.petclinic.visit.db.VisitEntity.VISIT_TABLE;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -21,8 +15,6 @@ import org.springframework.samples.petclinic.visit.Visit;
 
 import com.datastax.dse.driver.api.core.cql.reactive.ReactiveResultSet;
 import com.datastax.dse.driver.api.mapper.reactive.MappedReactiveResultSet;
-import com.datastax.oss.driver.api.core.CqlSession;
-import com.datastax.oss.driver.api.core.type.DataTypes;
 import com.datastax.oss.driver.api.mapper.annotations.Dao;
 import com.datastax.oss.driver.api.mapper.annotations.Delete;
 import com.datastax.oss.driver.api.mapper.annotations.Select;
@@ -63,34 +55,6 @@ public interface VisitReactiveDao {
     
     @Delete
     ReactiveResultSet delete(VisitEntity visit);
-    
-    /**
-     * Creating objects Table,Index for Visits.
-     */
-    default void createSchema(CqlSession cqlSession) {
-        
-        /** 
-         * CREATE TABLE IF NOT EXISTS petclinic_visit_by_pet (
-         *  pet_id      uuid,
-         *  visit_id    uuid,
-         *  visit_date date,
-         *  description text,
-         *  PRIMARY KEY ((pet_id), visit_id));
-         **/
-        cqlSession.execute(
-                createTable(VISIT_TABLE).ifNotExists()
-                .withPartitionKey(VISIT_ATT_PET_ID, DataTypes.UUID)
-                .withClusteringColumn(VISIT_ATT_VISIT_ID, DataTypes.UUID)
-                .withColumn(VISIT_ATT_DESCRIPTION, DataTypes.TEXT)
-                .withColumn(VISIT_ATT_VISIT_DATE, DataTypes.DATE)
-                .build());
-        
-        /** Create a secondary index on visitId as cardinality is low. */
-        cqlSession.execute(createIndex(VISIT_IDX_VISITID).ifNotExists()
-                .onTable(VISIT_TABLE)
-                .andColumn(VISIT_ATT_VISIT_ID)
-                .build());
-    }
     
     /**
      * A pet can have multiple visits. (1..n).

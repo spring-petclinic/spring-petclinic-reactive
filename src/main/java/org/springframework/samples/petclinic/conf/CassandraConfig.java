@@ -81,10 +81,10 @@ public class CassandraConfig {
     public VetReactiveDao vetDao(CqlSession cqlSession) {
         // A mapper is initiliazed with a Session.
         VetReactiveDaoMapper vetMapper = new VetReactiveDaoMapperBuilder(cqlSession).build();
-        // From the mapper we can access the Dao instance by specifying the proper keyspace.
-        VetReactiveDao       vetDao    = vetMapper.vetDao(cqlSession.getKeyspace().get());
         // Create tables required for this DAO.
-        vetDao.createSchema(cqlSession);
+        vetMapper.createSchema(cqlSession);
+        // From the mapper we can access the Dao instance by specifying the proper keyspace.
+        VetReactiveDao vetDao = vetMapper.vetDao(cqlSession.getKeyspace().get());
         return vetDao;
     }
  
@@ -95,8 +95,8 @@ public class CassandraConfig {
     @Bean
     public OwnerReactiveDao ownerDao(CqlSession cqlSession) {
         OwnerReactiveDaoMapper ownerMapper = new OwnerReactiveDaoMapperBuilder(cqlSession).build();
+        ownerMapper.createSchema(cqlSession);
         OwnerReactiveDao ownerDao = ownerMapper.ownerDao(cqlSession.getKeyspace().get());
-        ownerDao.createSchema(cqlSession);
         return ownerDao;
     }
     
@@ -107,8 +107,8 @@ public class CassandraConfig {
     @Bean
     public PetReactiveDao petDao(CqlSession cqlSession) {
         PetReactiveDaoMapper petMapper = new PetReactiveDaoMapperBuilder(cqlSession).build(); 
+        petMapper.createSchema(cqlSession);
         PetReactiveDao petDao = petMapper.petDao(cqlSession.getKeyspace().get());
-        petDao.createSchema(cqlSession);
         return petDao;
     }
     
@@ -119,8 +119,8 @@ public class CassandraConfig {
     @Bean
     public VisitReactiveDao visitDao(CqlSession cqlSession) {
         VisitReactiveDaoMapper visitMapper = new VisitReactiveDaoMapperBuilder(cqlSession).build();
+        visitMapper.createSchema(cqlSession);
         VisitReactiveDao visitDao = visitMapper.visitDao(cqlSession.getKeyspace().get());
-        visitDao.createSchema(cqlSession);
         return visitDao;
     }
 }
