@@ -161,7 +161,30 @@ You should now be able to access the UI on port 4200.
 
 ## Understand the architecture
 
-### Architecture diagram
+### Internal Architecture our of component
+
+Let's have a look inside the main component `spring-petclinic-reactive` to see which libraries and frameworks have been used.
+
+![Pet Clinic Welcome Screen](https://raw.githubusercontent.com/clun/spring-petclinic-reactive/master/doc/img/internal-architecture.png)
+
+- `Spring-boot`: Spring Boot makes it easy to create stand-alone, production-grade Spring based Applications that you can "just run". We take an opinionated view of the Spring platform and third-party libraries so you can get started with minimum fuss. Most Spring Boot applications need minimal Spring configuration.
+
+- `Spring-Security`: Spring Security is a powerful and highly customizable authentication and access-control framework. It is the de-facto standard for securing Spring-based applications. Spring Security is a framework that focuses on providing both authentication and authorization to Java applications. Like all Spring projects, the real power of Spring Security is found in how easily it can be extended to meet custom requirements
+
+- `Spring-WebFlux`: Spring sub framework allowing to create Reactive Rest Endpoint 
+
+- `Spring-Actuator`: Expose Endpoints to expose metrics to third party system: health, infos, jmx,prometheus,...
+
+- `Spring-Test`: Enabled unit testing and mocking with Spring configuration and beans
+
+- `Spring-Cloud`: Spring Cloud provides tools for developers to quickly build some of the common patterns in distributed systems (e.g. configuration management, service discovery, circuit breakers, intelligent routing, micro-proxy, control bus, one-time tokens, global locks, leadership election, distributed sessions, cluster state). Coordination of distributed systems leads to boiler plate patterns, and using Spring Cloud developers can quickly stand up services and applications that implement those patterns. They will work well in any distributed environment, including the developer’s own laptop, bare metal data centres, and managed platforms such as Cloud Foundry.
+
+- `SpringFox` *(Swagger)*: Annotation based rest documentation generation and test client generation (swagger-ui)
+
+![Pet Clinic Welcome Screen](https://raw.githubusercontent.com/clun/spring-petclinic-reactive/master/doc/img/swagger.png)
+
+
+### Logical Architecture
 
 ![Pet Clinic Welcome Screen](https://raw.githubusercontent.com/clun/spring-petclinic-reactive/master/doc/img/logical-architecture.png)
 
@@ -196,23 +219,7 @@ To start zipkin use `docker-compose up -d`
 
 - `DataStax Astra` : Apache Cassandra available in the Cloud for free as a managed service (DBaas)
 
-Let's have a look inside the main component `spring-petclinic-reactive` to see which libraries and frameworks have been used.
 
-![Pet Clinic Welcome Screen](https://raw.githubusercontent.com/clun/spring-petclinic-reactive/master/doc/img/internal-architecture.png)
-
-- `Spring-boot`: Spring Boot makes it easy to create stand-alone, production-grade Spring based Applications that you can "just run". We take an opinionated view of the Spring platform and third-party libraries so you can get started with minimum fuss. Most Spring Boot applications need minimal Spring configuration.
-
-- `Spring-Security`: Spring Security is a powerful and highly customizable authentication and access-control framework. It is the de-facto standard for securing Spring-based applications. Spring Security is a framework that focuses on providing both authentication and authorization to Java applications. Like all Spring projects, the real power of Spring Security is found in how easily it can be extended to meet custom requirements
-
-- `Spring-WebFlux`: Spring sub framework allowing to create Reactive Rest Endpoint 
-
-- `Spring-Actuator`: Expose Endpoints to expose metrics to third party system: health, infos, jmx,prometheus,...
-
-- `Spring-Test`: Enabled unit testing and mocking with Spring configuration and beans
-
-- `Spring-Cloud`: Spring Cloud provides tools for developers to quickly build some of the common patterns in distributed systems (e.g. configuration management, service discovery, circuit breakers, intelligent routing, micro-proxy, control bus, one-time tokens, global locks, leadership election, distributed sessions, cluster state). Coordination of distributed systems leads to boiler plate patterns, and using Spring Cloud developers can quickly stand up services and applications that implement those patterns. They will work well in any distributed environment, including the developer’s own laptop, bare metal data centres, and managed platforms such as Cloud Foundry.
-
-- `SpringFox` *(Swagger)*: Annotation based rest documentation generation and test client generation (swagger-ui)
 
 ### Data Model diagram
 
