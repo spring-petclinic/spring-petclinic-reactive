@@ -16,7 +16,7 @@ To get started with a free-forever, zero-install Cassandra database **[click her
 
 - [Run the application](#run-the-application)
 - [Understand the architecture](#understand-the-architecture)
-- [Contribute](#contribute)
+- [Contributing](#contributing)
 
 ## Run the application
 
@@ -159,25 +159,30 @@ You should now be able to access the UI on port 4200.
 
 ## Understand the architecture
 
-### Understanding the Pet Clinic Application
 
-Best resources is probably https://spring-petclinic.github.io/.  The Spring PetClinic is a sample application designed to show how the Spring stack can be used to build simple, but powerful database-oriented applications.
-
-![image](doc/img/pet-clinic.png?raw=true)
 
 ### Architecture diagram
 
-*in progress*
+
+![Pet Clinic Welcome Screen](https://raw.githubusercontent.com/clun/spring-petclinic-reactive/master/doc/img/logical-architecture.png)
+
+![Pet Clinic Welcome Screen](https://raw.githubusercontent.com/clun/spring-petclinic-reactive/master/doc/img/internal-architecture.png)
+
 
 ### Data Model diagram
 
-*in progress*
+![Pet Clinic Welcome Screen](https://raw.githubusercontent.com/clun/spring-petclinic-reactive/master/doc/img/data-model.png)
 
-## C. Contribute
 
-### Blog post and communications
 
-*in progress*
+
+
+## C. Contributing
+
+ The [issue tracker](https://github.com/spring-petclinic/spring-petclinic-reactive/issues)is the preferred channel for bug reports, features requests and submitting pull requests.
+
+For pull requests, editor preferences are available in the editor config for easy use in common text editors. Read more and download plugins at http://editorconfig.org.
+
 
 
 

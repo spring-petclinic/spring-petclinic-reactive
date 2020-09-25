@@ -15,8 +15,6 @@ import javax.validation.constraints.NotBlank;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.samples.petclinic.owner.db.OwnerEntity;
-import org.springframework.samples.petclinic.pet.db.PetEntity;
 import org.springframework.util.Assert;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -140,7 +138,7 @@ public class PetReactiveController {
                 consumes=APPLICATION_JSON_VALUE,
                 produces = APPLICATION_JSON_VALUE)
     @ApiOperation(value= "Upsert a pet (no read before write as for Cassandra)", 
-                  response=PetEntity.class)
+                  response=Pet.class)
     @ApiResponses({
         @ApiResponse(code = 201, message= "The pet has been created, uuid is provided in header"), 
         @ApiResponse(code = 400, message= "The pet bean was malformed or does not provide valid id"),

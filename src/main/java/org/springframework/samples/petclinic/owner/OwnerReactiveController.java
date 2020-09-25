@@ -15,8 +15,6 @@ import javax.validation.constraints.NotNull;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.samples.petclinic.owner.db.OwnerEntity;
-import org.springframework.samples.petclinic.vet.db.VetEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -68,7 +66,7 @@ public class OwnerReactiveController {
      *      list of Owners matching the term
      */
     @GetMapping(value = "/*/lastname/{lastName}", produces = APPLICATION_JSON_VALUE)
-    @ApiOperation(value= "Search owner by their lastName", response=OwnerEntity.class)
+    @ApiOperation(value= "Search owner by their lastName", response=Owner.class)
     @ApiResponses({
         @ApiResponse(code = 200, message= "List of owners matching the lastname"), 
         @ApiResponse(code = 500, message= "Internal technical error") })
@@ -100,7 +98,7 @@ public class OwnerReactiveController {
      *      a {@link Mono} of {@link OwnerEntity} or empty response with not found (404) code
      */
     @GetMapping(value = "/{ownerId}", produces = APPLICATION_JSON_VALUE)
-    @ApiOperation(value= "Retrieve owner information by its unique identifier", response=OwnerEntity.class)
+    @ApiOperation(value= "Retrieve owner information by its unique identifier", response=Owner.class)
     @ApiResponses({
         @ApiResponse(code = 200, message= "the identifier exists and related owner is returned"), 
         @ApiResponse(code = 400, message= "The identifier was not a valid UUID"),
