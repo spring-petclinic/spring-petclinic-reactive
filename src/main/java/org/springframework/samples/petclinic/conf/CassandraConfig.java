@@ -2,6 +2,8 @@ package org.springframework.samples.petclinic.conf;
 
 import static com.datastax.oss.driver.api.querybuilder.SchemaBuilder.createKeyspace;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,6 +13,7 @@ import org.springframework.samples.petclinic.owner.db.OwnerReactiveDaoMapperBuil
 import org.springframework.samples.petclinic.pet.db.PetReactiveDao;
 import org.springframework.samples.petclinic.pet.db.PetReactiveDaoMapper;
 import org.springframework.samples.petclinic.pet.db.PetReactiveDaoMapperBuilder;
+import org.springframework.samples.petclinic.vet.VetReactiveController;
 import org.springframework.samples.petclinic.vet.db.VetReactiveDao;
 import org.springframework.samples.petclinic.vet.db.VetReactiveDaoMapper;
 import org.springframework.samples.petclinic.vet.db.VetReactiveDaoMapperBuilder;
@@ -33,6 +36,9 @@ import com.datastax.oss.driver.api.core.config.DriverConfigLoader;
 @Configuration
 public class CassandraConfig {
     
+    /** Logger for the class. */
+    private static final Logger LOGGER = LoggerFactory.getLogger(CassandraConfig.class);
+   
     /**
      * This flag will help us decide between 2 configurations files
      * `application-astra.conf` or `application-local.conf`
@@ -52,6 +58,7 @@ public class CassandraConfig {
         DriverConfigLoader configReader;
         CqlSession cqlSession;
         if (useAstra) {
+             LOGGER.info("Loading configuration to Astra");
              // the file 'application-astra.conf' contains all configuration keys
              configReader = DriverConfigLoader.fromClasspath("application-astra.conf");
              cqlSession   = CqlSession.builder().withConfigLoader(configReader).build();
