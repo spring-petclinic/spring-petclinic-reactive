@@ -24,6 +24,7 @@
 		<slf4j.version>1.7.30</slf4j.version>
 		<spring-cloud.version>Hoxton.SR8</spring-cloud.version>
 		<lombok.version>1.18.12</lombok.version>
+		<maven.test.skip>true</maven.test.skip>
 	</properties>
 
 	<!-- Enabling SpringCloud features -->
