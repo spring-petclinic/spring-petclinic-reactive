@@ -9,7 +9,7 @@ tasks:
       npm run start
   - name: spring-petclinic-reactive
     init: mvn package
-    command: . setup.sh && java -jar target/spring-petclinic-reactive-1.0.0-SNAPSHOT.jar
+    command: . setup.sh && mvn spring-boot:run
 
 ports:
   - port: 4200
