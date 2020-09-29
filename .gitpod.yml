@@ -1,6 +1,6 @@
 image:
   file: .gitpod.Dockerfile
-  
+
 tasks:
   - name: spring-petclinic-angular
     before: cd ../spring-petclinic-angular

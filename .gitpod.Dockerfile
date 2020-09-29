@@ -8,4 +8,3 @@ RUN npm install --save-dev @angular/cli@8.0.3
 RUN npm install --save-dev @angular-devkit/build-angular
 RUN npm install -g typescript
 RUN npm install
-RUN npm run build
