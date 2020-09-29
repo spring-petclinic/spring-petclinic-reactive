@@ -58,7 +58,7 @@ View your database. It may take 2-3 minutes for your database to spin up. You wi
 
 ![my-pic](https://github.com/datastaxdevs/shared-assets/blob/master/astra/dashboard-pending-1000.png?raw=true)
 
-*Database is ready*
+*Database is ready, notice how the status changed from pending to Active and now you have the **connect** buttton enabled.*
 
 ![my-pic](https://github.com/datastaxdevs/shared-assets/blob/master/astra/dashboard-withdb-1000.png?raw=true)
 

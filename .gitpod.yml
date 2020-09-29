@@ -1,13 +1,27 @@
-image: gitpod/workspace-full
+image:
+  file: .gitpod.Dockerfile
+  
 tasks:
-  - init: mvn package
+  - name: spring-petclinic-angular
+    before: cd ../spring-petclinic-angular
+    init: npm install && npm run build
+    command: |
+      npm run start
+  - name: spring-petclinic-reactive
+    init: mvn package
     command: . setup.sh && java -jar target/spring-petclinic-reactive-1.0.0-SNAPSHOT.jar
+
 ports:
-  - port: 8081
-    onOpen: open-browser
+  - port: 4200
+    onOpen: open-preview  
+  - port: 9966
+    onOpen: open-preview
+  - port: 9967
+    onOpen: ignore
+
 github:
   prebuilds:
-    master: true
+    master: false
     branches: false
     pullRequests: false
     pullRequestsFromForks: false
