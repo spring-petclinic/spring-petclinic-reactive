@@ -32,10 +32,21 @@ To get started with a free-forever, zero-install Cassandra database **[click her
 
 **✅ Use the form to create new database**
 
-If you don't have an existing instance,  login process will route automatically to the database creation form. You will find below which values to enter for each field.
+On the Astra home page locate the **create Database** button
 
-![Astra Database Creation Form](doc/img/db-creation.png?raw=true)
+![Astra Database Creation Form](doc/img/db-creation-1.png?raw=true)
 
+1. Pick the free tier plan, this is a true free tier, free forever and no payment method asked.
+
+![Astra Database Creation Form](doc/img/db-creation-2.png?raw=true)
+
+2. Pick the proper region and click configure.
+
+![Astra Database Creation Form](doc/img/db-creation-3.png?raw=true)
+
+3. Fill the database name, keyspace name, username and password
+
+![Astra Database Creation Form](doc/img/db-creation-4.png?raw=true)
 
 **✅ View your Database and connect**
 

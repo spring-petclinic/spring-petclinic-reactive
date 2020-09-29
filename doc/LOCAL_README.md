@@ -46,9 +46,37 @@ npm uninstall -g angular-cli @angular/cli
 npm cache clean
 npm install -g @angular/cli@8.0.3
 npm install --save-dev @angular/cli@8.0.3
+npm install
+
 ng build
 ng serve
 ```
+
+```
+  # Distributed tracing with Brave/Zipkin/Sleuth
+  zipkin:
+    enabled: true
+    baseUrl: http://localhost:9411
+    sender:
+      type: web
+```
+
+```
+localhost:9091
+```
+
+```
+localhost:3000
+```
+
+```
+docker-compose up -d
+Creating network "spring-petclinic-reactive_default" with the default driver
+Creating prometheus-server ... done
+Creating tracing-server    ... done
+Creating grafana-server    ... done
+```
+
 
 You should now be able to access the UI on [localhost:4200](http://localhost:4200).
 ![Pet Clinic Welcome Screen](https://raw.githubusercontent.com/clun/spring-petclinic-reactive/master/doc/img/ui-top.png)
