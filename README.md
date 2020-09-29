@@ -32,7 +32,7 @@ To get started with a free-forever, zero-install Cassandra database **[click her
 
 **✅ Use the form to create new database**
 
-On the Astra home page locate the **create Database** button
+On the Astra home page locate the **Add Database** button
 
 ![Astra Database Creation Form](doc/img/db-creation-1.png?raw=true)
 
@@ -56,35 +56,29 @@ View your database. It may take 2-3 minutes for your database to spin up. You wi
 
 *Initializing*
 
-![Initializing Screen](doc/img/db-initializing.png?raw=true)
+![my-pic](https://github.com/datastaxdevs/shared-assets/blob/master/astra/dashboard-pending-1000.png?raw=true)
 
 *Database is ready*
 
-![Database ready screen](doc/img/db-ready.png?raw=true)
+![my-pic](https://github.com/datastaxdevs/shared-assets/blob/master/astra/dashboard-withdb-1000.png?raw=true)
 
 ### 2. Copy credentials to connect
 
 **✅ Navigate to your credentials**
 
-Click `Your Databases`, then `Manage Organizations` on the top navigation:
+Locate the combo `Manage Organizations` on the top navigation. On the right side of your organization, click the elipsis (...) then `Manage Organizations`:
 
-![image](https://user-images.githubusercontent.com/3254549/90944069-9f63a880-e3d1-11ea-834a-968ffe69e37b.png)
+![my-pic](https://github.com/datastaxdevs/shared-assets/blob/master/astra/organization-combo-1000.png?raw=true)
 
-On the right side of your organization, click the elipsis (...) then `Manage Organizations`:
+You should be routed to the following, scrool down to the bottom of the page
 
-![image](https://user-images.githubusercontent.com/3254549/90944096-c02bfe00-e3d1-11ea-9513-b3362cdfd77a.png)
-
-
-**✅ Add a service account if one does not exist**
-Click the action menu, then select 'Add Service Account':
-
-![image](https://user-images.githubusercontent.com/3254549/90944155-05503000-e3d2-11ea-9d2a-8c376b027358.png)
+![my-pic](https://github.com/datastaxdevs/shared-assets/blob/master/astra/organization-home-1000.png?raw=true)
 
 **✅ Copy credentials to your clipboard**
 
 Click the copy icon to copy your Astra service account credentials to your clipboard:
 
-![image](https://user-images.githubusercontent.com/3254549/90944221-3c264600-e3d2-11ea-9d04-46915f1c3731.png)
+![my-pic](https://github.com/datastaxdevs/shared-assets/blob/master/astra/organization-copycredentials-1000.png?raw=true)
 
 This credentials copied in the clipboard look like the following JSON:
 ```json
