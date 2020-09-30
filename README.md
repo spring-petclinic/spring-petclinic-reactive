@@ -2,14 +2,11 @@
 
 [![Build Status](https://travis-ci.org/ff4j/ff4j.svg?branch=master)](https://travis-ci.org/clun/spring-petclinic-reactive)
 [![License Apache2](https://img.shields.io/hexpm/l/plug.svg)](http://www.apache.org/licenses/LICENSE-2.0)
-[![Gitpod ready-to-code](https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/clun/spring-petclinic-reactive)
+[![Gitpod ready-to-code](https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/datastax-examples/spring-petclinic-reactive)
 
 This application serves a REST API that's implemented with **Spring WebFlux** as the web framework and *Apache Cassandra&reg;* as the database. This backend is meant to be used with the `spring-petclinic-angular` user interface.
 
-The steps to run the full application are provided below.
-
-To get started with a free-forever, zero-install Cassandra database **[click here](https://astra.datastax.com/register?utm_source=github&utm_medium=referral&utm_campaign=spring-petclinic-reactive)** 🚀
-
+The steps to run the application are provided below. You can run the application with no installation using Gitpod and Cassandra as DBaas for free or locally. To get started with a free-forever, zero-install Cassandra database **[click here](https://astra.datastax.com/register?utm_source=github&utm_medium=referral&utm_campaign=spring-petclinic-reactive)** 🚀
 
 ![Pet Clinic Welcome Screen](https://raw.githubusercontent.com/clun/spring-petclinic-reactive/master/doc/img/logical-architecture.png)
 *Architecture overview*
@@ -36,15 +33,15 @@ On the Astra home page locate the **Add Database** button
 
 ![Astra Database Creation Form](doc/img/db-creation-1.png?raw=true)
 
-1. Pick the free tier plan, this is a true free tier, free forever and no payment method asked.
+Pick the **free tier** plan, this is a true free tier, free forever and no payment method asked 🎉 🎉
 
 ![Astra Database Creation Form](doc/img/db-creation-2.png?raw=true)
 
-2. Pick the proper region and click configure.
+Pick the proper region and click `configure` button. Number of regions and cloud providers is reduced in the free tier but please notice you can run the DB on any cloud with any VPC Peering.
 
 ![Astra Database Creation Form](doc/img/db-creation-3.png?raw=true)
 
-3. Fill the database name, keyspace name, username and password
+Fill the `database name`, `keyspace name`, `username` and `password`. *Please remember your password as you will be asked to provide it when application start the first time.*
 
 ![Astra Database Creation Form](doc/img/db-creation-4.png?raw=true)
 
