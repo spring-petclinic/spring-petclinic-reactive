@@ -40,9 +40,66 @@ Locate the file `application.yaml`  on the repository and switch property `petcl
 ## The application
 
 
-**✅ Start the application** : You can now run the application with the command: `mvn spring-boot:run`. This will create the required schema for the application in your Astra database.
+**✅ Start Prometheus,Grafana, Zipkin** :
 
-![image](doc/img/exec-local.png?raw=true)
+All this components are available in the `docker-composer.yaml` file so simply. If you uncommented Cassandra it will also start.
+
+```
+docker-compose up -d
+```
+
+output 
+```
+Creating network "spring-petclinic-reactive_default" with the default driver
+Creating prometheus-server ... done
+Creating tracing-server    ... done
+Creating grafana-server    ... done
+```
+
+- Grafana is available at [localhost:3000](http://localhost:3000)
+
+![Pet Clinic Welcome Screen](img/grafana.png?raw=true)
+
+- Prometehus is available at [localhost:9091](http://localhost:9091)
+
+![Pet Clinic Welcome Screen](img/prometheus.png?raw=true)
+
+- Zipkin is available at [localhost:9091](http://localhost:9091)
+
+![Pet Clinic Welcome Screen](img/zipkin.png?raw=true)
+
+To enable this tracing set the properties to `zipkin.enabled` to true in `application.yaml`. 
+
+```
+  zipkin:
+    enabled: true
+    baseUrl: http://localhost:9411
+    sender:
+      type: web
+```
+
+
+**✅ Start the backend** : You can now run the application with the command: `mvn spring-boot:run`. This will create the required schema for the application in your Astra database.
+
+![image](img/exec-local.png?raw=true)
+
+
+
+
+**✅ Start the front end* : This REST API is meant to be used with the existing **[spring-petclinic-angular](https://github.com/spring-petclinic/spring-petclinic-angular)** user interface. To run the application please execute the following:
+
+```bash
+git clone https://github.com/spring-petclinic/spring-petclinic-angular.git
+cd spring-petclinic-angular
+npm uninstall -g angular-cli @angular/cli
+npm cache clean
+npm install -g @angular/cli@8.0.3
+npm install --save-dev @angular/cli@8.0.3
+npm install
+
+ng build
+ng serve
+```
 
 ### 5. More screenShots
 
@@ -62,45 +119,7 @@ Locate the file `application.yaml`  on the repository and switch property `petcl
 
 ![Pet Clinic Veterinarians Screen](https://raw.githubusercontent.com/clun/spring-petclinic-reactive/master/doc/img/ui-veterinarians.png)
 
-**✅ Start the WEB UI** : This REST API is meant to be used with the existing **[spring-petclinic-angular](https://github.com/spring-petclinic/spring-petclinic-angular)** user interface. To run the application please execute the following:
 
-```bash
-git clone https://github.com/spring-petclinic/spring-petclinic-angular.git
-cd spring-petclinic-angular
-npm uninstall -g angular-cli @angular/cli
-npm cache clean
-npm install -g @angular/cli@8.0.3
-npm install --save-dev @angular/cli@8.0.3
-npm install
-
-ng build
-ng serve
-```
-
-```
-  # Distributed tracing with Brave/Zipkin/Sleuth
-  zipkin:
-    enabled: true
-    baseUrl: http://localhost:9411
-    sender:
-      type: web
-```
-
-```
-localhost:9091
-```
-
-```
-localhost:3000
-```
-
-```
-docker-compose up -d
-Creating network "spring-petclinic-reactive_default" with the default driver
-Creating prometheus-server ... done
-Creating tracing-server    ... done
-Creating grafana-server    ... done
-```
 
 
 You should now be able to access the UI on [localhost:4200](http://localhost:4200).
