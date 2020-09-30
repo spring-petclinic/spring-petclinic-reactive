@@ -9,8 +9,8 @@ tasks:
       echo "export const environment = {production: false, REST_API_URL: '$(gp url 9966)/petclinic/api/'};" > /workspace/spring-petclinic-angular/src/environments/environment.ts 
       npm run start
   - name: spring-petclinic-reactive
-    init: . setup.sh
-    command: mvn clean package && java -jar target/spring-petclinic-reactive-1.0.0-SNAPSHOT.jar 
+    init:  mvn clean package install && . setup.sh
+    command: mvn clean package install && java -jar target/spring-petclinic-reactive-1.0.0-SNAPSHOT.jar 
 
 ports:
   - port: 4200

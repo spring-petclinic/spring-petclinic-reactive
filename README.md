@@ -55,7 +55,7 @@ View your database. It may take 2-3 minutes for your database to spin up. You wi
 
 ![my-pic](https://github.com/datastaxdevs/shared-assets/blob/master/astra/dashboard-pending-1000.png?raw=true)
 
-*Database is ready, notice how the status changed from pending to Active and now you have the **connect** buttton enabled.*
+Database is ready, notice how the status changed from `pending` to `Active` and now you now have the **connect** button enabled.*
 
 ![my-pic](https://github.com/datastaxdevs/shared-assets/blob/master/astra/dashboard-withdb-1000.png?raw=true)
 
@@ -63,11 +63,11 @@ View your database. It may take 2-3 minutes for your database to spin up. You wi
 
 **✅ Navigate to your credentials**
 
-Locate the combo `Manage Organizations` on the top navigation. On the right side of your organization, click the elipsis (...) then `Manage Organizations`:
+Locate the combo `Organization: <Your email>` on the top navigation. On the right side of your organization, click the elipsis (...) then click your `<Your email>`.
 
 ![my-pic](https://github.com/datastaxdevs/shared-assets/blob/master/astra/organization-combo-1000.png?raw=true)
 
-You should be routed to the following, scrool down to the bottom of the page
+You should landed to the following screem. Scroll down to the bottom of the page to locate the `Service Account` in `Security Settings`
 
 ![my-pic](https://github.com/datastaxdevs/shared-assets/blob/master/astra/organization-home-1000.png?raw=true)
 
@@ -90,7 +90,15 @@ This credentials copied in the clipboard look like the following JSON:
 
 **✅ Open Gitpod (with creds copied to clipboard)**
 
-[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/clun/spring-petclinic-reactive)
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/datastax-examples/spring-petclinic-reactive)
+
+At first launch the gitpod image is built.
+![image](doc/img/building-workspace.png?raw=true)
+
+Then image is pulled 
+![image](doc/img/pulling-image.png?raw=true)
+
+
 
 **✅ Paste credentials in Gitpod terminal**
 
@@ -100,7 +108,7 @@ Once your Gitpod workspace has loaded, you'll be asked to paste your service acc
 
 **✅ Open Swagger UI in browser**
 
-When the app is finished building, click the 'Open Browser' button on the bottom right of the screen:
+When the app is finished building, a new tab should be opened in your browser showing.
 
 ![image](doc/img/exec-start.png?raw=true)
 
@@ -110,54 +118,16 @@ You've successfully built the Spring Petclinic Reactive backend application!
 
 ![image](doc/img/exec-api-page.png?raw=true)
 
-
 **✅ Start the Web UI** :
 
-This REST API is meant to be used with the existing **[spring-petclinic-angular](https://github.com/spring-petclinic/spring-petclinic-angular)** user interface. To run the application please execute the following:
+You may have noticed another terminal named `spring-petclinic-angular`. This is where the UI should start. 
 
-- Installation of the components
-```bash
-git clone https://github.com/spring-petclinic/spring-petclinic-angular.git
-cd spring-petclinic-angular
-npm uninstall -g angular-cli @angular/cli
-npm install -g @angular/cli@8.0.3
-npm install --save-dev @angular/cli@8.0.3
-npm install --save-dev @angular-devkit/build-angular
-npm install -g typescript
-npm install
-npm run build
-```
+![image](doc/img/start-ui.png?raw=true)
 
-- Copy the url of the backend to get it use the following command:
+After answering the question about analytics usage you should now be able to access the UI on a new tab.
 
-```
-gp url 9966
-```
-
-- Locate the file `src/environments/environment.ts` 
-
-```
-export const environment = {
-  production: false,
-  REST_API_URL: 'https://localhost:9966/petclinic/api/'
-};
-```
-
-- Change `localhost:9966` with valid backend adress. As an EXAMPLE this is what it look like for us
-
-```
-export const environment = {
-  production: false,
-  REST_API_URL: 'https://9966-ea945100-94e7-4790-9b49-9514424ded86.ws-eu01.gitpod.io/petclinic/api/'
-};
-```
-
-- Start the UI with `ng serve`
-
-You should now be able to access the UI on port 4200.
 
 ![Pet Clinic Welcome Screen](https://raw.githubusercontent.com/clun/spring-petclinic-reactive/master/doc/img/ui-top.png)
-
 
 **NOTE** If you want to run everything locally, reference the [LOCAL_README.md](doc/LOCAL_README.md)
 
