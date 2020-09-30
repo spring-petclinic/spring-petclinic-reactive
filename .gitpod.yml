@@ -3,13 +3,13 @@ image:
 
 tasks:
   - name: spring-petclinic-angular
-    before: cd ../spring-petclinic-angular
+    before: cd /workspace && git clone https://github.com/spring-petclinic/spring-petclinic-angular.git && cd /workspace/spring-petclinic-angular
     init: npm install && npm run build
     command: |
       npm run start
   - name: spring-petclinic-reactive
     init: mvn package
-    command: . setup.sh && mvn spring-boot:run
+    command: . setup.sh && mvn package && java -jar target/spring-petclinic-reactive-1.0.0-SNAPSHOT.jar 
 
 ports:
   - port: 4200
