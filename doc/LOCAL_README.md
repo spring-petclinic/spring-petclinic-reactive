@@ -1,8 +1,23 @@
-### 4. Start locally
+# Reactive Implementation of 🐈 Spring PetClinic 🐕
 
-**✅ Download the secure connect bundle :** Go to the home page. Execute a refresh of the page using (F5) (the download link will be valid for 5 minutes and we want to ensure NOT to reach the timeout). Locate link Download secure connect bundle and click. You should download a file named secure-connect-<your_db_name>.zip. Please remember the location of the file.
+## Cassandra
 
-![image](doc/img/cloud-secure-bundle.png?raw=true)
+### Still using Cassandra As a service
+
+To create the DB the instruction [here are relevant](../spring-petclinic-reactive#1-start-the-database)
+
+**✅ Download the secure connect bundle :**
+
+On the summary page locate the `connect` button close to your database name:
+
+![my-pic](https://github.com/datastaxdevs/shared-assets/blob/master/astra/summary-1000-connect.png?raw=true)
+
+Then on the connection screen select `Drivers`
+![my-pic](https://github.com/datastaxdevs/shared-assets/blob/master/astra/connect-rest-driver.png?raw=true)
+
+Finally on the last page click the button `Download Secure Bundle`
+
+![my-pic](https://github.com/datastaxdevs/shared-assets/blob/master/astra/connect-driver-1000.png?raw=true)
 
 Save the file in a path you will remember, again we will need it for the next exercises.
 
@@ -14,6 +29,16 @@ export ASTRA_DB_PASSWORD=petclinic
 export ASTRA_DB_KEYSPACE=spring_petclinic
 export ASTRA_DB_BUNDLE=/Users/cedricklunven/Downloads/secure-connect-petclinicdb.zip
 ```
+
+### Work 100% locally
+
+Locate the file `docker-compose.yaml` on the repository and uncomment the block with the cassandra instruction.
+
+Locate the file `application.yaml`  on the repository and switch property `petclinic.astra.enable` to false. The application will now read the configuration file `application-local.conf` and not `application-astra.conf`
+
+
+## The application
+
 
 **✅ Start the application** : You can now run the application with the command: `mvn spring-boot:run`. This will create the required schema for the application in your Astra database.
 
