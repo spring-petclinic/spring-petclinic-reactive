@@ -4,9 +4,6 @@
 This application serves a REST API that's implemented with **Spring WebFlux** as the web framework and *Apache Cassandra&reg;* as the database. This backend is meant to be used with the `spring-petclinic-angular` user interface.
 
 ![image](https://raw.githubusercontent.com/clun/spring-petclinic-reactive/master/doc/img/ui-top.png)
-
-[![Build Status](https://travis-ci.org/ff4j/ff4j.svg?branch=master)](https://travis-ci.org/clun/spring-petclinic-reactive)
-[![License Apache2](https://img.shields.io/hexpm/l/plug.svg)](http://www.apache.org/licenses/LICENSE-2.0)
 [![Gitpod ready-to-code](https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/datastax-examples/spring-petclinic-reactive)
 
 The steps to run the application are provided below. You can run the application with no installation using Gitpod and Cassandra as DBaas for free or locally. To get started with a free-forever, zero-install Cassandra database **[click here](https://astra.datastax.com/register?utm_source=github&utm_medium=referral&utm_campaign=spring-petclinic-reactive)** 🚀
