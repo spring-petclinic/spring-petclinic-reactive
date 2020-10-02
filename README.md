@@ -3,7 +3,7 @@
 
 This application serves a REST API that's implemented with **Spring WebFlux** as the web framework and *Apache Cassandra&reg;* as the database. This backend is meant to be used with the `spring-petclinic-angular` user interface.
 
-![image](https://monosnap.com/image/Fv0yPAznbeNJD3vYlQfztME6yogzFT)
+![image](https://raw.githubusercontent.com/clun/spring-petclinic-reactive/master/doc/img/ui-top.png)
 
 [![Build Status](https://travis-ci.org/ff4j/ff4j.svg?branch=master)](https://travis-ci.org/clun/spring-petclinic-reactive)
 [![License Apache2](https://img.shields.io/hexpm/l/plug.svg)](http://www.apache.org/licenses/LICENSE-2.0)
