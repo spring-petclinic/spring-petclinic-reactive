@@ -1,7 +1,7 @@
 # Reactive Implementation of 🐈 Spring PetClinic 🐕
 *15 minutes, Intermediate*
 
-This application serves a REST API that's implemented with **Spring WebFlux** as the web framework and *Apache Cassandra&reg;* as the database. This backend is meant to be used with the `spring-petclinic-angular` user interface.
+This sample is a fully reactive version of the Spring PetClinic application using Spring WebFlux.
 
 ![image](https://raw.githubusercontent.com/clun/spring-petclinic-reactive/master/doc/img/ui-top.png)
 
