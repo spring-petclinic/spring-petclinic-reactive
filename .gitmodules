@@ -1,0 +1,4 @@
+[submodule "spring-petclinic-angular"]
+	path = spring-petclinic-angular
+	url = https://github.com/spring-petclinic/spring-petclinic-angular.git
+    ignore = dirty

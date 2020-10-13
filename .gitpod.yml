@@ -3,14 +3,23 @@ image:
 
 tasks:
   - name: spring-petclinic-angular
-    before: cd /workspace && git clone https://github.com/spring-petclinic/spring-petclinic-angular.git && cd /workspace/spring-petclinic-angular
-    init: npm install --silent && npm run build --silent
+    init: |
+      cd /workspace/workshop-spring-reactive/spring-petclinic-angular
+      npm install --silent
+      npm run build --silent
     command: |
-      echo "export const environment = {production: false, REST_API_URL: '$(gp url 9966)/petclinic/api/'};" > /workspace/spring-petclinic-angular/src/environments/environment.ts 
+      cd /workspace/workshop-spring-reactive/spring-petclinic-angular
+      echo "export const environment = {production: false, REST_API_URL: '$(gp url 9966)/petclinic/api/'};" > /workspace/workshop-spring-reactive/spring-petclinic-angular/environment.ts 
       npm run start
+    env:
+      # suppress the "Would you like to share anonymous usage data with the Angular Team at Google under Google’s Privacy Policy" message.
+      NG_CLI_ANALYTICS: ci
   - name: spring-petclinic-reactive
-    init:  mvn clean package install && . setup.sh
-    command: mvn clean package install && java -jar target/spring-petclinic-reactive-1.0.0-SNAPSHOT.jar 
+    init: |
+      mvn clean package install
+    command: |
+      . setup.sh
+      java -jar target/spring-petclinic-reactive-1.0.0-SNAPSHOT.jar 
 
 ports:
   - port: 4200
@@ -24,12 +33,12 @@ ports:
 
 github:
   prebuilds:
-    master: false
-    branches: false
-    pullRequests: false
+    master: true
+    branches: true
+    pullRequests: true
     pullRequestsFromForks: false
-    addCheck: false
+    addCheck: true
     addComment: false
-    addBadge: false
+    addBadge: true
     addLabel: false
 
