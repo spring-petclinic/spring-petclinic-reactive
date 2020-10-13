@@ -42,3 +42,6 @@ github:
     addBadge: true
     addLabel: false
 
+vscode:
+  extensions:
+    - Pivotal.vscode-spring-boot@1.22.0:NtlGb5ygHm2uP5qeqfVrCA==
