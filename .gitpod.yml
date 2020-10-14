@@ -9,7 +9,7 @@ tasks:
       npm run build --silent
     command: |
       cd /workspace/workshop-spring-reactive/spring-petclinic-angular
-      echo "export const environment = {production: false, REST_API_URL: '$(gp url 9966)/petclinic/api/'};" > /workspace/workshop-spring-reactive/spring-petclinic-angular/environment.ts 
+      echo "export const environment = {production: false, REST_API_URL: '$(gp url 9966)/petclinic/api/'};" > /workspace/workshop-spring-reactive/spring-petclinic-angular/src/environments/environment.ts 
       npm run start
     env:
       # suppress the "Would you like to share anonymous usage data with the Angular Team at Google under Google’s Privacy Policy" message.
