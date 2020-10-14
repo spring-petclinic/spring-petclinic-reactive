@@ -3,11 +3,11 @@
 
 This sample is a fully reactive version of the Spring PetClinic application using Spring WebFlux.
 
-![image](https://raw.githubusercontent.com/clun/spring-petclinic-reactive/master/doc/img/ui-top.png)
+![image](doc/img/ui-top.png?raw=true)
 
 The steps to run the application are provided below. You can run the application with no installation using Gitpod and Cassandra as DBaas for free or locally. To get started with a free-forever, zero-install Cassandra database **[click here](https://astra.datastax.com/register?utm_source=github&utm_medium=referral&utm_campaign=spring-petclinic-reactive)** 🚀
 
-![Pet Clinic Welcome Screen](https://raw.githubusercontent.com/clun/spring-petclinic-reactive/master/doc/img/logical-architecture.png)
+![Pet Clinic Welcome Screen](doc/img/logical-architecture.png?raw=true)
 *Architecture overview*
 
 ## Table of contents
@@ -136,7 +136,7 @@ You may have noticed another terminal named `spring-petclinic-angular`. This is 
 After answering the question about analytics usage, you should be able to access the UI on a new tab.
 
 
-![Pet Clinic Welcome Screen](https://raw.githubusercontent.com/clun/spring-petclinic-reactive/master/doc/img/ui-top.png)
+![Pet Clinic Welcome Screen](doc/img/ui-top.png?raw=true)
 
 **NOTE** If you want to run everything locally, reference the [LOCAL_README.md](doc/LOCAL_README.md)
 
@@ -146,7 +146,7 @@ After answering the question about analytics usage, you should be able to access
 
 Let's have a look inside the main component `spring-petclinic-reactive` to see which libraries and frameworks have been used.
 
-![Pet Clinic Welcome Screen](https://raw.githubusercontent.com/clun/spring-petclinic-reactive/master/doc/img/internal-architecture.png)
+![Pet Clinic Welcome Screen](doc/img/internal-architecture.png?raw=true)
 
 - `Spring-boot`: Spring Boot makes it easy to create stand-alone, production-grade Spring based Applications that you can "just run". We take an opinionated view of the Spring platform and third-party libraries so you can get started with minimum fuss. Most Spring Boot applications need minimal Spring configuration.
 
@@ -162,12 +162,12 @@ Let's have a look inside the main component `spring-petclinic-reactive` to see w
 
 - `SpringFox` *(Swagger)*: Annotation based rest documentation generation and test client generation (swagger-ui).
 
-![Pet Clinic Welcome Screen](https://raw.githubusercontent.com/clun/spring-petclinic-reactive/master/doc/img/swagger.png)
+![Pet Clinic Welcome Screen](doc/img/swagger.png?raw=true)
 
 
 ### Logical Architecture
 
-![Pet Clinic Welcome Screen](https://raw.githubusercontent.com/clun/spring-petclinic-reactive/master/doc/img/logical-architecture.png)
+![Pet Clinic Welcome Screen](doc/img/logical-architecture.png?raw=true)
 
 Here, you can find a description of the logical architecture components:
 
@@ -176,11 +176,11 @@ Here, you can find a description of the logical architecture components:
 
 - `prometheus`: Our component exposes some metrics through the actuator endpoint. A registry will push this information into the Prometheus database (docker-based).
 
-![Pet Clinic Welcome Screen](https://raw.githubusercontent.com/clun/spring-petclinic-reactive/master/doc/img/prometheus.png)
+![Pet Clinic Welcome Screen](doc/img/prometheus.png?raw=true)
 
 - `Grafana`: Allows to create dashboards based on data stored in prometheus.
 
-![Pet Clinic Welcome Screen](https://raw.githubusercontent.com/clun/spring-petclinic-reactive/master/doc/img/grafana.png)
+![Pet Clinic Welcome Screen](doc/img/grafana.png?raw=true)
 
 - `zipkin`: Our component includes the `spring-cloud-sleuth` dependency allowing Brave to push metrics usage of the API to the distributed tracing component Zipkin. To enable this tracing
 set the property `zipkin.enabled` to true in `application.yaml`.
@@ -194,19 +194,18 @@ To start zipkin use `docker-compose up -d`
       type: web
 ```
 
-![Pet Clinic Welcome Screen](https://raw.githubusercontent.com/clun/spring-petclinic-reactive/master/doc/img/zipkin.png)
+![Pet Clinic Welcome Screen](doc/img/zipkin.png?raw=true)
 
 - `Apache Cassandra`: A NoSQL database
 
 - `DataStax Astra` : Apache Cassandra available in the Cloud for free as a managed service (DBaas)
 
 
-
 ### Data Model diagram
 
 The underlying data model implemented in Apache Cassandra is different from the one you would have defined with a relational database.
 
-![Pet Clinic Welcome Screen](https://raw.githubusercontent.com/clun/spring-petclinic-reactive/master/doc/img/data-model.png)
+![Pet Clinic Welcome Screen](doc/img/data-model.png?raw=true)
 
 To enable scalability, Apache Cassandra does not support joins or integrity constraints. Therefore we used some denormalization.
 We also created some `secondary indices` to queries columns that are not the PARTITION KEY. These secondary indices work well in this case because the cardinality is low (e.g, few pets for an owner).
@@ -220,4 +219,4 @@ The application generates the objects related to the data model (e.g., tables, i
 For pull requests, editor preferences are available in the editor config for easy use in common text editors. Read more and download plugins at http://editorconfig.org.
 
 
-![banner](https://raw.githubusercontent.com/clun/spring-petclinic-reactive/master/doc/img/banner.png)
+![banner](doc/img/banner.png?raw=true)
