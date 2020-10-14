@@ -70,13 +70,23 @@ You should land to the following screen. Scroll down to the bottom of the page t
 
 ![my-pic](https://github.com/datastaxdevs/shared-assets/blob/master/astra/organization-home-1000.png?raw=true)
 
+**✅ Create Service Account**
+
+Create a service account by clicking `Add Service Account` button above the section as shown below
+
+![my-pic](https://github.com/datastaxdevs/shared-assets/blob/master/astra/security-settings-annotated.png?raw=true)
+
+When panel open on the right, click `Add` 
+
+![my-pic](https://github.com/datastaxdevs/shared-assets/blob/master/astra/security-add-org-annotated.png?raw=true)
+
 **✅ Copy credentials to your clipboard**
 
-Click the copy icon to copy your Astra service account credentials to your clipboard:
+Click the ellipsis at end of Service Account row to open menu as select `Copy Credentials`
 
 ![my-pic](https://github.com/datastaxdevs/shared-assets/blob/master/astra/organization-copycredentials-1000.png?raw=true)
 
-The credentials you copied to the clipboard look like the following JSON:
+The credentials you copied to the clipboard look like the following JSON, we will use it in gitpod to enable connectivity.
 ```json
 {
   "clientId":"149de2c7-9b07-41b3-91ad-9453dee4dc54",
