@@ -24,10 +24,10 @@ tasks:
 ports:
   - port: 4200
     onOpen: open-browser 
-    # Backend port showing 
+# Backend port showing 
   - port: 9966
     onOpen: open-browser
-    # This is actuator port
+# This is actuator port
   - port: 9967
     onOpen: ignore
 
@@ -45,3 +45,4 @@ github:
 vscode:
   extensions:
     - Pivotal.vscode-spring-boot@1.22.0:NtlGb5ygHm2uP5qeqfVrCA==
+    - cool2k.vscode-lombok@1.0.2:e816/wZO588Jp8PN58Wj6g==
