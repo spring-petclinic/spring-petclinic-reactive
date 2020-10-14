@@ -89,7 +89,7 @@ This credentials copied in the clipboard look like the following JSON:
 
 **✅ Open Gitpod (with creds copied to clipboard)**
 
-[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/datastax-examples/spring-petclinic-reactive)
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/datastax-academy/spring-petclinic-reactive)
 
 At first launch the gitpod image is built.
 ![image](doc/img/building-workspace.png?raw=true)
