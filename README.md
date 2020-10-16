@@ -20,13 +20,13 @@ The steps to run the application are provided below. You can run the application
 
 ### 1. Start the database
 
-**✅ Create an free-forever Cassandra database with DataStax Astra**: [click here to get started](https://astra.datastax.com/register?utm_source=github&utm_medium=referral&utm_campaign=spring-petclinic-reactive) 🚀
+**✅ Create a free-forever Cassandra database with DataStax Astra**: [click here to get started](https://astra.datastax.com/register?utm_source=github&utm_medium=referral&utm_campaign=spring-petclinic-reactive) 🚀
 
 
 ![Astra Registration Screen](doc/img/db-auth.png?raw=true)
 
 
-**✅ Use the form to create new database**
+**✅ Use the form to create a new database**
 
 On the Astra home page locate the **Add Database** button
 
@@ -40,7 +40,7 @@ Select the proper region and click the `configure` button. The number of regions
 
 ![Astra Database Creation Form](doc/img/db-creation-3.png?raw=true)
 
-Fill the `database name`, `keyspace name`, `username` and `password`. *Please remember your password as you will be asked to provide it when application start the first time.*
+Fill in the `database name`, `keyspace name`, `username` and `password`. *Please remember your password as you will be asked to provide it when the application starts the first time.*
 
 ![Astra Database Creation Form](doc/img/db-creation-4.png?raw=true)
 
@@ -54,7 +54,7 @@ View your database. It may take 2-3 minutes for your database to spin up. You wi
 
 ![my-pic](https://github.com/datastaxdevs/shared-assets/blob/master/astra/dashboard-pending-1000.png?raw=true)
 
-Once the database is ready, notice how the status changes from `pending` to `Active` and Astra enables the **connect** button.
+Once the database is ready, notice how the status changes from `Pending` to `Active` and Astra enables the **CONNECT** button.
 
 ![my-pic](https://github.com/datastaxdevs/shared-assets/blob/master/astra/dashboard-withdb-1000.png?raw=true)
 
@@ -62,31 +62,31 @@ Once the database is ready, notice how the status changes from `pending` to `Act
 
 **✅ Navigate to your credentials**
 
-Locate the combo `Organization: <Your email>` on the top navigation. On the right side of your organization, click the elipsis (...) then click your `<Your email>`.
+Locate the combo `Organization: <Your email>` on the top navigation. On the right side of your organization, click the ellipsis (...) then click your `<Your email>`.
 
 ![my-pic](https://github.com/datastaxdevs/shared-assets/blob/master/astra/organization-combo-1000.png?raw=true)
 
-You should land to the following screen. Scroll down to the bottom of the page to locate the `Service Account` in `Security Settings`
+You should land on the following screen. Scroll down to the bottom of the page to locate the `Service Account` in `Security Settings`
 
 ![my-pic](https://github.com/datastaxdevs/shared-assets/blob/master/astra/organization-home-1000.png?raw=true)
 
 **✅ Create Service Account**
 
-Create a service account by clicking `Add Service Account` button above the section as shown below
+Create a service account by clicking the `Add Service Account` button above the section as shown below
 
 ![my-pic](https://github.com/datastaxdevs/shared-assets/blob/master/astra/security-settings-annotated.png?raw=true)
 
-When panel open on the right, click `Add` 
+When the panel opens on the right, click `Add`
 
 ![my-pic](https://github.com/datastaxdevs/shared-assets/blob/master/astra/security-add-org-annotated.png?raw=true)
 
 **✅ Copy credentials to your clipboard**
 
-Click the ellipsis at end of Service Account row to open menu as select `Copy Credentials`
+Click the ellipsis at end of Service Account row to open menu and select `Copy Credentials`
 
 ![my-pic](https://github.com/datastaxdevs/shared-assets/blob/master/astra/organization-copycredentials-1000.png?raw=true)
 
-The credentials you copied to the clipboard look like the following JSON, we will use it in gitpod to enable connectivity.
+The credentials you copied to the clipboard look like the following JSON, we will use this in gitpod to enable connectivity.
 ```json
 {
   "clientId":"149de2c7-9b07-41b3-91ad-9453dee4dc54",
@@ -111,7 +111,7 @@ Git pod pulls the image.
 
 **✅ Paste credentials in Gitpod terminal**
 
-Once your Gitpod loads the workspace, you'll be asked to paste your service account credentials in the Gitpod terminal at the bottom of the screen. The [setup.sh](setup.sh) script at the root of the repository is what asks this question.
+Once Gitpod loads the workspace, you'll be asked to paste your service account credentials in the Gitpod terminal at the bottom of the screen. The [setup.sh](setup.sh) script at the root of the repository is what asks this question.
 
 ![image](doc/img/script-copy-creds.png?raw=true)
 
@@ -134,7 +134,6 @@ You may have noticed another terminal named `spring-petclinic-angular`. This is 
 ![image](doc/img/start-ui.png?raw=true)
 
 After answering the question about analytics usage, you should be able to access the UI on a new tab.
-
 
 ![Pet Clinic Welcome Screen](doc/img/ui-top.png?raw=true)
 
