@@ -17,10 +17,10 @@ import org.springframework.security.web.server.SecurityWebFilterChain;
  * Setup of spring-security to enforce authentiation when flag
  * 'petclinic.security.enable' is set to true.
  */
-//@Configuration
-//@EnableWebFluxSecurity
-//@EnableReactiveMethodSecurity
-//@ConditionalOnProperty(name = "petclinic.security.enable", havingValue = "true")
+@Configuration
+@EnableWebFluxSecurity
+@EnableReactiveMethodSecurity
+@ConditionalOnProperty(name = "petclinic.security.enable", havingValue = "true")
 public class SecurityEnabledConfig {
 
     /** Logger for the class. */
