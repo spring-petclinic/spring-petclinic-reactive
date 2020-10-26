@@ -24,7 +24,7 @@
 		<slf4j.version>1.7.30</slf4j.version>
 		<spring-cloud.version>Hoxton.SR8</spring-cloud.version>
 		<lombok.version>1.18.12</lombok.version>
-		<maven.test.skip>true</maven.test.skip>
+		<maven.test.skip>false</maven.test.skip>
 	</properties>
 
 	<!-- Enabling SpringCloud features -->
@@ -156,15 +156,15 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 			<exclusions>
-				<exclusion>
-					<groupId>junit</groupId>
-					<artifactId>junit</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>com.vaadin.external.google</groupId>
-					<artifactId>android-json</artifactId>
-				</exclusion>
-			</exclusions>
+		        <exclusion>
+		          <groupId>org.junit.vintage</groupId>
+		          <artifactId>junit-vintage-engine</artifactId>
+		        </exclusion>
+		        <exclusion>
+		          <groupId>com.vaadin.external.google</groupId>
+		          <artifactId>android-json</artifactId>
+		        </exclusion>
+		    </exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.assertj</groupId>

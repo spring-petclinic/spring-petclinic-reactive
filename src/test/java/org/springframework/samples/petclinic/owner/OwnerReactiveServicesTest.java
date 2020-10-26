@@ -45,10 +45,8 @@ public class OwnerReactiveServicesTest {
   void should_save_owner_when_save_given_valid_input() {
     // Given
     given(ownerServices.createOwner(o1)).willReturn(Mono.just(o1));
-    
     // When
-    var ownerService = new OwnerReactiveServices(ownerDao, petDao, visitDao);
-    var mono = ownerService.createOwner(o1);
+    var mono = ownerServices.createOwner(o1);
     // Then
     StepVerifier.create(mono).expectNext(o1).expectComplete().verify();
   }
