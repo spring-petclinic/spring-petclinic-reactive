@@ -23,7 +23,6 @@
 		<springfox.version>3.0.0</springfox.version>
 		<slf4j.version>1.7.30</slf4j.version>
 		<spring-cloud.version>Hoxton.SR8</spring-cloud.version>
-		<lombok.version>1.18.12</lombok.version>
 		<maven.test.skip>false</maven.test.skip>
 	</properties>
 
@@ -86,11 +85,16 @@
             <artifactId>micrometer-registry-prometheus</artifactId>
         </dependency>
         
+        <!-- Custom keys in application.yaml -->
+        <dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-configuration-processor</artifactId>
+		</dependency>
+		
         <!-- Reduce Boilerplate code in POJO -->
         <dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
-			<version>${lombok.version}</version>
 		</dependency>
 
 		<!-- Driver (overriding spring defaults) -->
@@ -227,6 +231,11 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+	     		 <layers>
+                  <enabled>true</enabled>
+                 </layers>
+                </configuration>
 			</plugin>
 		</plugins>
 	</build>

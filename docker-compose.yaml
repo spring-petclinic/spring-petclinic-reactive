@@ -1,29 +1,61 @@
 version: "3.8"
 services:
 
-  #cassandra:
-  #  image: cassandra:3.11.7
-  #  ports:
-  #    - 7000:7000
-  #    - 9042:9042
-  #  ulimits:
-  #    memlock: -1
-  # docker exec -it `docker ps | grep cassandra:3.11.7 | cut -b 1-12` cqlsh -e "create keyspace petclinic WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : 3 };"
-  # docker exec -it `docker ps | grep cassandra:3.11.7 | cut -b 1-12` cqlsh -e "describe keyspaces"
+  # Single Node Cassandra for local build (9042)
+  cassandra:
+    image: cassandra:3.11.8
+    container_name: cassandra-server
+    ports:
+      - 7000:7000
+      - 9042:9042
+    ulimits:
+      memlock: -1
   
-  #spring-petclinic-reactive:
-  #  image: com.springframework/spring-petclinic-reactive:1.0
-  #  build:
-  #    context: .
-      #dockerfile: Dockerfile
-  #    dockerfile: Dockerfilefast
-  #    labels:
-  #      com.springframework.samples.description: "pet Clinic"
-  #  ports:
-  #    - 8081:8081
-  #  depends_on:
-  #    - cassandra
+  # Spring petclinic backend
+  spring-petclinic-reactive:
+    image: com.springframework/spring-petclinic-reactive:1.0
+    container_name: spring-petclinic-backend
+    build:
+      context: .
+      dockerfile: Dockerfile
+      labels:
+        com.springframework.samples.description: "pet Clinic"
+        com.springframework.samples.maintainer: "datastax"
+    ports:
+      - 9966:9966
+      - 9967:9967
+    environment:
+      LISTENING_PORT: 9966
+      MONITORING_ENABLED: "true"
+      MONITORING_PROMETHEUS: "true"
+      MONITORING_METRICS: "true"
+      MONITORING_LISTENING_PORT: 9967
+      DISTRIBUTED_TRACING_ENABLED: "true"
+      DISTRIBUTED_TRACING_URL: "http://tracing-server:9411"
+      CASSANDRA_CONTACT_POINTS: "cassandra:9042"
+      CASSANDRA_LOCAL_DC: datacenter1
+      CASSANDRA_KEYSPACE_CREATE: "true"
+      CASSANDRA_KEYSPACE_NAME: spring_petclinic
+      CASSANDRA_KEYSPACE_CQL: "CREATE KEYSPACE IF NOT EXISTS spring_petclinic WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : 1 };"
+    depends_on:
+      - cassandra
+  
+  # Spring petclinic frontend
+  
+  # Web UI to visualixe data and execute custom commands (3001)    
+  cassandra-web:
+    image: ipushc/cassandra-web:v1.0.9
+    container_name: cassandra-webui
+    ports:
+     - 3001:3001
+    environment:
+     HOST_PORT: ":3001"
+     CASSANDRA_HOST: cassandra
+     CASSANDRA_PORT: 9042
+     CASSANDRA_USER: cassandra
+     CASSANDRA_PASSWORD: cassandra
       
+  # Zipking for distributed Tracing (9411)
   tracing-server: 
     image: openzipkin/zipkin
     container_name: tracing-server
@@ -32,16 +64,17 @@ services:
     ports:
      - 9411:9411
      
-  ## Grafana / Prometheus
-
+  # Grafana for ui visualixation (3002)
   grafana-server:
     build: ./docker/grafana
     container_name: grafana-server
     ports:
-    - 3000:3000
+     - 3002:3000
 
+  # Prometheus to collect metrics (9091)
   prometheus-server:
     build: ./docker/prometheus
     container_name: prometheus-server
     ports:
-    - 9091:9090  
+     - 9091:9090
+     

@@ -1,0 +1,29 @@
+{
+  "properties": [
+    {
+      "name": "petclinic.astra.enable",
+      "type": "java.lang.Boolean",
+      "defaultValue": "true"
+    },
+    {
+      "name": "petclinic.security.enable",
+      "type": "java.lang.Boolean",
+      "defaultValue": "true"
+    },
+    {
+      "name": "petclinic.cassandra.local-keyspace.create",
+      "type": "java.lang.Boolean",
+      "defaultValue": "true"
+    },
+    {
+      "name": "petclinic.cassandra.local-keyspace.name",
+      "type": "java.lang.String",
+      "defaultValue": "spring_petclinic"
+    },
+    {
+      "name": "petclinic.cassandra.local-keyspace.cql",
+      "type": "java.lang.String",
+      "defaultValue": "CREATE KEYSPACE IF NOT EXISTS spring_petclinic WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : 1 };"
+    }],
+  "hints": []
+}

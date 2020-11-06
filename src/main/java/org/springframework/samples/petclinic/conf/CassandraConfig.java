@@ -1,7 +1,5 @@
 package org.springframework.samples.petclinic.conf;
 
-import static com.datastax.oss.driver.api.querybuilder.SchemaBuilder.createKeyspace;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,7 +11,6 @@ import org.springframework.samples.petclinic.owner.db.OwnerReactiveDaoMapperBuil
 import org.springframework.samples.petclinic.pet.db.PetReactiveDao;
 import org.springframework.samples.petclinic.pet.db.PetReactiveDaoMapper;
 import org.springframework.samples.petclinic.pet.db.PetReactiveDaoMapperBuilder;
-import org.springframework.samples.petclinic.vet.VetReactiveController;
 import org.springframework.samples.petclinic.vet.db.VetReactiveDao;
 import org.springframework.samples.petclinic.vet.db.VetReactiveDaoMapper;
 import org.springframework.samples.petclinic.vet.db.VetReactiveDaoMapperBuilder;
@@ -49,6 +46,15 @@ public class CassandraConfig {
     @Value("${petclinic.astra.enable:true}")
     private boolean useAstra;
     
+    @Value("${petclinic.cassandra.local-keyspace.create}")
+    private boolean localKeyspaceCreate;
+    
+    @Value("${petclinic.cassandra.local-keyspace.name}")
+    private String localKeyspaceName;
+    
+    @Value("${petclinic.cassandra.local-keyspace.cql}")
+    private String localKeyspaceCql;
+    
     /**
      * Create the Singleton {@link CqlSession} used everywhere to 
      * access the Cassandra DB.
@@ -67,11 +73,10 @@ public class CassandraConfig {
              configReader = DriverConfigLoader.fromClasspath("application-local.conf");
              cqlSession   = CqlSession.builder().withConfigLoader(configReader).build();
              // If we are working locally (docker) we may need to create the keypace
-             cqlSession.execute(createKeyspace("spring_petclinic").ifNotExists()
-                     .withSimpleStrategy(1)
-                     .withDurableWrites(true)
-                     .build());
-             cqlSession.execute("use spring_petclinic");
+             if (localKeyspaceCreate) {
+                 cqlSession.execute(localKeyspaceCql);
+             }
+             cqlSession.execute("use " + localKeyspaceName);
         }
         
         // Create schema upfront

@@ -21,19 +21,19 @@
 
 # Expose API through this port (setup the UI accordingly)
 server:
-  port: ${PORT:9966}
+  port: ${LISTENING_PORT:9966}
 
 # Expose Management endpoint through this port (setup prometheus accordingly)
 management:
   server:
-    port: 9967
+    port: ${MONITORING_LISTENING_PORT:9967}
   endpoint:
     env:
-      enabled: true
+      enabled: ${MONITORING_ENABLED:true}
     metrics:
-      enabled: true
+      enabled: ${MONITORING_METRICS:true}
     prometheus:
-      enabled: true
+      enabled: ${MONITORING_PROMETHEUS:true}
   endpoints:
     web:
       exposure:
@@ -44,12 +44,21 @@ spring:
  
   # Distributed tracing with Brave/Zipkin/Sleuth
   zipkin:
-    enabled: false
-    baseUrl: http://localhost:9411
+    enabled: ${DISTRIBUTED_TRACING_ENABLED:true}
+    baseUrl: ${DISTRIBUTED_TRACING_URL:http://localhost:9411}
     sender:
       type: web
 
 # Enable Spring Security through Flag
-petclinic.astra.enable: true
-petclinic.security.enable: false
+petclinic.astra.enable: ${CASSANDRA_USE_ASTRA:false}
+petclinic.security.enable: ${SECURE_API:false}
+
+####
+# When working locally we may need to create the keyspace
+# We cannot define the keyspace name in 'application.conf' as Mapper will load immediately
+# Defining keys to create keyspace if needed 
+###
+petclinic.cassandra.local-keyspace.create: ${CASSANDRA_KEYSPACE_CREATE:true}
+petclinic.cassandra.local-keyspace.name: ${CASSANDRA_KEYSPACE_NAME:spring_petclinic}
+petclinic.cassandra.local-keyspace.cql: ${CASSANDRA_KEYSPACE_CQL}
 
