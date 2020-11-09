@@ -37,6 +37,8 @@ services:
       CASSANDRA_KEYSPACE_CREATE: "true"
       CASSANDRA_KEYSPACE_NAME: spring_petclinic
       CASSANDRA_KEYSPACE_CQL: "CREATE KEYSPACE IF NOT EXISTS spring_petclinic WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : 1 };"
+      CASSANDRA_USER: cassandra
+      CASSANDRA_PASSWORD: cassandra
     depends_on:
       - cassandra
   
