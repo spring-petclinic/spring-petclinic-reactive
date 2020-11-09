@@ -21,6 +21,7 @@
 		<cassandra-java-driver.version>4.9.0</cassandra-java-driver.version>
 		<cassandra-native-protocol.version>1.4.11</cassandra-native-protocol.version>
 		<springfox.version>3.0.0</springfox.version>
+		<jkube.version>1.0.2</jkube.version>
 		<slf4j.version>1.7.30</slf4j.version>
 		<spring-cloud.version>Hoxton.SR8</spring-cloud.version>
 		<maven.test.skip>false</maven.test.skip>
@@ -237,6 +238,11 @@
                  </layers>
                 </configuration>
 			</plugin>
+			<plugin>
+        		<groupId>org.eclipse.jkube</groupId>
+        		<artifactId>kubernetes-maven-plugin</artifactId>
+        		<version>${jkube.version}</version>
+      		</plugin>
 		</plugins>
 	</build>
 

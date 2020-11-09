@@ -12,9 +12,9 @@ services:
       memlock: -1
   
   # Spring petclinic backend
-  spring-petclinic-reactive:
-    image: com.springframework/spring-petclinic-reactive:1.0
-    container_name: spring-petclinic-backend
+  petclinic-backend:
+    image: petclinic/backend:1.0
+    container_name: petclinic-backend
     build:
       context: .
       dockerfile: Dockerfile
@@ -41,7 +41,17 @@ services:
       - cassandra
   
   # Spring petclinic frontend
-  
+  petclinic-frontend:
+    image: petclinic/frontend:1.0
+    container_name: petclinic-frontend
+    build:
+      context: .
+      dockerfile: Dockerfile-frontend
+    ports:
+      - 8080:8080
+    depends_on:
+      - petclinic-backend
+      
   # Web UI to visualixe data and execute custom commands (3001)    
   cassandra-web:
     image: ipushc/cassandra-web:v1.0.9
