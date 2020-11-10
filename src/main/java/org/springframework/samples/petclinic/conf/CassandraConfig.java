@@ -1,5 +1,7 @@
 package org.springframework.samples.petclinic.conf;
 
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -61,6 +63,15 @@ public class CassandraConfig {
      */
     @Bean
     public CqlSession cqlSession() {
+        
+        LOGGER.info("Reading configuration");
+        Map<String, String> env = System.getenv();
+        if (env != null) {
+            for (String key : env.keySet()) {
+                LOGGER.info("key=" + key + ", value=" + env.get(key));
+            }
+        }
+        
         DriverConfigLoader configReader;
         CqlSession cqlSession;
         if (useAstra) {
