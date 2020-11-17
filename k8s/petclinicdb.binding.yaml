@@ -1,0 +1,10 @@
+---
+apiVersion: servicecatalog.k8s.io/v1beta1
+kind: ServiceBinding
+metadata:
+  name: petclinicdb
+spec:
+  instanceRef:
+    name: petclinicdb
+  parameters: {}
+  secretName: petclinicdb
