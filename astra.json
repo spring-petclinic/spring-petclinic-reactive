@@ -1,0 +1,11 @@
+{
+  "name": "Reactive Implementation of Spring PetClinic",
+  "description": "This sample is a fully reactive version of the Spring PetClinic application using Spring WebFlux.",
+  "duration": "15 minutes",
+  "skillLevel": "Intermediate",
+  "gitpodUrl": "https://gitpod.io/#https://github.com/spring-petclinic/spring-petclinic-reactive",
+  "githubUrl": "https://github.com/DataStax-Examples/spring-petclinic-reactive",
+  "tags": [{ "name": "labs" }, { "name": "java" }],
+  "category": "apps",
+  "priority": 1
+}
