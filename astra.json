@@ -5,7 +5,11 @@
   "skillLevel": "Intermediate",
   "gitpodUrl": "https://gitpod.io/#https://github.com/spring-petclinic/spring-petclinic-reactive",
   "githubUrl": "https://github.com/DataStax-Examples/spring-petclinic-reactive",
-  "tags": [{ "name": "labs", "color": "warning" }, { "name": "java" }],
+  "tags": [
+    { "name": "labs", "color": "warning" },
+    { "name": "java" },
+    { "name": "java driver" }
+  ],
   "category": "apps",
   "priority": 1
 }
