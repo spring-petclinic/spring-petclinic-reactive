@@ -1,5 +1,5 @@
 {
-  "name": "Reactive Implementation of Spring PetClinic",
+  "name": "Reactive PetClinic, using Spring WebFlux and Astra",
   "description": "This sample is a fully reactive version of the Spring PetClinic application using Spring WebFlux.",
   "duration": "15 minutes",
   "skillLevel": "Intermediate",
