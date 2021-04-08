@@ -18,8 +18,7 @@ To build and play with this app, follow the build instructions that are located 
 Let's do some initial setup by creating a serverless(!) database.
 
 ### DataStax Astra
-1. Create a [DataStax Astra account](https://astra.datastax.com/register?utm_source=github&utm_medium=referral&utm_campaign=spring-petclinic-reactive) if you don't 
-already have one:
+1. Create a [DataStax Astra account](https://astra.datastax.com/register?utm_source=github&utm_medium=referral&utm_campaign=spring-petclinic-reactive) if you don't already have one:
 ![image](https://raw.githubusercontent.com/DataStax-Examples/sample-app-template/master/screenshots/astra-register-basic-auth.png)
 
 2. On the home page. Locate the button **`Create Database`**
@@ -35,14 +34,12 @@ already have one:
 ![image](https://raw.githubusercontent.com/DataStax-Examples/sample-app-template/master/screenshots/astra-db-active.png)
 
 6. After your database is provisioned, we need to generate an Application Token for our App. Go to the `Settings` tab in the database home screen.
-information (we'll need this later!):
 ![image](https://raw.githubusercontent.com/DataStax-Examples/sample-app-template/master/screenshots/astra-db-settings.png)
 
-7. Select `Admin User` for the role for this Sample App and then generate the token. Download the CSV so that we can use the credentials we need later.
-information (we'll need this later!):
+1. Select `Admin User` for the role for this Sample App and then generate the token. Download the CSV so that we can use the credentials we need later.
 ![image](https://raw.githubusercontent.com/DataStax-Examples/sample-app-template/master/screenshots/astra-db-settings-token.png)
 
-8. After you have your Application Token, head to the database connect screen and select the driver connection that we need. Go ahead and download the `Secure Bundle` for the driver.
+1. After you have your Application Token, head to the database connect screen and select the driver connection that we need. Go ahead and download the `Secure Bundle` for the driver.
 ![image](https://raw.githubusercontent.com/DataStax-Examples/sample-app-template/master/screenshots/astra-db-connect-bundle.png)
 
 9. Make note of where to use the `Client Id` and `Client Secret` that is part of the Application Token that we generated earlier.
