@@ -11,5 +11,6 @@
     { "name": "java driver" }
   ],
   "category": "apps",
-  "priority": 3
+  "priority": 3,
+  "heroImage": "https://raw.githubusercontent.com/DataStax-Examples/spring-petclinic-reactive/master/hero.png"
 }

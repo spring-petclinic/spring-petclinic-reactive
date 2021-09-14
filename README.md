@@ -6,7 +6,7 @@ This sample is a fully reactive version of the Spring PetClinic application usin
 <!--- ENDEXCLUDE --->
 
 
-![image](https://raw.githubusercontent.com/DataStax-Examples/spring-petclinic-reactive/master/doc/img/ui-top.png)
+![image](https://raw.githubusercontent.com/DataStax-Examples/spring-petclinic-reactive/master/hero.png)
 
 
 ## Get Started
