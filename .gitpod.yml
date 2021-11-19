@@ -4,12 +4,12 @@ image:
 tasks:
   - name: spring-petclinic-angular
     init: |
-      cd /workspace/spring-petclinic-reactive/spring-petclinic-angular
+      cd /workspace/workshop-spring-reactive/spring-petclinic-angular
       npm install --silent
       npm run build --silent
     command: |
-      cd /workspace/spring-petclinic-reactive/spring-petclinic-angular
-      echo "export const environment = {production: false, REST_API_URL: '$(gp url 9966)/petclinic/api/'};" > /workspace/spring-petclinic-reactive/spring-petclinic-angular/src/environments/environment.ts 
+      cd /workspace/workshop-spring-reactive/spring-petclinic-angular
+      echo "export const environment = {production: false, REST_API_URL: '$(gp url 9966)/petclinic/api/'};" > /workspace/workshop-spring-reactive/spring-petclinic-angular/src/environments/environment.ts 
       npm run start
     env:
       # suppress the "Would you like to share anonymous usage data with the Angular Team at Google under Google’s Privacy Policy" message.
@@ -20,13 +20,14 @@ tasks:
     command: |
       . setup.sh
       java -jar target/spring-petclinic-reactive-1.0.0-SNAPSHOT.jar 
+      
 ports:
   - port: 4200
     onOpen: open-browser 
-    # Backend port showing 
+# Backend port showing 
   - port: 9966
     onOpen: open-browser
-    # This is actuator port
+# This is actuator port
   - port: 9967
     onOpen: ignore
 
@@ -44,3 +45,4 @@ github:
 vscode:
   extensions:
     - Pivotal.vscode-spring-boot@1.22.0:NtlGb5ygHm2uP5qeqfVrCA==
+    - cool2k.vscode-lombok@1.0.2:e816/wZO588Jp8PN58Wj6g==

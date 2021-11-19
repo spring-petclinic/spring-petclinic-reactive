@@ -1,6 +1,8 @@
 # Reactive Implementation of 🐈 Spring PetClinic 🐕
 *15 minutes, Intermediate*
 
+
+
 This sample is a fully reactive version of the Spring PetClinic application using Spring WebFlux.
 
 ![image](doc/img/ui-top.png?raw=true)
@@ -72,21 +74,21 @@ You should land on the following screen. Scroll down to the bottom of the page t
 
 **✅ Create Service Account**
 
-Create a service account by clicking the `Add Service Account` button above the section as shown below
 
+Create a service account by clicking `Add Service Account` button above the section as shown below
 ![my-pic](https://github.com/datastaxdevs/shared-assets/blob/master/astra/security-settings-annotated.png?raw=true)
-
-When the panel opens on the right, click `Add`
+When panel open on the right, click `Add` 
 
 ![my-pic](https://github.com/datastaxdevs/shared-assets/blob/master/astra/security-add-org-annotated.png?raw=true)
 
 **✅ Copy credentials to your clipboard**
 
-Click the ellipsis at end of Service Account row to open menu and select `Copy Credentials`
+
+Click the ellipsis at end of Service Account row to open menu as select `Copy Credentials`
 
 ![my-pic](https://github.com/datastaxdevs/shared-assets/blob/master/astra/organization-copycredentials-1000.png?raw=true)
 
-The credentials you copied to the clipboard look like the following JSON, we will use this in gitpod to enable connectivity.
+The credentials you copied to the clipboard look like the following JSON, we will use it in gitpod to enable connectivity.
 ```json
 {
   "clientId":"149de2c7-9b07-41b3-91ad-9453dee4dc54",
@@ -99,15 +101,13 @@ The credentials you copied to the clipboard look like the following JSON, we wil
 
 **✅ Open Gitpod (with creds copied to clipboard)**
 
-[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/spring-petclinic/spring-petclinic-reactive)
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/datastaxdevs/workshop-spring-reactive)
 
 When you first launch gitpod, it builds the image.
 ![image](doc/img/building-workspace.png?raw=true)
 
 Git pod pulls the image.
 ![image](doc/img/pulling-image.png?raw=true)
-
-
 
 **✅ Paste credentials in Gitpod terminal**
 
@@ -216,6 +216,5 @@ The application generates the objects related to the data model (e.g., tables, i
  The [issue tracker](https://github.com/spring-petclinic/spring-petclinic-reactive/issues)is the preferred channel for bug reports, features requests and submitting pull requests.
 
 For pull requests, editor preferences are available in the editor config for easy use in common text editors. Read more and download plugins at http://editorconfig.org.
-
 
 ![banner](doc/img/banner.png?raw=true)
