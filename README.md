@@ -46,7 +46,7 @@ Let's do some initial setup by creating a serverless(!) database.
 ![image](https://raw.githubusercontent.com/DataStax-Examples/sample-app-template/master/screenshots/astra-db-connect-bundle-driver.png)
 
 ### Github
-1. Click `Use this template` at the top of the [GitHub Repository](GITHUB_URL):
+1. Click `Use this template` at the top of the [GitHub Repository](https://github.com/DataStax-Examples/spring-petclinic-reactive#prerequisite):
 ![image](https://raw.githubusercontent.com/DataStax-Examples/sample-app-template/master/screenshots/github-use-template.png)
 
 2. Enter a repository name and click 'Create repository from template':
