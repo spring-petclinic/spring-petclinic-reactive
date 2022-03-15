@@ -50,7 +50,7 @@ spring:
       type: web
 
 # Enable Spring Security through Flag
-petclinic.astra.enable: ${CASSANDRA_USE_ASTRA:false}
+petclinic.astra.enable: ${CASSANDRA_USE_ASTRA:true}
 petclinic.security.enable: ${SECURE_API:false}
 
 ####
@@ -60,5 +60,5 @@ petclinic.security.enable: ${SECURE_API:false}
 ###
 petclinic.cassandra.local-keyspace.create: ${CASSANDRA_KEYSPACE_CREATE:true}
 petclinic.cassandra.local-keyspace.name: ${CASSANDRA_KEYSPACE_NAME:spring_petclinic}
-petclinic.cassandra.local-keyspace.cql: ${CASSANDRA_KEYSPACE_CQL}
+petclinic.cassandra.local-keyspace.cql: ${CASSANDRA_KEYSPACE_CQL:default}
 

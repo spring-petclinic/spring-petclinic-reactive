@@ -89,7 +89,6 @@ To enable this tracing set the properties to `zipkin.enabled` to true in `applic
 **✅ Start the front end* : This REST API is meant to be used with the existing **[spring-petclinic-angular](https://github.com/spring-petclinic/spring-petclinic-angular)** user interface. To run the application please execute the following:
 
 ```bash
-git clone https://github.com/spring-petclinic/spring-petclinic-angular.git
 cd spring-petclinic-angular
 npm uninstall -g angular-cli @angular/cli
 npm cache clean
