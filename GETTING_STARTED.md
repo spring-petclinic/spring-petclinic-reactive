@@ -1,75 +1,46 @@
-<!--- STARTEXCLUDE --->
 # Reactive Implementation of 🐈 Spring PetClinic 🐕
-*15 minutes, Intermediate, [Start Building](https://github.com/DataStax-Examples/spring-petclinic-reactive#prerequisites)*
-
-
+*15 minutes, Intermediate*
 
 This sample is a fully reactive version of the Spring PetClinic application using Spring WebFlux.
-<!--- ENDEXCLUDE --->
+
+![image](https://raw.githubusercontent.com/DataStax-Examples/spring-petclinic-reactive/master/doc/img/ui-top.png)
+
+The steps to run the application are provided below. You can run the application with no installation using Gitpod and Cassandra as DBaas for free or locally. To get started with a free-forever, zero-install Cassandra database **[click here](https://astra.datastax.com/register?utm_source=github&utm_medium=referral&utm_campaign=spring-petclinic-reactive)** 🚀
+
+![Pet Clinic Welcome Screen](doc/img/logical-architecture.png?raw=true)
+*Architecture overview*
+
+## Table of contents
+
+- [Run the application](#run-the-application)
+- [Understand the architecture](#understand-the-architecture)
+- [Contributing](#contributing)
+
+## Run the application
+
+### 1. Start the database
+
+**✅ Create a free-forever Cassandra database with DataStax Astra**: [click here to get started](https://astra.datastax.com/register?utm_source=github&utm_medium=referral&utm_campaign=spring-petclinic-reactive) 🚀
 
 
-![image](https://raw.githubusercontent.com/DataStax-Examples/spring-petclinic-reactive/master/hero.png)
+![Astra Registration Screen](doc/img/db-auth.png?raw=true)
 
 
-## Get Started
-To build and play with this app, follow the build instructions that are located here: [https://github.com/DataStax-Examples/spring-petclinic-reactive](https://github.com/DataStax-Examples/spring-petclinic-reactive#prerequisite)
+**✅ Use the form to create a new database**
 
+On the Astra home page locate the **Add Database** button
 
-<!--- STARTEXCLUDE --->
-## Prerequisites
-Let's do some initial setup by creating a serverless(!) database.
+![Astra Database Creation Form](doc/img/db-creation-1.png?raw=true)
 
-### DataStax Astra
-1. Create a [DataStax Astra DB account](https://dtsx.io/38yYuif) if you don't already have one:
-![image](https://raw.githubusercontent.com/DataStax-Examples/sample-app-template/master/screenshots/astra-register-basic-auth.png)
+Select the **free tier** plan, this is a true free tier, free forever and no payment method asked 🎉 🎉
 
-2. On the home page. Locate the button **`Create Database`**
-![image](https://raw.githubusercontent.com/DataStax-Examples/sample-app-template/master/screenshots/astra-dashboard.png)
+![Astra Database Creation Form](doc/img/db-creation-2.png?raw=true)
 
-3. Locate the **`Get Started`** button to continue
-![image](https://raw.githubusercontent.com/DataStax-Examples/sample-app-template/master/screenshots/astra-select-plan.png)
+Select the proper region and click the `configure` button. The number of regions and cloud providers are limited in the free tier but please notice you can run the DB on any cloud with any VPC Peering.
 
-4. Define a **database name**, **keyspace name** and select a database **region**, then click **create database**.
-![image](https://raw.githubusercontent.com/DataStax-Examples/sample-app-template/master/screenshots/astra-create-db.png)
+![Astra Database Creation Form](doc/img/db-creation-3.png?raw=true)
 
-5. Your Astra DB will be ready when the status will change from *`Pending`* to **`Active`** 💥💥💥 
-![image](https://raw.githubusercontent.com/DataStax-Examples/sample-app-template/master/screenshots/astra-db-active.png)
-
-6. After your database is provisioned, we need to generate an Application Token for our App. Go to the `Settings` tab in the database home screen.
-![image](https://raw.githubusercontent.com/DataStax-Examples/sample-app-template/master/screenshots/astra-db-settings.png)
-
-1. Select `Admin User` for the role for this Sample App and then generate the token. Download the CSV so that we can use the credentials we need later.
-![image](https://raw.githubusercontent.com/DataStax-Examples/sample-app-template/master/screenshots/astra-db-settings-token.png)
-
-1. After you have your Application Token, head to the database connect screen and select the driver connection that we need. Go ahead and download the `Secure Bundle` for the driver.
-![image](https://raw.githubusercontent.com/DataStax-Examples/sample-app-template/master/screenshots/astra-db-connect-bundle.png)
-
-9. Make note of where to use the `Client Id` and `Client Secret` that is part of the Application Token that we generated earlier.
-![image](https://raw.githubusercontent.com/DataStax-Examples/sample-app-template/master/screenshots/astra-db-connect-bundle-driver.png)
-
-### Github
-
-1. Click `Use this template` at the top of the [GitHub Repository](https://github.com/DataStax-Examples/spring-petclinic-reactive#prerequisite):
-![image](https://raw.githubusercontent.com/DataStax-Examples/sample-app-template/master/screenshots/github-use-template.png)
-
-2. Enter a repository name and click 'Create repository from template':
-![image](https://raw.githubusercontent.com/DataStax-Examples/sample-app-template/master/screenshots/github-create-repository.png)
-
-3. Clone the repository:
-![image](https://raw.githubusercontent.com/DataStax-Examples/sample-app-template/master/screenshots/github-clone.png)
-
-## 🚀 Getting Started Paths:
-*Make sure you've completed the [prerequisites](#prerequisites) before starting this step*
-  - [Running on Gitpod](#running-on-gitpod)
-  - [Deploying to Vercel](#deploying-to-vercel)
-  - [Deploying to Netlify](#deploying-to-netlify)
-
-
-### Running on Gitpod
-
-1. Click the 'Open in Gitpod' link:
-[![Open in IDE](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/spring-petclinic/spring-petclinic-reactive)
-<!--- ENDEXCLUDE --->
+Fill in the `database name`, `keyspace name`, `username` and `password`. *Please remember your password as you will be asked to provide it when the application starts the first time.*
 
 ![Astra Database Creation Form](doc/img/db-creation-4.png?raw=true)
 
@@ -101,21 +72,21 @@ You should land on the following screen. Scroll down to the bottom of the page t
 
 **✅ Create Service Account**
 
+Create a service account by clicking the `Add Service Account` button above the section as shown below
 
-Create a service account by clicking `Add Service Account` button above the section as shown below
 ![my-pic](https://github.com/datastaxdevs/shared-assets/blob/master/astra/security-settings-annotated.png?raw=true)
-When panel open on the right, click `Add` 
+
+When the panel opens on the right, click `Add`
 
 ![my-pic](https://github.com/datastaxdevs/shared-assets/blob/master/astra/security-add-org-annotated.png?raw=true)
 
 **✅ Copy credentials to your clipboard**
 
-
-Click the ellipsis at end of Service Account row to open menu as select `Copy Credentials`
+Click the ellipsis at end of Service Account row to open menu and select `Copy Credentials`
 
 ![my-pic](https://github.com/datastaxdevs/shared-assets/blob/master/astra/organization-copycredentials-1000.png?raw=true)
 
-The credentials you copied to the clipboard look like the following JSON, we will use it in gitpod to enable connectivity.
+The credentials you copied to the clipboard look like the following JSON, we will use this in gitpod to enable connectivity.
 ```json
 {
   "clientId":"149de2c7-9b07-41b3-91ad-9453dee4dc54",
@@ -128,13 +99,15 @@ The credentials you copied to the clipboard look like the following JSON, we wil
 
 **✅ Open Gitpod (with creds copied to clipboard)**
 
-[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/datastaxdevs/workshop-spring-reactive)
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/spring-petclinic/spring-petclinic-reactive)
 
 When you first launch gitpod, it builds the image.
 ![image](doc/img/building-workspace.png?raw=true)
 
 Git pod pulls the image.
 ![image](doc/img/pulling-image.png?raw=true)
+
+
 
 **✅ Paste credentials in Gitpod terminal**
 
@@ -244,6 +217,5 @@ The application generates the objects related to the data model (e.g., tables, i
 
 For pull requests, editor preferences are available in the editor config for easy use in common text editors. Read more and download plugins at http://editorconfig.org.
 
+
 ![banner](doc/img/banner.png?raw=true)
-
-
