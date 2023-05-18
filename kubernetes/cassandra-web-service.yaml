@@ -1,0 +1,20 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.28.0 (c4137012e)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: cassandra-web
+  name: cassandra-web
+spec:
+  ports:
+    - name: "3001"
+      port: 3001
+      targetPort: 3001
+  selector:
+    io.kompose.service: cassandra-web
+status:
+  loadBalancer: {}

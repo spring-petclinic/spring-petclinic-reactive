@@ -1,0 +1,71 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.28.0 (c4137012e)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: petclinic-backend
+  name: petclinic-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: petclinic-backend
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert
+        kompose.version: 1.28.0 (c4137012e)
+      creationTimestamp: null
+      labels:
+        io.kompose.network/spring-petclinic-reactive-default: "true"
+        io.kompose.service: petclinic-backend
+    spec:
+      containers:
+        - env:
+            - name: CASSANDRA_HOST
+              value: demo-dc1-service
+            - name: CASSANDRA_USER
+              value: cassandra
+            - name: CASSANDRA_PASSWORD
+              value: cassandra
+            - name: CASSANDRA_PORT
+              value: "9042"
+            - name: CASSANDRA_CONTACT_POINTS
+              value: demo-dc1-service:9042
+            - name: CASSANDRA_KEYSPACE_CQL
+              value: 'CREATE KEYSPACE IF NOT EXISTS spring_petclinic WITH REPLICATION = { ''class'' : ''SimpleStrategy'', ''replication_factor'' : 1 };'
+            - name: CASSANDRA_KEYSPACE_CREATE
+              value: "true"
+            - name: CASSANDRA_KEYSPACE_NAME
+              value: spring_petclinic
+            - name: CASSANDRA_LOCAL_DC
+              value: dc1
+            - name: CASSANDRA_USE_ASTRA
+              value: "false"
+            - name: DISTRIBUTED_TRACING_ENABLED
+              value: "false"
+            - name: DISTRIBUTED_TRACING_URL
+              value: http://tracing-server:9411
+            - name: LISTENING_PORT
+              value: "9966"
+            - name: MONITORING_ENABLED
+              value: "false"
+            - name: MONITORING_LISTENING_PORT
+              value: "9967"
+            - name: MONITORING_METRICS
+              value: "false"
+            - name: MONITORING_PROMETHEUS
+              value: "false"
+          image: gcr.io/pl-pixies/users/ddelnano/petclinic-backend:1.1
+          name: petclinic-backend
+          ports:
+            - containerPort: 9966
+            - containerPort: 9967
+          resources: {}
+      restartPolicy: Always
+status: {}

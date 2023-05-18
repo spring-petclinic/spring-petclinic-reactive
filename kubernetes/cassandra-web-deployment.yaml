@@ -1,0 +1,46 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.28.0 (c4137012e)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: cassandra-web
+  name: cassandra-web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: cassandra-web
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert
+        kompose.version: 1.28.0 (c4137012e)
+      creationTimestamp: null
+      labels:
+        io.kompose.network/spring-petclinic-reactive-default: "true"
+        io.kompose.service: cassandra-web
+    spec:
+      containers:
+        - env:
+            - name: CASSANDRA_HOST
+              value: demo-dc1-service
+            - name: CASSANDRA_USER
+              value: cassandra
+            - name: CASSANDRA_PASSWORD
+              value: cassandra
+            - name: CASSANDRA_PORT
+              value: "9042"
+            - name: HOST_PORT
+              value: :3001
+          image: ipushc/cassandra-web:v1.0.9
+          name: cassandra-webui
+          ports:
+            - containerPort: 3001
+          resources: {}
+      restartPolicy: Always
+status: {}

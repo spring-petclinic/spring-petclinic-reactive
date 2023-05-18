@@ -1,0 +1,21 @@
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: petclinic
+secretGenerator:
+  - name: demo-superuser
+    literals:
+      - username=cassandra
+      - password=cassandra
+generatorOptions:
+  disableNameSuffixHash: true
+
+resources:
+  - kubernetes/namespace.yaml
+  - kubernetes/cassandra-web-deployment.yaml
+  - kubernetes/cassandra-web-service.yaml
+  - kubernetes/petclinic-backend-deployment.yaml
+  - kubernetes/petclinic-backend-service.yaml
+  - kubernetes/petclinic-frontend-deployment.yaml
+  - kubernetes/petclinic-frontend-service.yaml
