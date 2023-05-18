@@ -13,7 +13,7 @@ services:
   
   # Spring petclinic backend
   petclinic-backend:
-    image: petclinic/backend:1.0
+    image: petclinic/backend:1.1
     container_name: petclinic-backend
     build:
       context: .
@@ -39,6 +39,7 @@ services:
       CASSANDRA_KEYSPACE_CQL: "CREATE KEYSPACE IF NOT EXISTS spring_petclinic WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : 1 };"
       CASSANDRA_USER: cassandra
       CASSANDRA_PASSWORD: cassandra
+      CASSANDRA_USE_ASTRA: "false"
     depends_on:
       - cassandra
   
@@ -89,4 +90,3 @@ services:
     container_name: prometheus-server
     ports:
      - 9091:9090
-     
