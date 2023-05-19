@@ -19,7 +19,7 @@
     - name: CASSANDRA_KEYSPACE_NAME
       value: spring_petclinic
     - name: CASSANDRA_LOCAL_DC
-      value: datacenter1
+      value: dc1
     - name: CASSANDRA_USE_ASTRA
       value: "false"
     - name: DISTRIBUTED_TRACING_ENABLED
