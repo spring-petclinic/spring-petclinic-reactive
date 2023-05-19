@@ -6,14 +6,17 @@ metadata:
     kompose.version: 1.28.0 (c4137012e)
   creationTimestamp: null
   labels:
-    io.kompose.service: petclinic-frontend
-  name: petclinic-frontend
+    io.kompose.service: cassandra
+  name: cassandra
 spec:
   ports:
-    - name: "8080"
-      port: 8080
-      targetPort: 8080
+    - name: "7000"
+      port: 7000
+      targetPort: 7000
+    - name: "9042"
+      port: 9042
+      targetPort: 9042
   selector:
-    io.kompose.service: petclinic-frontend
+    io.kompose.service: cassandra
 status:
   loadBalancer: {}

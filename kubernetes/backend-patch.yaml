@@ -1,0 +1,41 @@
+---
+- op: replace
+  path: /spec/template/spec/containers/0/env
+  value:
+    - name: CASSANDRA_HOST
+      value: demo-dc1-service
+    - name: CASSANDRA_USER
+      value: cassandra
+    - name: CASSANDRA_PASSWORD
+      value: cassandra
+    - name: CASSANDRA_PORT
+      value: "9042"
+    - name: CASSANDRA_CONTACT_POINTS
+      value: demo-dc1-service:9042
+    - name: CASSANDRA_KEYSPACE_CQL
+      value: 'CREATE KEYSPACE IF NOT EXISTS spring_petclinic WITH REPLICATION = { ''class'' : ''SimpleStrategy'', ''replication_factor'' : 1 };'
+    - name: CASSANDRA_KEYSPACE_CREATE
+      value: "true"
+    - name: CASSANDRA_KEYSPACE_NAME
+      value: spring_petclinic
+    - name: CASSANDRA_LOCAL_DC
+      value: datacenter1
+    - name: CASSANDRA_USE_ASTRA
+      value: "false"
+    - name: DISTRIBUTED_TRACING_ENABLED
+      value: "true"
+    - name: DISTRIBUTED_TRACING_URL
+      value: http://tracing-server:9411
+    - name: LISTENING_PORT
+      value: "9966"
+    - name: MONITORING_ENABLED
+      value: "true"
+    - name: MONITORING_LISTENING_PORT
+      value: "9967"
+    - name: MONITORING_METRICS
+      value: "true"
+    - name: MONITORING_PROMETHEUS
+      value: "true"
+- op: replace
+  path: /spec/template/spec/containers/0/image
+  value: gcr.io/pl-pixies/users/ddelnano/petclinic-backend:1.1

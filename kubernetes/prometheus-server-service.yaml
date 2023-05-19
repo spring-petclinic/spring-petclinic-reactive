@@ -6,14 +6,14 @@ metadata:
     kompose.version: 1.28.0 (c4137012e)
   creationTimestamp: null
   labels:
-    io.kompose.service: petclinic-frontend
-  name: petclinic-frontend
+    io.kompose.service: prometheus-server
+  name: prometheus-server
 spec:
   ports:
-    - name: "8080"
-      port: 8080
-      targetPort: 8080
+    - name: "9091"
+      port: 9091
+      targetPort: 9090
   selector:
-    io.kompose.service: petclinic-frontend
+    io.kompose.service: prometheus-server
 status:
   loadBalancer: {}

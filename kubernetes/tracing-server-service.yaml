@@ -6,14 +6,14 @@ metadata:
     kompose.version: 1.28.0 (c4137012e)
   creationTimestamp: null
   labels:
-    io.kompose.service: petclinic-frontend
-  name: petclinic-frontend
+    io.kompose.service: tracing-server
+  name: tracing-server
 spec:
   ports:
-    - name: "8080"
-      port: 8080
-      targetPort: 8080
+    - name: "9411"
+      port: 9411
+      targetPort: 9411
   selector:
-    io.kompose.service: petclinic-frontend
+    io.kompose.service: tracing-server
 status:
   loadBalancer: {}
