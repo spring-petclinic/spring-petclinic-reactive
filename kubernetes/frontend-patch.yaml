@@ -1,4 +1,4 @@
 ---
 - op: replace
   path: /spec/template/spec/containers/0/image
-  value: gcr.io/pixie-prod/demos/petclinic/frontend:1.0
+  value: gcr.io/pixie-prod/demos/petclinic/frontend:1.0@sha256:0a48dc7ebc80cf8c818e27777038c052ef82a8c11c30accbdf16845cb1f72d77
