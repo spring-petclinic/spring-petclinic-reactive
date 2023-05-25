@@ -1,12 +1,17 @@
 package org.springframework.samples.petclinic.visit;
 
+import java.time.LocalDate;
 import java.util.UUID;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+import com.datastax.oss.driver.api.core.uuid.Uuids;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.samples.petclinic.pet.db.PetEntity;
 import org.springframework.samples.petclinic.pet.db.PetReactiveDao;
 import org.springframework.samples.petclinic.utils.MappingUtils;
+import org.springframework.samples.petclinic.vet.db.VetEntity;
 import org.springframework.samples.petclinic.visit.db.VisitEntity;
 import org.springframework.samples.petclinic.visit.db.VisitReactiveDao;
 import org.springframework.stereotype.Component;
@@ -23,8 +28,10 @@ import reactor.core.publisher.Mono;
  */
 @Component
 @Validated
-public class VisitReactiveServices {
-    
+public class VisitReactiveServices implements InitializingBean {
+
+    public static final String VISIT_SPECIALTY = "vet_specialty";
+
     /** Implementation of Crud operations for pets. */
     private PetReactiveDao petDao;
     
@@ -90,5 +97,21 @@ public class VisitReactiveServices {
         return Mono.from(visitDao.findVisitById(visitId))
                    .map(visitDao::delete)
                    .then();
+    }
+
+    /**
+     * Spring interface {@link InitializingBean} let you execute some
+     * code after bean has been initialized.
+     *
+     * Here we enter default values for Pets and Pet visits.
+     */
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        UUID petUuid = UUID.fromString("11111111-1111-1111-1111-111111111111");
+        Mono.from(petDao.upsert(new PetEntity(UUID.randomUUID(), petUuid,
+                "Dog", "Ollie", LocalDate.of(2021, 5, 10)))).subscribe();
+        for (int i = 0; i < 10; i++)
+            Mono.from(visitDao.upsert(new VisitEntity(petUuid, UUID.randomUUID(),
+                    "General check up for Ollie", LocalDate.of(2023, 1, 25)))).subscribe();
     }
 }
