@@ -23,19 +23,19 @@
     - name: CASSANDRA_USE_ASTRA
       value: "false"
     - name: DISTRIBUTED_TRACING_ENABLED
-      value: "true"
+      value: "false"
     - name: DISTRIBUTED_TRACING_URL
       value: http://tracing-server:9411
     - name: LISTENING_PORT
       value: "9966"
     - name: MONITORING_ENABLED
-      value: "true"
+      value: "false"
     - name: MONITORING_LISTENING_PORT
       value: "9967"
     - name: MONITORING_METRICS
-      value: "true"
+      value: "false"
     - name: MONITORING_PROMETHEUS
-      value: "true"
+      value: "false"
 - op: replace
   path: /spec/template/spec/containers/0/image
   value: gcr.io/pixie-prod/demos/petclinic/backend:1.0@sha256:8f3bfb03da53e13d25a70291631d35aff259ce038b5dce61a8ea182766e7594b
