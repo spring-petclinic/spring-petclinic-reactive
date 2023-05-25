@@ -1,0 +1,14 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  creationTimestamp: null
+  name: spring-petclinic-reactive-default
+spec:
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              io.kompose.network/spring-petclinic-reactive-default: "true"
+  podSelector:
+    matchLabels:
+      io.kompose.network/spring-petclinic-reactive-default: "true"

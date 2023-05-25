@@ -1,0 +1,24 @@
+---
+apiVersion: k8ssandra.io/v1alpha1
+kind: K8ssandraCluster
+metadata:
+  name: demo
+  namespace: petclinic
+spec:
+  cassandra:
+    serverVersion: "4.0.1"
+    datacenters:
+      - metadata:
+          name: dc1
+        size: 1
+        storageConfig:
+          cassandraDataVolumeClaimSpec:
+            storageClassName: standard
+            accessModes:
+              - ReadWriteOnce
+            resources:
+              requests:
+                storage: 5Gi
+        config:
+          jvmOptions:
+            heapSize: 512M

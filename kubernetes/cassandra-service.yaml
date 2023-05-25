@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -f ../docker-compose.yaml
+    kompose.version: 1.28.0 (c4137012e)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: cassandra
+  name: cassandra
+spec:
+  ports:
+    - name: "7000"
+      port: 7000
+      targetPort: 7000
+    - name: "9042"
+      port: 9042
+      targetPort: 9042
+  selector:
+    io.kompose.service: cassandra
+status:
+  loadBalancer: {}

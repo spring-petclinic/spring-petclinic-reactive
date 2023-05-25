@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -f ../docker-compose.yaml
+    kompose.version: 1.28.0 (c4137012e)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: tracing-server
+  name: tracing-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: tracing-server
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert -f ../docker-compose.yaml
+        kompose.version: 1.28.0 (c4137012e)
+      creationTimestamp: null
+      labels:
+        io.kompose.network/spring-petclinic-reactive-default: "true"
+        io.kompose.service: tracing-server
+    spec:
+      containers:
+        - env:
+            - name: JAVA_OPTS
+              value: -XX:+UnlockExperimentalVMOptions -Djava.security.egd=file:/dev/./urandom
+          image: openzipkin/zipkin
+          name: tracing-server
+          ports:
+            - containerPort: 9411
+          resources: {}
+      restartPolicy: Always
+status: {}
