@@ -40,6 +40,8 @@ spec:
               value: cassandra
             - name: CASSANDRA_USER
               value: cassandra
+            - name: CASSANDRA_USE_ASTRA
+              value: "false"
             - name: DISTRIBUTED_TRACING_ENABLED
               value: "true"
             - name: DISTRIBUTED_TRACING_URL

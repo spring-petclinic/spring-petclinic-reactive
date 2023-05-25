@@ -1,3 +1,4 @@
+---
 version: "3.8"
 services:
 
@@ -25,6 +26,7 @@ services:
       - 9966:9966
       - 9967:9967
     environment:
+      CASSANDRA_USE_ASTRA: "false"
       LISTENING_PORT: 9966
       MONITORING_ENABLED: "true"
       MONITORING_PROMETHEUS: "true"
@@ -89,4 +91,3 @@ services:
     container_name: prometheus-server
     ports:
      - 9091:9090
-     
