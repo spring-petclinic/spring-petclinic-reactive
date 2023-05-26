@@ -10,7 +10,8 @@ secretGenerator:
       - password=cassandra
 generatorOptions:
   disableNameSuffixHash: true
-
+commonLabels:
+  pixie-demo: px-k8ssandra
 resources:
   - kubernetes/namespace.yaml
   - kubernetes/petclinic-backend-deployment.yaml
@@ -18,8 +19,17 @@ resources:
   - kubernetes/petclinic-frontend-deployment.yaml
   - kubernetes/petclinic-frontend-service.yaml
   - kubernetes/k8ssandra/cassandra_cluster.yaml
-
 patchesJson6902:
+  - target:
+      group: k8ssandra.io
+      version: v1alpha1
+      kind: K8ssandraCluster
+      name: demo
+      namespace: petclinic 
+    patch: |-
+      - op: add
+        path: metadata/metadata/labels
+        value: {pixie-demo-initial-cleanup: "true", pixie-demo: px-k8ssandra}
   - target:
       group: apps
       version: v1
